@@ -1,5 +1,5 @@
 /*
-Copyright IBM Corp. 2016 All Rights Reserved.
+Copyright Tongji University. 2018 All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,149 +16,196 @@ limitations under the License.
 
 package main
 
-
 import (
+	"encoding/json"
 	"fmt"
-	"strconv"
+	"time"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 )
 
-var logger = shim.NewLogger("example_cc0")
+var logger = shim.NewLogger("gameAsset")
 
-// SimpleChaincode example simple Chaincode implementation
-type SimpleChaincode struct {
+// GameAssetChaincode Chaincode implementation
+type GameAssetChaincode struct {
 }
 
-func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response  {
-	logger.Info("########### example_cc0 Init ###########")
+//information for gameAsset
+type GameAsset struct {
+	AssetID         string    `json:"AssetID"`
+	Type            string    `json:"Type"`
+	Number          uint64    `json:"Number"`
+	GameCompany     string    `json:"GameCompany"`
+	GameName        string    `json:"GameName"`
+	ReleaseTime     time.Time `json:"ReleaseTime"`
+	Owner           string    `json:"Owner"`
+	AssetInfo       string    `json:"AssetInfo"`
+	TransactionInfo string    `json:"TransactionInfo"`
+}
 
-	_, args := stub.GetFunctionAndParameters()
-	var A, B string    // Entities
-	var Aval, Bval int // Asset holdings
+func (t *GameAssetChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
+	logger.Info("########### GameAssetChaincode Init ###########")
+
+	return shim.Success(nil)
+
+}
+
+// some functions
+func (t *GameAssetChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
+	logger.Info("########### GameAssetChaincode Invoke ###########")
+
+	function, args := stub.GetFunctionAndParameters()
+
+	if function == "generateAsset" {
+		return t.generateAsset(stub, args)
+	}
+
+	if function == "getGameAssetInfo" {
+		return t.getGameAssetInfo(stub, args)
+	}
+
+	if function == "changeGameAssetOwner" {
+		return t.changeGameAssetOwner(stub, args)
+	}
+
+	if function == "deleteGameAsset" {
+		return t.deleteGameAsset(stub, args)
+	}
+
+	logger.Errorf("Unknown action, check the first argument, must be one of 'generateAsset', 'getGameAssetInfo', 'changeGameAssetOwner', 'deleteGameAsset'. But got: %v", args[0])
+	return shim.Error(fmt.Sprintf("Unknown action, check the first argument, must be one of 'generateAsset', 'getGameAssetInfo', 'changeGameAssetOwner'. But got: %v", args[0]))
+}
+
+// 游戏资产发行的时候进行初始化
+// 输入参数一个：json化的GameAsset
+// 输出：执行状态
+func (t *GameAssetChaincode) generateAsset(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+
 	var err error
 
-	// Initialize the chaincode
-	A = args[0]
-	Aval, err = strconv.Atoi(args[1])
-	if err != nil {
-		return shim.Error("Expecting integer value for asset holding")
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments. Expecting 1.")
 	}
-	B = args[2]
-	Bval, err = strconv.Atoi(args[3])
-	if err != nil {
-		return shim.Error("Expecting integer value for asset holding")
-	}
-	logger.Info("Aval = %d, Bval = %d\n", Aval, Bval)
-
-	// Write the state to the ledger
-	err = stub.PutState(A, []byte(strconv.Itoa(Aval)))
+	//从参数中获取初始化信息
+	var InitGameAssetObj GameAsset
+	InitGameAssetInfo := args[0]
+	err = json.Unmarshal([]byte(InitGameAssetInfo), &InitGameAssetObj)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
 
-	err = stub.PutState(B, []byte(strconv.Itoa(Bval)))
+	//判断资产ID是否唯一
+	AssetID := InitGameAssetObj.AssetID
+	GameAssetInfo, _ := stub.GetState(AssetID)
+	if GameAssetInfo != nil {
+		return shim.Error("the GameAsset is existed")
+	}
+
+	//记录资产交易时间
+	timestamp, _ := stub.GetTxTimestamp()
+	ReleaseTime := time.Unix(timestamp.Seconds, int64(timestamp.Nanos))
+	InitGameAssetObj.ReleaseTime = ReleaseTime
+
+	//检查更改完成之后上链
+	//key：读出来的AssetID，value:检查过的结构体
+	jsonAsBytes, _ := json.Marshal(InitGameAssetObj)
+	err = stub.PutState(AssetID, []byte(jsonAsBytes))
 	if err != nil {
 		return shim.Error(err.Error())
 	}
 
 	return shim.Success(nil)
-
-
 }
 
-// Transaction makes payment of X units from A to B
-func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
-	logger.Info("########### example_cc0 Invoke ###########")
-
-	function, args := stub.GetFunctionAndParameters()
-	
-	if function == "delete" {
-		// Deletes an entity from its state
-		return t.delete(stub, args)
-	}
-
-	if function == "query" {
-		// queries an entity state
-		return t.query(stub, args)
-	}
-	if function == "move" {
-		// Deletes an entity from its state
-		return t.move(stub, args)
-	}
-
-	logger.Errorf("Unknown action, check the first argument, must be one of 'delete', 'query', or 'move'. But got: %v", args[0])
-	return shim.Error(fmt.Sprintf("Unknown action, check the first argument, must be one of 'delete', 'query', or 'move'. But got: %v", args[0]))
-}
-
-func (t *SimpleChaincode) move(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	// must be an invoke
-	var A, B string    // Entities
-	var Aval, Bval int // Asset holdings
-	var X int          // Transaction value
+// 更改一个游戏资产的所有权
+//输入：GameAsse.AssetID，newOwner，TransactionInfo
+//输出：执行状态
+func (t *GameAssetChaincode) changeGameAssetOwner(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var err error
 
 	if len(args) != 3 {
-		return shim.Error("Incorrect number of arguments. Expecting 4, function followed by 2 names and 1 value")
+		return shim.Error("Incorrect number of arguments. Expecting 3")
 	}
 
-	A = args[0]
-	B = args[1]
+	AssetID := args[0]
+	NewOwner := args[1]
+	TransactionInfo := args[2]
 
-	// Get the state from the ledger
-	// TODO: will be nice to have a GetAllState call to ledger
-	Avalbytes, err := stub.GetState(A)
+	//检查传入的AssetID是否正确
+	Assetbytes, err := stub.GetState(AssetID)
 	if err != nil {
-		return shim.Error("Failed to get state")
+		jsonResp := "{\"Error\":\"Failed to get state for " + AssetID + "\"}"
+		return shim.Error(jsonResp)
 	}
-	if Avalbytes == nil {
-		return shim.Error("Entity not found")
-	}
-	Aval, _ = strconv.Atoi(string(Avalbytes))
 
-	Bvalbytes, err := stub.GetState(B)
-	if err != nil {
-		return shim.Error("Failed to get state")
+	if Assetbytes == nil {
+		jsonResp := "{\"Error\":\"Nil amount for " + AssetID + "\"}"
+		return shim.Error(jsonResp)
 	}
-	if Bvalbytes == nil {
-		return shim.Error("Entity not found")
-	}
-	Bval, _ = strconv.Atoi(string(Bvalbytes))
 
-	// Perform the execution
-	X, err = strconv.Atoi(args[2])
-	if err != nil {
-		return shim.Error("Invalid transaction amount, expecting a integer value")
-	}
-	Aval = Aval - X
-	Bval = Bval + X
-	logger.Infof("Aval = %d, Bval = %d\n", Aval, Bval)
-
-	// Write the state back to the ledger
-	err = stub.PutState(A, []byte(strconv.Itoa(Aval)))
+	//解析对象并更改信息，TransactionInfo以追加形式添加,并且重新上链
+	var GameAssetObj GameAsset
+	err = json.Unmarshal([]byte(Assetbytes), &GameAssetObj)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
 
-	err = stub.PutState(B, []byte(strconv.Itoa(Bval)))
+	GameAssetObj.Owner = NewOwner
+	//采用‘ + ’作为解析的分隔符
+	NewTransactionInfo := GameAssetObj.TransactionInfo + " + " + TransactionInfo
+	GameAssetObj.TransactionInfo = NewTransactionInfo
+
+	jsonAsBytes, _ := json.Marshal(GameAssetObj)
+	err = stub.PutState(AssetID, []byte(jsonAsBytes))
 	if err != nil {
 		return shim.Error(err.Error())
 	}
 
-        return shim.Success(nil);
+	return shim.Success(nil)
 }
 
-// Deletes an entity from state
-func (t *SimpleChaincode) delete(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+//查询资产信息
+//输入参数一个：AssetID
+//输出：查询到的结构体
+func (t *GameAssetChaincode) getGameAssetInfo(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+
+	var err error
+
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments. Expecting name of the person to query")
+	}
+
+	AssetID := args[0]
+
+	Avalbytes, err := stub.GetState(AssetID)
+	if err != nil {
+		jsonResp := "{\"Error\":\"Failed to get state for " + AssetID + "\"}"
+		return shim.Error(jsonResp)
+	}
+
+	if Avalbytes == nil {
+		jsonResp := "{\"Error\":\"Nil amount for " + AssetID + "\"}"
+		return shim.Error(jsonResp)
+	}
+
+	jsonResp := "{\"Name\":\"" + AssetID + "\",\"Amount\":\"" + string(Avalbytes) + "\"}"
+	logger.Infof("Query Response:%s\n", jsonResp)
+	return shim.Success(Avalbytes)
+}
+
+// 删除一个GameAsset
+//输入：GameAsse.AssetID
+//输出：执行状态
+func (t *GameAssetChaincode) deleteGameAsset(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if len(args) != 1 {
 		return shim.Error("Incorrect number of arguments. Expecting 1")
 	}
 
-	A := args[0]
+	AssetID := args[0]
 
 	// Delete the key from the state in ledger
-	err := stub.DelState(A)
+	err := stub.DelState(AssetID)
 	if err != nil {
 		return shim.Error("Failed to delete state")
 	}
@@ -166,37 +213,8 @@ func (t *SimpleChaincode) delete(stub shim.ChaincodeStubInterface, args []string
 	return shim.Success(nil)
 }
 
-// Query callback representing the query of a chaincode
-func (t *SimpleChaincode) query(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-
-	var A string // Entities
-	var err error
-
-	if len(args) != 1 {
-		return shim.Error("Incorrect number of arguments. Expecting name of the person to query")
-	}
-
-	A = args[0]
-
-	// Get the state from the ledger
-	Avalbytes, err := stub.GetState(A)
-	if err != nil {
-		jsonResp := "{\"Error\":\"Failed to get state for " + A + "\"}"
-		return shim.Error(jsonResp)
-	}
-
-	if Avalbytes == nil {
-		jsonResp := "{\"Error\":\"Nil amount for " + A + "\"}"
-		return shim.Error(jsonResp)
-	}
-
-	jsonResp := "{\"Name\":\"" + A + "\",\"Amount\":\"" + string(Avalbytes) + "\"}"
-	logger.Infof("Query Response:%s\n", jsonResp)
-	return shim.Success(Avalbytes)
-}
-
 func main() {
-	err := shim.Start(new(SimpleChaincode))
+	err := shim.Start(new(GameAssetChaincode))
 	if err != nil {
 		logger.Errorf("Error starting Simple chaincode: %s", err)
 	}
