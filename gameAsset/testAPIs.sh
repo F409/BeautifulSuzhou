@@ -160,6 +160,69 @@ curl -s -X POST \
 echo
 echo
 
+# echo "POST invoke chaincode:generateAsset on peers of Org1"
+# echo
+# TRX_ID=$(curl -s -X POST \
+#   http://localhost:4000/channels/mychannel/chaincodes/mycc \
+#   -H "authorization: Bearer $ORG1_TOKEN" \
+#   -H "content-type: application/json" \
+#   -d '{
+# 	"peers": ["peer0.org1.example.com","peer1.org1.example.com"],
+# 	"fcn":"generateAsset",
+# 	"args":["{\"AssetID\":\"001\",\"Type\":\"money\",\"Number\":16,\"GameCompany\":\"Tencent\",\"GameName\":\"chiji\",\"ReleaseTime\":\"2018-04-29T05:05:13.359Z\",\"Owner\":\"Liyiming\",\"AssetInfo\":\"nothing\",\"TransactionInfo\":\"init\"}"]
+# }')
+# echo "Transacton ID is $TRX_ID"
+# echo
+# echo
+#
+# echo "GET query chaincode:getGameAssetInfo on peer1 of Org1"
+# echo
+# curl -s -X GET \
+#   "http://localhost:4000/channels/mychannel/chaincodes/mycc?peer=peer0.org1.example.com&fcn=getGameAssetInfo&args=%5b%22001%22%5d" \
+#   -H "authorization: Bearer $ORG1_TOKEN" \
+#   -H "content-type: application/json"
+# echo
+# echo
+#
+# echo "POST invoke chaincode:changeGameAssetOwner on peers of Org1"
+# echo
+# TRX_ID=$(curl -s -X POST \
+#   http://localhost:4000/channels/mychannel/chaincodes/mycc \
+#   -H "authorization: Bearer $ORG1_TOKEN" \
+#   -H "content-type: application/json" \
+#   -d '{
+# 	"peers": ["peer0.org1.example.com","peer1.org1.example.com"],
+# 	"fcn":"changeGameAssetOwner",
+# 	"args":["001","wangyi","changtowangyi"]
+# }')
+# echo "Transacton ID is $TRX_ID"
+# echo
+# echo
+#
+# echo "GET query chaincode:getGameAssetInfo on peer1 of Org1"
+# echo
+# curl -s -X GET \
+#   "http://localhost:4000/channels/mychannel/chaincodes/mycc?peer=peer0.org1.example.com&fcn=getGameAssetInfo&args=%5b%22001%22%5d" \
+#   -H "authorization: Bearer $ORG1_TOKEN" \
+#   -H "content-type: application/json"
+# echo
+# echo
+#
+# echo "POST invoke chaincode:deleteGameAsset on peers of Org1"
+# echo
+# TRX_ID=$(curl -s -X POST \
+#   http://localhost:4000/channels/mychannel/chaincodes/mycc \
+#   -H "authorization: Bearer $ORG1_TOKEN" \
+#   -H "content-type: application/json" \
+#   -d '{
+# 	"peers": ["peer0.org1.example.com","peer1.org1.example.com"],
+# 	"fcn":"deleteGameAsset",
+# 	"args":["001"]
+# }')
+# echo "Transacton ID is $TRX_ID"
+# echo
+# echo
+
 echo "POST invoke chaincode:generateAsset on peers of Org1"
 echo
 TRX_ID=$(curl -s -X POST \
@@ -168,8 +231,8 @@ TRX_ID=$(curl -s -X POST \
   -H "content-type: application/json" \
   -d '{
 	"peers": ["peer0.org1.example.com","peer1.org1.example.com"],
-	"fcn":"generateAsset",
-	"args":["{\"AssetID\":\"001\",\"Type\":\"money\",\"Number\":16,\"GameCompany\":\"Tencent\",\"GameName\":\"chiji\",\"ReleaseTime\":\"2018-04-29T05:05:13.359Z\",\"Owner\":\"Liyiming\",\"AssetInfo\":\"nothing\",\"TransactionInfo\":\"init\"}"]
+	"fcn":"generateUser",
+	"args":["{\"UserID\":\"001\",\"Name\":\"xujinging\",\"Email\":\"123456@qq.com\",\"Balance\":3.14,\"AssetList\":[\"001\",\"002\"],\"AssetForSale\":[\"000\"],\"TransactionInfo\":\"init\"}"]
 }')
 echo "Transacton ID is $TRX_ID"
 echo
@@ -178,13 +241,13 @@ echo
 echo "GET query chaincode:getGameAssetInfo on peer1 of Org1"
 echo
 curl -s -X GET \
-  "http://localhost:4000/channels/mychannel/chaincodes/mycc?peer=peer0.org1.example.com&fcn=getGameAssetInfo&args=%5b%22001%22%5d" \
+  "http://localhost:4000/channels/mychannel/chaincodes/mycc?peer=peer0.org1.example.com&fcn=getUserInfo&args=%5b%22001%22%5d" \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json"
 echo
 echo
 
-echo "POST invoke chaincode:changeGameAssetOwner on peers of Org1"
+echo "POST invoke chaincode:changeUser.Name on peers of Org1"
 echo
 TRX_ID=$(curl -s -X POST \
   http://localhost:4000/channels/mychannel/chaincodes/mycc \
@@ -192,8 +255,98 @@ TRX_ID=$(curl -s -X POST \
   -H "content-type: application/json" \
   -d '{
 	"peers": ["peer0.org1.example.com","peer1.org1.example.com"],
-	"fcn":"changeGameAssetOwner",
-	"args":["001","wangyi","changtowangyi"]
+	"fcn":"changeUser",
+	"args":["001","Name","liulietong"]
+}')
+echo "Transacton ID is $TRX_ID"
+echo
+echo
+
+echo "POST invoke chaincode:changeUser.Email on peers of Org1"
+echo
+TRX_ID=$(curl -s -X POST \
+  http://localhost:4000/channels/mychannel/chaincodes/mycc \
+  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "content-type: application/json" \
+  -d '{
+	"peers": ["peer0.org1.example.com","peer1.org1.example.com"],
+	"fcn":"changeUser",
+	"args":["001","Email","654321@qq.com"]
+}')
+echo "Transacton ID is $TRX_ID"
+echo
+echo
+
+echo "POST invoke chaincode:changeUser.Balance on peers of Org1"
+echo
+TRX_ID=$(curl -s -X POST \
+  http://localhost:4000/channels/mychannel/chaincodes/mycc \
+  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "content-type: application/json" \
+  -d '{
+	"peers": ["peer0.org1.example.com","peer1.org1.example.com"],
+	"fcn":"changeUser",
+	"args":["001","Balance","4.13"]
+}')
+echo "Transacton ID is $TRX_ID"
+echo
+echo
+
+echo "POST invoke chaincode:changeUser.addAssetList on peers of Org1"
+echo
+TRX_ID=$(curl -s -X POST \
+  http://localhost:4000/channels/mychannel/chaincodes/mycc \
+  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "content-type: application/json" \
+  -d '{
+	"peers": ["peer0.org1.example.com","peer1.org1.example.com"],
+	"fcn":"changeUser",
+	"args":["001","addAssetList","003"]
+}')
+echo "Transacton ID is $TRX_ID"
+echo
+echo
+
+echo "POST invoke chaincode:changeUser.deleteAssetList on peers of Org1"
+echo
+TRX_ID=$(curl -s -X POST \
+  http://localhost:4000/channels/mychannel/chaincodes/mycc \
+  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "content-type: application/json" \
+  -d '{
+	"peers": ["peer0.org1.example.com","peer1.org1.example.com"],
+	"fcn":"changeUser",
+	"args":["001","deleteAssetList","001"]
+}')
+echo "Transacton ID is $TRX_ID"
+echo
+echo
+
+echo "POST invoke chaincode:changeUser.addAssetForSale on peers of Org1"
+echo
+TRX_ID=$(curl -s -X POST \
+  http://localhost:4000/channels/mychannel/chaincodes/mycc \
+  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "content-type: application/json" \
+  -d '{
+	"peers": ["peer0.org1.example.com","peer1.org1.example.com"],
+	"fcn":"changeUser",
+	"args":["001","addAssetForSale","001"]
+}')
+echo "Transacton ID is $TRX_ID"
+echo
+echo
+
+echo "POST invoke chaincode:changeUser.deleteAssetForSale on peers of Org1"
+echo
+TRX_ID=$(curl -s -X POST \
+  http://localhost:4000/channels/mychannel/chaincodes/mycc \
+  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "content-type: application/json" \
+  -d '{
+	"peers": ["peer0.org1.example.com","peer1.org1.example.com"],
+	"fcn":"changeUser",
+	"args":["001","deleteAssetForSale","000"]
 }')
 echo "Transacton ID is $TRX_ID"
 echo
@@ -202,24 +355,9 @@ echo
 echo "GET query chaincode:getGameAssetInfo on peer1 of Org1"
 echo
 curl -s -X GET \
-  "http://localhost:4000/channels/mychannel/chaincodes/mycc?peer=peer0.org1.example.com&fcn=getGameAssetInfo&args=%5b%22001%22%5d" \
+  "http://localhost:4000/channels/mychannel/chaincodes/mycc?peer=peer0.org1.example.com&fcn=getUserInfo&args=%5b%22001%22%5d" \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json"
-echo
-echo
-
-echo "POST invoke chaincode:deleteGameAsset on peers of Org1"
-echo
-TRX_ID=$(curl -s -X POST \
-  http://localhost:4000/channels/mychannel/chaincodes/mycc \
-  -H "authorization: Bearer $ORG1_TOKEN" \
-  -H "content-type: application/json" \
-  -d '{
-	"peers": ["peer0.org1.example.com","peer1.org1.example.com"],
-	"fcn":"deleteGameAsset",
-	"args":["001"]
-}')
-echo "Transacton ID is $TRX_ID"
 echo
 echo
 
