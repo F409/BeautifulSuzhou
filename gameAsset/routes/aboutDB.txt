@@ -3,3 +3,28 @@ collections:
 generatedAssets:游戏公司生成的未售道具
 sellingAssets:其他玩家发布的待出售道具
 assetsImages:游戏道具name与对应的图片
+
+
+var promise = new Promise(function(resolve){
+    var sql = "SELECT COUNT(*) count FROM wx_user WHERE username = ?";
+    var sqlParams = [username];
+    var count;
+    co.query(sql,sqlParams,function(err,result){
+        if(err){
+            return console.log(err.message);
+        }
+        console.log("------------------------开始查询---------------------");
+        console.log(result);
+        var str = JSON.stringify(result);
+        var json = JSON.parse(str);
+        count = json[0].count;
+        console.log(count);
+        console.log("------------------------查询结束---------------------");
+        resolve(count);
+    });
+});
+promise.then(function(value){
+    // console.log(value);
+    return value;
+});
+return promise;

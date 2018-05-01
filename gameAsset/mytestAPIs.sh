@@ -52,23 +52,43 @@ function setChaincodePath(){
 
 setChaincodePath
 
-echo "POST request Enroll on Org1  ..."
+echo "POST request add User on Org1  ..."
 
-ORG1_TOKEN=$(curl -s -X POST \
+response1=$(curl -s -X POST \
   http://localhost:4000/addUser \
   -H "content-type: application/json" \
   -d '{
-		"username":"Jim",
+		"username":"Iris",
 		"orgName":"Org1",
 		"Password":"1234",
 		"Email":"123456@qq.com",
 		"Balance":100,
 		"AssetList":[],
 		"AssetForSale":[],
-		"TransactionInfo":["GameCompany"],
+		"TransactionInfo":"GameCompany",
 		"peers": ["peer0.org1.example.com","peer1.org1.example.com"],
 		"fcn":"generateUser",
 		"channelName":"mychannel",
 		"chaincodeName":"mycc"
 		 }')
-echo $ORG1_TOKEN
+echo $response1
+echo "POST request add User on Org1  ..."
+
+response2=$(curl -s -X POST \
+  http://localhost:4000/addUser \
+  -H "content-type: application/json" \
+  -d '{
+		"username":"Iris",
+		"orgName":"Org1",
+		"Password":"1234",
+		"Email":"123456@qq.com",
+		"Balance":100,
+		"AssetList":[],
+		"AssetForSale":[],
+		"TransactionInfo":"GameCompany",
+		"peers": ["peer0.org1.example.com","peer1.org1.example.com"],
+		"fcn":"generateUser",
+		"channelName":"mychannel",
+		"chaincodeName":"mycc"
+		 }')
+echo $response

@@ -156,11 +156,6 @@ app.post('/addUser', async function(req, res) {
 		res.json(getErrorMessage('\'orgName\''));
 		return;
 	}
-	var token = jwt.sign({
-		exp: Math.floor(Date.now() / 1000) + parseInt(hfc.getConfigSetting('jwt_expiretime')),
-		username: username,
-		orgName: orgName
-	}, app.get('secret'));
 	let userData = {
 		"Name":username,
 		"orgName":orgName,
@@ -171,31 +166,48 @@ app.post('/addUser', async function(req, res) {
 		"AssetForSale":req.body.AssetForSale,
 		"TransactionInfo":req.body.TransactionInfo
 	};
-	// 插入到数据库
-	db.insertOne('myuser', userData, function (err, result) {
+
+let response = await helper.getRegisteredUser(username, orgName, true);
+logger.debug('-- returned from registering the username %s for organization %s',username,orgName);
+if (response && typeof response !== 'string') {
+	logger.debug('Successfully registered the username %s for organization %s',username,orgName);
+} else {
+	logger.debug('Failed to register the username %s for organization %s with::%s',username,orgName,response);
+	res.json({success: false, message: response});
+}
+// 插入到数据库
+var UserID;
+await db.insertOne('myuser', userData,async function (err, result) {
 		if (err) {
 			return res.json({
 				"code": 401,
 				"message": "user新增失败"
 			})
 		}
-		logger.debug(result[0])
-		// return res.json({
-		// 	"code": 200,
-		// 	"message": "user新增成功"
-		// })
+		UserID=result[0]._id
+		logger.debug('-- returned from:'+UserID._id)
+		var blockUser ={
+			"UserID":UserID,
+			"Name":username,
+			"Email": req.body.Email,
+			"Balance":req.body.Balance,
+			"AssetList":req.body.AssetList,
+			"AssetForSale":req.body.AssetForSale,
+			"TransactionInfo":req.body.TransactionInfo
+		}
+		var peers = req.body.peers;
+		var chaincodeName = req.body.chaincodeName;
+		var channelName = req.body.channelName;
+		var fcn = req.body.fcn;
+		var args =new Array([]);
+		args[0] = JSON.stringify(blockUser);
+		logger.debug('channelName  : ' + channelName);
+		logger.debug('chaincodeName : ' + chaincodeName);
+		logger.debug('fcn  : ' + fcn);
+		logger.debug('args  : ' + args[0].UserID);
+		let message =await invoke.invokeChaincode(peers, channelName, chaincodeName, fcn, args, username, orgName);
+		return res.json({"message":message});
 	})
-	let response = await helper.getRegisteredUser(username, orgName, true);
-	logger.debug('-- returned from registering the username %s for organization %s',username,orgName);
-	if (response && typeof response !== 'string') {
-		logger.debug('Successfully registered the username %s for organization %s',username,orgName);
-		response.token = token;
-		res.json(response);
-	} else {
-		logger.debug('Failed to register the username %s for organization %s with::%s',username,orgName,response);
-		res.json({success: false, message: response});
-	}
-
 });
 // app.use('/longin', longin);
 // Create Channel

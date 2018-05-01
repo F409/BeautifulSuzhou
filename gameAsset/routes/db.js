@@ -52,7 +52,7 @@ exports.insertOne = function(collectionName, json, callback) {
         db.close()
         return
       }
-      console.log(result.ops);
+      // console.log(result.ops);
       callback(err, result.ops)
       db.close()
     })
