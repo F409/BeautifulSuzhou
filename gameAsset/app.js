@@ -42,7 +42,6 @@ var invoke = require('./app/invoke-transaction.js');
 var query = require('./app/query.js');
 var host = process.env.HOST || hfc.getConfigSetting('host');
 var port = process.env.PORT || hfc.getConfigSetting('port');
-// var login = require('./routes/login');
 ///////////////////////////////////////////////////////////////////////////////
 //////////////////////////////// SET CONFIGURATONS ////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -59,7 +58,7 @@ app.set('secret', 'thisismysecret');
 app.use(expressJWT({
 	secret: 'thisismysecret'
 }).unless({
-	path: ['/addUser','/users']
+	path: ['/addUser','/users','/login']
 }));
 app.use(bearerToken());
 app.use(function(req, res, next) {
@@ -68,6 +67,9 @@ app.use(function(req, res, next) {
 		return next();
 	}
 	if (req.originalUrl.indexOf('/addUser') >= 0) {
+		return next();
+	}
+	if (req.originalUrl.indexOf('/login') >= 0) {
 		return next();
 	}
 	var token = req.token;
@@ -85,6 +87,7 @@ app.use(function(req, res, next) {
 			// for the downstream code to use
 			req.username = decoded.username;
 			req.orgname = decoded.orgName;
+			req.UserID = decoded.UserID;
 			logger.debug(util.format('Decoded from JWT token: username - %s, orgname - %s', decoded.username, decoded.orgName));
 			return next();
 		}
@@ -110,7 +113,7 @@ function getErrorMessage(field) {
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////// REST ENDPOINTS START HERE ///////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-// Register and enroll user
+// Register and enroll user区块链安装链码以及初始化
 app.post('/Users', async function(req, res) {
 	var username = req.body.username;
 	var orgName = req.body.orgName;
@@ -141,6 +144,7 @@ app.post('/Users', async function(req, res) {
 		res.json({success: false, message: response});
 	}
 	});
+// Register and enroll user往mongodb和区块链上写数据
 app.post('/addUser', async function(req, res) {
 	logger.debug(req.body)
 	var username = req.body.username;
@@ -209,7 +213,61 @@ await db.insertOne('myuser', userData,async function (err, result) {
 		return res.json({"message":message});
 	})
 });
-// app.use('/longin', longin);
+app.post('/login', async function(req, res) {
+	var username = req.body.username;
+	var password = md5(req.body.password);
+	logger.debug('End point : /login');
+	logger.debug('User name : ' + username)
+	if (!username) {
+		res.json(getErrorMessage('\'username\''));
+		return;
+	}
+	if (!password) {
+		res.json(getErrorMessage('\'password\''));
+		return;
+	}
+	// 根据用户名查询数据库中是否含有该用
+	await db.findOne('myuser', { "Name": username }, function (err, result) {
+		if (err) {
+			return res.json({
+				"code": 500,
+				"message": "内部服务器错误"
+			})
+		}
+		if (!result || result.length === 0) {
+			return res.json({
+				"code": 401,
+				"message": "找不到用户名"
+			})
+		}
+		var dbPassword = result.Password
+		var UserID = result._id
+		var orgName = result.orgName
+		if (dbPassword === password) {
+			var token = jwt.sign({
+				exp: Math.floor(Date.now() / 1000) + parseInt(hfc.getConfigSetting('jwt_expiretime')),
+				username: username,
+				orgName: orgName,
+				UserID: UserID
+			}, app.get('secret'));
+			logger.debug(username+"登录成功");
+			return res.json({
+				"code": 200,
+				"message": "登录成功",
+				"token": token,
+				"username": username,
+				"UserID": UserID
+			})
+		} else {
+			return res.json({
+				"code": 401,
+				"message": "密码错误"
+			})
+		}
+	})
+
+});
+
 // Create Channel
 app.post('/channels', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< C R E A T E  C H A N N E L >>>>>>>>>>>>>>>>>');
