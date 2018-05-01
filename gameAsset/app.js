@@ -42,6 +42,10 @@ var invoke = require('./app/invoke-transaction.js');
 var query = require('./app/query.js');
 var host = process.env.HOST || hfc.getConfigSetting('host');
 var port = process.env.PORT || hfc.getConfigSetting('port');
+var userType={
+	"Org1":0,
+	"Org2":1
+}
 ///////////////////////////////////////////////////////////////////////////////
 //////////////////////////////// SET CONFIGURATONS ////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -243,6 +247,7 @@ app.post('/login', async function(req, res) {
 		var dbPassword = result.Password
 		var UserID = result._id
 		var orgName = result.orgName
+		var balance = result.Balance
 		if (dbPassword === password) {
 			var token = jwt.sign({
 				exp: Math.floor(Date.now() / 1000) + parseInt(hfc.getConfigSetting('jwt_expiretime')),
@@ -252,11 +257,11 @@ app.post('/login', async function(req, res) {
 			}, app.get('secret'));
 			logger.debug(username+"登录成功");
 			return res.json({
-				"code": 200,
-				"message": "登录成功",
-				"token": token,
+				"success": true,
 				"username": username,
-				"UserID": UserID
+				"userType":userType[orgName],
+				"balance":balance,
+				"token": token
 			})
 		} else {
 			return res.json({
