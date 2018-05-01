@@ -65,6 +65,10 @@ ORG1_TOKEN=$(curl -s -X POST \
 		"Balance":100,
 		"AssetList":[],
 		"AssetForSale":[],
-		"TransactionInfo":["GameCompany"]
+		"TransactionInfo":["GameCompany"],
+		"peers": ["peer0.org1.example.com","peer1.org1.example.com"],
+		"fcn":"generateUser",
+		"channelName":"mychannel",
+		"chaincodeName":"mycc"
 		 }')
 echo $ORG1_TOKEN
