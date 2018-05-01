@@ -27,7 +27,9 @@ var expressJWT = require('express-jwt');
 var jwt = require('jsonwebtoken');
 var bearerToken = require('express-bearer-token');
 var cors = require('cors');
-
+const md5 = require('./routes/md5.js')
+const db = require('./routes/db.js')
+var ObjectId = require('mongodb').ObjectId;
 require('./config.js');
 var hfc = require('fabric-client');
 
@@ -40,6 +42,7 @@ var invoke = require('./app/invoke-transaction.js');
 var query = require('./app/query.js');
 var host = process.env.HOST || hfc.getConfigSetting('host');
 var port = process.env.PORT || hfc.getConfigSetting('port');
+// var login = require('./routes/login');
 ///////////////////////////////////////////////////////////////////////////////
 //////////////////////////////// SET CONFIGURATONS ////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -56,7 +59,7 @@ app.set('secret', 'thisismysecret');
 app.use(expressJWT({
 	secret: 'thisismysecret'
 }).unless({
-	path: ['/users']
+	path: ['/addUser','/users']
 }));
 app.use(bearerToken());
 app.use(function(req, res, next) {
@@ -64,7 +67,9 @@ app.use(function(req, res, next) {
 	if (req.originalUrl.indexOf('/users') >= 0) {
 		return next();
 	}
-
+	if (req.originalUrl.indexOf('/addUser') >= 0) {
+		return next();
+	}
 	var token = req.token;
 	jwt.verify(token, app.get('secret'), function(err, decoded) {
 		if (err) {
@@ -106,7 +111,7 @@ function getErrorMessage(field) {
 ///////////////////////// REST ENDPOINTS START HERE ///////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 // Register and enroll user
-app.post('/users', async function(req, res) {
+app.post('/Users', async function(req, res) {
 	var username = req.body.username;
 	var orgName = req.body.orgName;
 	logger.debug('End point : /users');
@@ -135,8 +140,64 @@ app.post('/users', async function(req, res) {
 		logger.debug('Failed to register the username %s for organization %s with::%s',username,orgName,response);
 		res.json({success: false, message: response});
 	}
+	});
+app.post('/addUser', async function(req, res) {
+	logger.debug(req.body)
+	var username = req.body.username;
+	var orgName = req.body.orgName;
+	logger.debug('End point : /users');
+	logger.debug('User name : ' + username);
+	logger.debug('Org name  : ' + orgName);
+	if (!username) {
+		res.json(getErrorMessage('\'username\''));
+		return;
+	}
+	if (!orgName) {
+		res.json(getErrorMessage('\'orgName\''));
+		return;
+	}
+	var token = jwt.sign({
+		exp: Math.floor(Date.now() / 1000) + parseInt(hfc.getConfigSetting('jwt_expiretime')),
+		username: username,
+		orgName: orgName
+	}, app.get('secret'));
+	let userData = {
+		"Name":username,
+		"orgName":orgName,
+		"Password":md5(req.body.Password),
+		"Email": req.body.Email,
+		"Balance":req.body.Balance,
+		"AssetList":req.body.AssetList,
+		"AssetForSale":req.body.AssetForSale,
+		"TransactionInfo":req.body.TransactionInfo
+	};
+	// 插入到数据库
+	db.insertOne('myuser', userData, function (err, result) {
+		if (err) {
+			return res.json({
+				"code": 401,
+				"message": "user新增失败"
+			})
+		}
+		logger.debug(result[0])
+		// return res.json({
+		// 	"code": 200,
+		// 	"message": "user新增成功"
+		// })
+	})
+	let response = await helper.getRegisteredUser(username, orgName, true);
+	logger.debug('-- returned from registering the username %s for organization %s',username,orgName);
+	if (response && typeof response !== 'string') {
+		logger.debug('Successfully registered the username %s for organization %s',username,orgName);
+		response.token = token;
+		res.json(response);
+	} else {
+		logger.debug('Failed to register the username %s for organization %s with::%s',username,orgName,response);
+		res.json({success: false, message: response});
+	}
 
 });
+// app.use('/longin', longin);
 // Create Channel
 app.post('/channels', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< C R E A T E  C H A N N E L >>>>>>>>>>>>>>>>>');

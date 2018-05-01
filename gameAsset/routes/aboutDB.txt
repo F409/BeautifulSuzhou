@@ -1,0 +1,5 @@
+dbname:gameAsset
+collections:
+generatedAssets:游戏公司生成的未售道具
+sellingAssets:其他玩家发布的待出售道具
+assetsImages:游戏道具name与对应的图片
