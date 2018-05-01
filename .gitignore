@@ -1,0 +1,6 @@
+# Emacs backup files
+*~
+
+gameAsset/.DS_Store
+gameAsset/node_modules/*
+gameAsset/fabric-client-kv-org*
