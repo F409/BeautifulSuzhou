@@ -1,14 +1,18 @@
 var storage = window.localStorage;
 // 获取localStorage数据
-var local_name = storage["local-name"];
+
+var d_username = storage['d-username'];
+var d_userType = storage['d-userType'];
+var d_balance = storage['d-balance'];
+var d_token = storage['d-token'];
 
 document.writeln('	<div class="header">');
 document.writeln('		<div class="container">');
 document.writeln('			<div class="header-grid">');
 document.writeln('				<div class="header-grid-left">');
 document.writeln('					<ul>');
-if(local_name){ // 已登录
-	document.writeln('						<li id="loginInfo">欢迎您 '+local_name+' !</li>');
+if(d_token){ // 已登录
+	document.writeln('						<li id="loginInfo">欢迎您 '+d_username+' !</li>');
 	document.writeln('						<li id="center"><i class="glyphicon glyphicon-user" aria-hidden="true"></i><a href="center.html">信息中心</a></li>');
 	document.writeln('						<li id="loginOut"><i class="glyphicon glyphicon-log-out" aria-hidden="true"></i><a href="#">注销登陆</a></li>');
 }else{ // 未登录
@@ -64,7 +68,10 @@ document.writeln('	</div>');
 
 // 取消登陆
 $('#loginOut').on('click', function () {
-	localStorage.removeItem('local-name');
+	localStorage.removeItem('d-username');
+	localStorage.removeItem('d-userType');
+	localStorage.removeItem('d-balance');
+	localStorage.removeItem('d-token');
 	location.reload();
 	console.log('localStorage删除完毕');
 });

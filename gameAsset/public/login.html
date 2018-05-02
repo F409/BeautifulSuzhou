@@ -66,14 +66,32 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	$(function () {
 		// 写入数据
 		$('#loginForm').submit(function () {
-			var storage = window.localStorage;
-			var local_name = $('#username').val();
-			storage['local-name'] = local_name;
-			//待完成：判断登陆
-
-
-			//location.reload();
-			self.location='center.html'; 
+			var data = {};
+			data['username']=$('#username').val();
+			data['password']=$('#password').val();
+			$.ajax({
+				type: "POST",
+				url: "/login",
+				data: data,
+				beforeSend: function(request) {
+					request.setRequestHeader("content-type", "application/json");
+					//request.setRequestHeader("authorization","Bearer $ORG1_TOKEN");
+				},
+				success: function(result) {
+					alert(result);
+					if(result['success']==true){
+						storage['d-username'] = result['username'];
+						storage['d-userType'] = result['userType'];
+						storage['d-balance'] = result['balance'];
+						storage['d-token'] = result['token'];
+						alert('登陆成功');
+						self.location='center.html';
+					}else{
+						alert('用户名或者密码错误');
+					}
+					
+				}
+			});
 			return false;
 		});
 	});
