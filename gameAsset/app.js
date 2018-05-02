@@ -174,48 +174,47 @@ app.post('/addUser', async function(req, res) {
 		"AssetForSale":req.body.AssetForSale,
 		"TransactionInfo":req.body.TransactionInfo
 	};
-
-let response = await helper.getRegisteredUser(username, orgName, true);
-logger.debug('-- returned from registering the username %s for organization %s',username,orgName);
-if (response && typeof response !== 'string') {
-	logger.debug('Successfully registered the username %s for organization %s',username,orgName);
-} else {
-	logger.debug('Failed to register the username %s for organization %s with::%s',username,orgName,response);
-	res.json({success: false, message: response});
-}
-// 插入到数据库
-var UserID;
-await db.insertOne('myuser', userData,async function (err, result) {
-		if (err) {
-			return res.json({
-				"code": 401,
-				"message": "user新增失败"
-			})
-		}
-		UserID=result[0]._id
-		logger.debug('-- returned from:'+UserID._id)
-		var blockUser ={
-			"UserID":UserID,
-			"Name":username,
-			"Email": req.body.Email,
-			"Balance":req.body.Balance,
-			"AssetList":req.body.AssetList,
-			"AssetForSale":req.body.AssetForSale,
-			"TransactionInfo":req.body.TransactionInfo
-		}
-		var peers = req.body.peers;
-		var chaincodeName = req.body.chaincodeName;
-		var channelName = req.body.channelName;
-		var fcn = req.body.fcn;
-		var args =new Array([]);
-		args[0] = JSON.stringify(blockUser);
-		logger.debug('channelName  : ' + channelName);
-		logger.debug('chaincodeName : ' + chaincodeName);
-		logger.debug('fcn  : ' + fcn);
-		logger.debug('args  : ' + args[0].UserID);
-		let message =await invoke.invokeChaincode(peers, channelName, chaincodeName, fcn, args, username, orgName);
-		return res.json({"message":message});
-	})
+	let response = await helper.getRegisteredUser(username, orgName, true);
+	logger.debug('-- returned from registering the username %s for organization %s',username,orgName);
+	if (response && typeof response !== 'string') {
+		logger.debug('Successfully registered the username %s for organization %s',username,orgName);
+	} else {
+		logger.debug('Failed to register the username %s for organization %s with::%s',username,orgName,response);
+		res.json({success: false, message: response});
+	}
+	// 插入到数据库
+	var UserID;
+	await db.insertOne('myuser', userData,async function (err, result) {
+			if (err) {
+				return res.json({
+					"code": 401,
+					"message": "user新增失败"
+				})
+			}
+			UserID=result[0]._id
+			logger.debug('-- returned from:'+UserID._id)
+			var blockUser ={
+				"UserID":UserID,
+				"Name":username,
+				"Email": req.body.Email,
+				"Balance":req.body.Balance,
+				"AssetList":req.body.AssetList,
+				"AssetForSale":req.body.AssetForSale,
+				"TransactionInfo":req.body.TransactionInfo
+			}
+			var peers = req.body.peers;
+			var chaincodeName = req.body.chaincodeName;
+			var channelName = req.body.channelName;
+			var fcn = req.body.fcn;
+			var args =new Array([]);
+			args[0] = JSON.stringify(blockUser);
+			logger.debug('channelName  : ' + channelName);
+			logger.debug('chaincodeName : ' + chaincodeName);
+			logger.debug('fcn  : ' + fcn);
+			logger.debug('args  : ' + args[0].UserID);
+			let message =await invoke.invokeChaincode(peers, channelName, chaincodeName, fcn, args, username, orgName);
+			return res.json({"message":message});
+		})
 });
 app.post('/login', async function(req, res) {
 	var username = req.body.username;
@@ -234,13 +233,13 @@ app.post('/login', async function(req, res) {
 	await db.findOne('myuser', { "Name": username }, function (err, result) {
 		if (err) {
 			return res.json({
-				"code": 500,
+				"success": false,
 				"message": "内部服务器错误"
 			})
 		}
 		if (!result || result.length === 0) {
 			return res.json({
-				"code": 401,
+				"success": false,
 				"message": "找不到用户名"
 			})
 		}
@@ -265,7 +264,7 @@ app.post('/login', async function(req, res) {
 			})
 		} else {
 			return res.json({
-				"code": 401,
+				"success": false,
 				"message": "密码错误"
 			})
 		}
