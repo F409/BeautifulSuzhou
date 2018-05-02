@@ -83,7 +83,7 @@ response6=$(curl -s -X POST \
 BUYER_TOKEN=$(echo $response6 | jq ".token" | sed "s/\"//g")
 echo $BUYER_TOKEN
 echo "POST request Create new Item  ..."
-# echo
+echo
 # createItemIds=$(curl -s -X POST \
 #   http://localhost:4000/createItem \
 #   -H "authorization: Bearer $ORG1_TOKEN" \
@@ -103,7 +103,7 @@ echo "POST request Create new Item  ..."
 # echo $createItemIds
 # 后面的itemID可以从这个返回值里取
 
-itemID="5ae9b39ec4b6f303309a1ce0"
+itemID="5ae9b606dc20311d3cb20d4d"
 echo "POST request startIssueProductByID  ..."
 echo
 curl -s -X POST \
@@ -202,5 +202,17 @@ curl -s -X POST \
   -d "{
 		\"username\":\"Iris\",
 		\"userType\":\"0\"
+}"
+echo
+echo
+echo "POST request getProductsByCompanyAndStatus  ..."
+curl -s -X POST \
+  http://localhost:4000/getProductsByCompanyAndStatus \
+  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "content-type: application/json" \
+  -d "{
+		\"username\":\"Tencent\",
+		\"userType\":\"0\",
+		\"itemStatus\":\"0\"
 }"
 echo
