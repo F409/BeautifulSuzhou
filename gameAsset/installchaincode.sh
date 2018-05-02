@@ -159,3 +159,62 @@ curl -s -X POST \
 echo
 echo
 echo "Total execution time : $(($(date +%s)-starttime)) secs ..."
+echo "POST request add User on Org1  ..."
+
+response1=$(curl -s -X POST \
+  http://localhost:4000/addUser \
+  -H "content-type: application/json" \
+  -d '{
+		"username":"Iris",
+		"orgName":"Org1",
+		"Password":"1234",
+		"Email":"123456@qq.com",
+		"Balance":100,
+		"AssetList":[],
+		"AssetForSale":[],
+		"TransactionInfo":"GameCompany",
+		"peers": ["peer0.org1.example.com","peer1.org1.example.com"],
+		"fcn":"generateUser",
+		"channelName":"mychannel",
+		"chaincodeName":"mycc"
+		 }')
+echo $response1
+# echo "POST request add User on Org2  ..."
+
+response2=$(curl -s -X POST \
+  http://localhost:4000/addUser \
+  -H "content-type: application/json" \
+  -d '{
+		"username":"jingjing",
+		"orgName":"Org2",
+		"Password":"1234",
+		"Email":"123456@qq.com",
+		"Balance":100,
+		"AssetList":[],
+		"AssetForSale":[],
+		"TransactionInfo":"Personal User",
+		"peers": ["peer0.org2.example.com","peer1.org2.example.com"],
+		"fcn":"generateUser",
+		"channelName":"mychannel",
+		"chaincodeName":"mycc"
+		 }')
+echo $response2
+
+response3=$(curl -s -X POST \
+  http://localhost:4000/addUser \
+  -H "content-type: application/json" \
+  -d '{
+		"username":"xiaoxu",
+		"orgName":"Org2",
+		"Password":"1234",
+		"Email":"123456@qq.com",
+		"Balance":100,
+		"AssetList":[],
+		"AssetForSale":[],
+		"TransactionInfo":"Personal User",
+		"peers": ["peer0.org2.example.com","peer1.org2.example.com"],
+		"fcn":"generateUser",
+		"channelName":"mychannel",
+		"chaincodeName":"mycc"
+		 }')
+echo $response3
