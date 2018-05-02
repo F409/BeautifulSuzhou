@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>个人中心</title>
+<!-- for-mobile-apps -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="Best Store Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, 
+Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
+<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false);
+		function hideURLbar(){ window.scrollTo(0,1); } </script>
+<!-- //for-mobile-apps -->
+<link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
+<link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
+<!-- js -->
+<script src="js/jquery.min.js"></script>
+<!-- //js -->
+<!-- cart -->
+	<script src="js/simpleCart.min.js"> </script>
+<!-- cart -->
+<link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
+<!-- for bootstrap working -->
+	<script type="text/javascript" src="js/bootstrap-3.1.1.min.js"></script>
+<!-- //for bootstrap working -->
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+<!-- animation-effect -->
+<link href="css/animate.min.css" rel="stylesheet"> 
+<script src="js/wow.min.js"></script>
+<script>
+ new WOW().init();
+</script>
+<!-- //animation-effect -->
+</head>
+	
+<body>
+<!-- header -->
+<script type="text/javascript" src="js/header.js"></script>
+<!-- //header -->
+<!-- breadcrumbs -->
+	<div class="breadcrumbs">
+		<div class="container">
+			<ol class="breadcrumb breadcrumb1 animated wow slideInLeft" data-wow-delay=".5s">
+				<li><a href="index.html"><span class="glyphicon glyphicon-home" aria-hidden="true"></span>主页</a></li>
+				<li class="active">个人中心</li>
+			</ol>
+		</div>
+	</div>
+	<div class="products">
+		<div class="container">
+			<div id="select2" class="col-md-4 products-right">
+				<div class="filter-price animated" data-wow-delay=".5s">
+					<h3>可赠送道具</h3>
+					<ul class="dropdown-menu1">
+						<li><div id="" style="text-align:center;">5</div></li>	
+					</ul>
+				</div>
+			</div>
+			<div class="clearfix"> </div>
+		</div>
+	</div>
+		<div id="select2c" class="checkout">
+			<div class="container">
+				<div class="checkout-right animated" data-wow-delay=".5s">
+					<table class="timetable_sub">
+						<thead>
+							<tr>
+								<th>道具ID</th>	
+								<th>道具名称</th>
+								<th>装备类型</th>
+								<th>发行数量</th>
+								<th>流转信息</th>
+								<th>简介</th>
+								<th>图片</th>
+								<th>状态</th>
+							</tr>
+						</thead>
+						<tr class="rem1">
+							<td class="invert">12345</td>
+							<td class="invert">大保健</td>
+							<td class="invert">皮肤</td>
+							<td class="invert">1000</td>
+							<td class="invert">2017.01.01 游戏厂商生成</br>2017.01.02 A购买</br>2017.01.03 B购买</td>
+							<td class="invert">简介12345</td>
+							<td class="invert-image"><a href="single.html"><img src="images/22.jpg" alt=" " class="img-responsive" /></a></td>
+							<td class="invert"><button type="button" class="btn btn-success upd" data-toggle="modal" data-target="#exampleModal" data-whatever="12345">赠送道具</button></td>
+						</tr>
+					</table>
+					
+				</div>
+			</div>
+		</div>
+<!-- //breadcrumbs -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+		<div class="modal-dialog" role="document">
+		  <div class="modal-content">
+			<div class="modal-header">
+			  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			  <h4 class="modal-title" id="exampleModalLabel">确认出售</h4>
+			</div>
+			<div class="modal-body">
+			  <form>
+				<div class="form-group">
+				  <label for="itemsID" class="control-label">道具ID:</label>
+				  <input type="text" class="form-control" id="itemsID" disabled>
+				</div>
+				<div class="form-group">
+				  <label for="to" class="control-label">赠送对象:</label>
+				  <input type="text" class="form-control" id="to"></textarea>
+				</div>
+			  </form>
+			</div>
+			<div class="modal-footer">
+			  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			  <button type="button" class="btn btn-primary" onclick="giveItem()">确认</button>
+			</div>
+		  </div>
+		</div>
+	  </div>
+
+<script type="text/javascript">
+	$('#exampleModal').on('show.bs.modal', function (event) {
+		var button = $(event.relatedTarget);
+		var recipient = button.data('whatever');
+		var modal = $(this);
+		modal.find('#itemsID').val(recipient);
+	});
+	function giveItem(){
+		alert('确认出售成功 ID'+$('#itemsID').val()+' 赠送对象 '+$('#to').val());
+		window.location.reload(true); 
+	}
+	$('#DemoTitle').html('游戏厂商系统');
+</script>
+<!-- footer -->
+<script type="text/javascript" src="js/footer.js"></script>
+<!-- //footer -->
+</body>
+</html>

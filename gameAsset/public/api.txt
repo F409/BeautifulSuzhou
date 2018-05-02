@@ -1,0 +1,193 @@
+用户表字段：
+        username
+        password
+        balance
+        userType
+
+用户类型(userType)
+            0：厂商
+            1：用户
+
+道具表字段：
+        itemID
+        itemName
+        itemCompany
+        itemType
+        itemCount
+        owner
+        buyer 
+        itemPrice
+        itemHistory[]
+        itemInfo
+        itemImages[]
+        itemStatus
+
+道具状态(itemStatus)：  
+            0：刚生产出来，所有者是商家，该状态不可以给用户；
+            1：没有进行买卖，所有者用户；
+            2：用户将道具挂上市场，还没有人买；
+            3：用户将道具挂上市场，有人要买，但是用户没确认；
+            4：用户将道具挂上市场，有人要买，用户确认，厂商没确认；
+            5：刚生产出来，所有者是商家,该状态可以给用户；
+
+index.html
+无请求
+
+(login.html)
+
+1 登陆
+
+url : /api/login
+type : POST
+dataType : application/json
+data : {"username":"xxx","password":"xxx"}
+success : {"success":true/false,"username":"xxx","userType":"xxx","balance":"xxx"}
+说明：用户名密码正确，success字段返回true，username返回用户名，userType返回用户类型,balance为帐户余额；否则success字段返回false，其余为空。
+
+
+(productsAll.html)
+
+2 获得所有正在交易市场的道具列表  
+
+url : /api/getProductsOnsell
+type : POST
+dataType : application/json
+data : {"username":"xxx","userType":"xxx"}
+success : {"success":true/false,"data":["xxx","yyy"]}
+说明：请求成功success字段返回true，data返回所有道具状态为（2，3，4）的所有道具数组；否则success字段返回false，其余为空。
+
+
+(productsSpec.html)
+
+3 根据状态和厂商获取道具列表  
+
+url : /api/getProductsByCompanyAndStatus
+type : POST
+dataType : application/json
+data : {"username":"xxx","userType":"xxx","itemStatus":"xxx"}
+success : {"success":true/false,"data":["xxx","yyy"]}
+说明：请求成功success字段返回true，data返回所有itemCompany为username并且状态itemStatus为itemStatus的所有道具数组；否则success字段返回false，其余为空。
+
+
+（single.html）
+
+4 根据道具ID获取道具  
+
+url : /api/getProductByID
+type : POST
+dataType : application/json
+data : {"username":"xxx","userType":"xxx","itemID":"xxx"}
+success : {"success":true/false,"data":"xxx"}
+说明：请求成功success字段返回true，data返回itemID为itemID的道具信息；否则success字段返回false，其余为空。
+
+5 提交购买请求  
+
+url : /api/buyProductByID
+type : POST
+dataType : application/json
+data : {"username":"xxx","userType":"xxx","itemID":"xxx"}
+success : {"success":true/false}
+说明：请求成功（当前itemID道具的状态为2）将itemID道具的状态设置成3，同时将itemID道具的buyer字段设置成username，将购买者账户balance减掉itemPrice，然后success字段返回true，；否则success字段返回false，其余为空。
+
+（center.html）
+
+6 根据用户获取道具列表  
+
+url : /api/getProductsByOwner
+type : POST
+dataType : application/json
+data : {"username":"xxx","userType":"xxx"}
+success : {"success":true/false,"data":["xxx","yyy"]}
+说明：请求成功success字段返回true，data返回所有owner为username的所有道具数组；否则success字段返回false，其余为空。
+
+
+7 提交出售请求  
+
+url : /api/startSellProductByID
+type : POST
+dataType : application/json
+data : {"username":"xxx","userType":"xxx","itemID":"xxx","itemPrice":"xxx"}
+success : {"success":true/false}
+说明：请求成功（当前itemID道具的状态为1,owner为username）将itemID道具的状态设置成2，同时将itemID道具的itemPrice字段设置成itemPrice，然后success字段返回true，；否则success字段返回false，其余为空。
+
+8 停止出售请求  
+
+url : /api/stopSellProductByID
+type : POST
+dataType : application/json
+data : {"username":"xxx","userType":"xxx","itemID":"xxx"}
+success : {"success":true/false}
+说明：请求成功（当前itemID道具的状态为2,owner为username）将itemID道具的状态设置成1，然后success字段返回true，；否则success字段返回false，其余为空。
+
+
+9 确认他人购买请求  
+
+url : /api/confirmSellProductByID
+type : POST
+dataType : application/json
+data : {"username":"xxx","userType":"xxx","itemID":"xxx","confirm":true/false}
+success : {"success":true/false}
+说明：confirm=true 时同意他人购买请求：请求成功（当前itemID道具的状态为3,owner为username）将itemID道具的状态设置成4，然后success字段返回true；否则success字段返回false，其余为空。
+confirm=false 时不同意他人购买请求：请求成功（当前itemID道具的状态为3,owner为username）将itemID道具的状态设置成2，将buyer账户balance增加itemPrice，同时将该道具的buyer字段置为空，然后success字段返回true，；否则success字段返回false，其余为空。
+
+
+（centerSpec.html）
+
+6 根据厂商获取道具列表  
+
+url : /api/getProductsByCompany
+type : POST
+dataType : application/json
+data : {"username":"xxx","userType":"xxx"}
+success : {"success":true/false,"data":["xxx","yyy"]}
+说明：请求成功success字段返回true，data返回所有itemCompany为username的所有道具数组；否则success字段返回false，其余为空。
+
+
+10 提交发行请求  
+
+url : /api/startIssueProductByID
+type : POST
+dataType : application/json
+data : {"username":"xxx","userType":"xxx","itemID":"xxx"}
+success : {"success":true/false}
+说明：请求成功（当前itemID道具的状态为0,itemCompany为username）将itemID道具的状态设置成5，然后success字段返回true，；否则success字段返回false，其余为空。
+
+11 批准玩家购买请求  
+
+url : /api/approveSellProductByID
+type : POST
+dataType : application/json
+data : {"username":"xxx","userType":"xxx","itemID":"xxx","approve":true/false}
+success : {"success":true/false}
+说明：approve=true 时批准购买请求：请求成功（当前itemID道具的状态为4,itemCompany为username）将itemID道具的状态设置成1，将所有者owner置为buyer，将buyer字段置为空，将itemPrice字段置为空，增加一条流转信息itemHistory，然后success字段返回true，；否则success字段返回false，其余为空。
+approve=false 时不批准购买请求：请求成功（当前itemID道具的状态为4,itemCompany为username）将itemID道具的状态设置成2，将buyer账户balance增加itemPrice，同时将该道具的buyer字段置为空，然后success字段返回true，；否则success字段返回false，其余为空。
+
+12 生成新道具  
+
+url : /api/createItem
+type : POST
+dataType : application/json
+data : {"username":"xxx","userType":"xxx","itemName":"xxx","itemType":"xxx","itemCount":"xxx","owner":"xxx","itemCompany":"xxx","itemInfo":"xxx","itemImages":["xxx","yyy"]}
+success : {"success":true/false}
+说明：后台生成一个itemID，再将前台传入信息itemName、itemType、itemCount、owner、itemCompany、itemInfo、itemImages[]以及itemPrice为空、itemHistory[]为空、buyer为空、itemStatus为0，存入数据库。返回success为true。
+
+
+
+13 用户从厂商得到道具（或者说厂商发道具）(页面待实现)
+
+url : /api/getIssueProductByID
+type : POST
+dataType : application/json
+data : {"username":"xxx","userType":"xxx","itemID":"xxx"}
+success : {"success":true/false}
+说明：请求成功（当前itemID道具的状态为5）将itemID道具的状态设置成1，将所有者owner置为username,然后success字段返回true，；否则success字段返回false，其余为空。
+
+14 用户游戏中直接交易道具(页面待实现)
+
+url : /api/giveProductByID
+type : POST
+dataType : application/json
+data : {"username":"xxx","userType":"xxx","itemID":"xxx","to":"xxx"}
+success : {"success":true/false}
+说明：请求成功（当前itemID道具的状态为1,owner为username）将所有者owner置为to,然后success字段返回true，；否则success字段返回false，其余为空。
+
