@@ -134,20 +134,33 @@ echo $ORG1_TOKEN
 ORG2_TOKEN=$(echo $response4 | jq ".token" | sed "s/\"//g")
 echo $ORG2_TOKEN
 
-echo "POST request Create new Item  ..."
+# echo "POST request Create new Item  ..."
+# echo
+# curl -s -X POST \
+#   http://localhost:4000/createItem \
+#   -H "authorization: Bearer $ORG1_TOKEN" \
+#   -H "content-type: application/json" \
+#   -d '{
+# 		"username":"Iris",
+# 		"userType":"0",
+# 		"itemName":"pikaqiu",
+# 		"itemType":"toy",
+# 		"itemCount":"5",
+# 		"owner":"Iris",
+# 		"itemCompany":"Tencent",
+# 		"itemInfo":"this is test item",
+# 		"itemImages":"itemImages"
+# }'
+
+echo "POST request startIssueProductByID  ..."
 echo
 curl -s -X POST \
-  http://localhost:4000/createItem \
+  http://localhost:4000/startIssueProductByID \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json" \
   -d '{
 		"username":"Iris",
 		"userType":"0",
-		"itemName":"pikaqiu",
-		"itemType":"toy",
-		"itemCount":"5",
-		"owner":"Iris",
-		"itemCompany":"Tencent",
-		"itemInfo":"this is test item",
-		"itemImages":"itemImages"
+		"itemID":"5ae955f1baf0be2eb46e87fe"
+
 }'

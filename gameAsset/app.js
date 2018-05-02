@@ -47,6 +47,7 @@ var userType={
 	"Org2":"1"
 }
 var clone = function(a){return JSON.parse(JSON.stringify(a));}
+var ObjectId = require('mongodb').ObjectID
 ///////////////////////////////////////////////////////////////////////////////
 //////////////////////////////// SET CONFIGURATONS ////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -279,6 +280,7 @@ app.post('/login', async function(req, res) {
 	})
 
 });
+// 游戏公司生成道具
 app.post('/createItem', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< C R E A T E  NEW ITEM>>>>>>>>>>>>>>>>>');
 	logger.debug('End point : /createItem');
@@ -332,6 +334,55 @@ app.post('/createItem', async function(req, res) {
 		})
 	})
 });
+// 游戏公司将生成的道具发行
+app.post('/startIssueProductByID', async function(req, res) {
+	logger.info('<<<<<<<<<<<<<<<<< start Issue Product By ID>>>>>>>>>>>>>>>>>');
+	logger.debug('End point : /startIssueProductByID');
+	if (userType[req.orgName]=="1") {
+		res.json({
+				"success": false,
+				"message": "wrong userType:"+userType[req.orgName]
+		});
+		return;
+	};
+	var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"0"};
+	var newItem = {"itemStatus":"5"};
+	await db.updateMany('gamaAsset',oldItem,newItem, function (err, result) {
+		if (err) {
+			logger.debug('发行道具失败: ' + err);
+			return res.json({
+				"success": false,
+				"message": "发行道具失败"
+			})
+		}
+		// var createItemsId = result.insertedIds
+		// logger.debug('生成道具的id列表' + createItemsId);
+		logger.debug(result)
+		if(result.n==0){
+			logger.debug('发行道具失败: ' + result);
+			return res.json({
+				"success": false,
+				"message": "该道具状态不为０"
+			})
+		}
+		else{
+			return res.json({
+				"success": true,
+				"message": "发行道具成功"
+			})
+		}
+	})
+})
+// 用户购买发行的道具(用户从厂商得到道具)
+app.post('/getIssueProductByID', async function(req, res) {
+	logger.info('<<<<<<<<<<<<<<<<< C R E A T E  NEW ITEM>>>>>>>>>>>>>>>>>');
+	logger.debug('End point : /createItem');
+})
+// 用户A将自己的道具出售，提交出售申请
+// 当道具未被其他用户购买时，用户A可取消出售申请
+// 用户B在平台上看到道具出售信息，提交购买申请
+// 用户A同意B的购买申请
+// A和B的交易请求提交到游戏公司，游戏公司批准玩家的购买请求，交易完成。
 // Create Channel
 app.post('/channels', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< C R E A T E  C H A N N E L >>>>>>>>>>>>>>>>>');

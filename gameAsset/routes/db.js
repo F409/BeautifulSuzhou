@@ -164,7 +164,7 @@ exports.updateMany = function(collectionName, jsonOld, jsonNew, callback) {
           db.close()
           return
         }
-        callback(err, results)
+        callback(err, results.result)
         db.close()
       })
   })
