@@ -161,7 +161,7 @@ echo $BUYER_TOKEN
 # 		"itemImages":"itemImages"
 # }'
 #
-itemID="5ae953107bf2db1da1ffb099"
+itemID="5ae953107bf2db1da1ffb098"
 echo "POST request startIssueProductByID  ..."
 echo
 curl -s -X POST \
@@ -226,3 +226,17 @@ curl -s -X POST \
 		\"itemID\":\"$itemID\"
 }"
 echo
+echo "POST request confirmSellProductByID  ..."
+echo
+curl -s -X POST \
+  http://localhost:4000/confirmSellProductByID \
+  -H "authorization: Bearer $ORG2_TOKEN" \
+  -H "content-type: application/json" \
+  -d "{
+		\"username\":\"xiaoxu\",
+		\"userType\":\"1\",
+		\"itemID\":\"$itemID\",
+		\"confirm\":true
+}"
+echo
+# {"username":"xxx","userType":"xxx","itemID":"xxx","confirm":true/false}

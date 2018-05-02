@@ -563,7 +563,106 @@ app.post('/buyProductByID', async function(req, res) {
 
 	})
 });
-// 用户A同意B的购买申请
+// 用户A同意B的购买申请(确认他人购买请求)
+app.post('/confirmSellProductByID', async function(req, res) {
+	logger.info('<<<<<<<<<<<<<<<<< confirmSellProductByID>>>>>>>>>>>>>>>>>');
+	logger.debug('End point : /confirmSellProductByID');
+	if (userType[req.orgName]=="0") {
+		res.json({
+				"success": false,
+				"message": "wrong userType,should be 1,got"+userType[req.orgName]
+		});
+		return;
+	};
+	if(req.body.confirm){
+		var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"3","owner":req.username};
+		var newItem = {"itemStatus":"4"};
+		await db.updateMany('gamaAsset',oldItem,newItem, function (err, result) {
+			if (err) {
+				return res.json({
+					"success": false,
+					"message": "内部服务器错误"
+				})
+			}
+			logger.debug(result)
+			if(result.n==0){
+				logger.debug('确认他人购买请求: ' + result);
+				return res.json({
+					"success": false,
+					"message": "不存在符合条件的道具"
+				})
+			}
+			else{
+				return res.json({
+					"success": true,
+					"message": "确认他人购买请求成功"
+				})
+			}
+		})
+	}
+	else {
+		var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"3","owner":req.username};
+		var newItem = {"itemStatus":"2","buyer":""};
+		await db.findOne('gamaAsset',oldItem, async function (err, result) {
+			if (err) {
+				return res.json({
+					"success": false,
+					"message": "内部服务器错误"
+				})
+			}
+			if (!result || result.length === 0) {
+				return res.json({
+					"success": false,
+					"message": "找不到该道具"
+				})
+			}
+			var itemPrice =parseInt(result.itemPrice)
+			var buyer = result.buyer
+			await db.findOne('myuser', {"Name":buyer }, async function (err, result) {
+				if (err) {
+					return res.json({
+						"success": false,
+						"message": "内部服务器错误"
+					})
+				}
+				if (!result || result.length === 0) {
+					return res.json({
+						"success": false,
+						"message": "找不到用户名"
+					})
+				}
+				var Balance = result.Balance
+				var newBalance = Balance+itemPrice
+				await db.updateMany('myuser',{"Name":buyer },{"Balance":newBalance},async function (err, result) {
+					if (err) {
+						logger.debug('内部服务器错误: ' + err);
+						return res.json({
+							"success": false,
+							"message": "内部服务器错误"
+						})
+					}
+					await db.updateMany('gamaAsset',oldItem,newItem, function (err, result) {
+						if (err) {
+							logger.debug('内部服务器错误: ' + err);
+							return res.json({
+								"success": false,
+								"message": "内部服务器错误"
+							})
+						}
+
+						logger.debug(result)
+							return res.json({
+								"success": true,
+								"message": "不同意购买请求成功"
+							})
+					})
+				})
+			})
+
+		})
+
+	}
+})
 // A和B的交易请求提交到游戏公司，游戏公司批准玩家的购买请求，交易完成。
 // Create Channel
 app.post('/channels', async function(req, res) {
