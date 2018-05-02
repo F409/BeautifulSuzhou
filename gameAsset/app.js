@@ -328,7 +328,25 @@ app.post('/getProductsByCompanyAndStatus', async function(req, res) {
 })
 // 4 根据道具ID获取道具
 app.post('/getProductByID', async function(req, res) {
-
+	logger.info('<<<<<<<<<<<<<<<<< getProductByID>>>>>>>>>>>>>>>>>');
+	logger.debug('End point : /getProductByID');
+	let itemID = req.body.itemID
+	let query = {"_id":ObjectId(itemID)}
+	await db.find('gameAsset',query,async　function (err, result) {
+		if (err) {
+			logger.debug('查询道具失败: ' + err);
+			return res.json({
+				"success": false,
+				"message": "查询道具失败"
+			})
+		}
+		await logger.debug("查询道具成功"+result);
+		return res.json({
+			"success": true,
+			"message": "查询道具成功",
+			"data":result[0]
+		})
+	})
 })
 // 6 根据用户获取道具列表
 app.post('/getProductsByOwner', async function(req, res) {

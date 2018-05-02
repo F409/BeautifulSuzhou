@@ -216,3 +216,15 @@ curl -s -X POST \
 		\"itemStatus\":\"0\"
 }"
 echo
+echo
+echo "POST request getProductByID  ..."
+curl -s -X POST \
+  http://localhost:4000/getProductByID \
+  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "content-type: application/json" \
+  -d "{
+		\"username\":\"Tencent\",
+		\"userType\":\"0\",
+		\"itemID\":\"$itemID\"
+}"
+echo
