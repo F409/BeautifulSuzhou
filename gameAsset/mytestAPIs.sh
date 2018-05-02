@@ -118,6 +118,6 @@ response4=$(curl -s -X POST \
   -H "content-type: application/json" \
   -d '{
 		"username":"xiaoxu",
-		"password":"12345"
+		"password":"1234"
 		 }')
 echo $response4
