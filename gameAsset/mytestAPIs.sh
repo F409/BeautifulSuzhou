@@ -228,3 +228,14 @@ curl -s -X POST \
 		\"itemID\":\"$itemID\"
 }"
 echo
+echo
+echo "POST request getProductsByOwner  ..."
+curl -s -X POST \
+  http://localhost:4000/getProductsByOwner \
+  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "content-type: application/json" \
+  -d "{
+		\"username\":\"Iris\",
+		\"userType\":\"0\"
+}"
+echo

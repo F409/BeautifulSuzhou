@@ -350,7 +350,25 @@ app.post('/getProductByID', async function(req, res) {
 })
 // 6 根据用户获取道具列表
 app.post('/getProductsByOwner', async function(req, res) {
-
+	logger.info('<<<<<<<<<<<<<<<<< getProductsByOwner>>>>>>>>>>>>>>>>>');
+	logger.debug('End point : /getProductsByOwner');
+	let owner = req.username
+	let query = {"owner":owner}
+	await db.find('gameAsset',query,async　function (err, result) {
+		if (err) {
+			logger.debug('查询道具失败: ' + err);
+			return res.json({
+				"success": false,
+				"message": "查询道具失败"
+			})
+		}
+		await logger.debug("查询道具成功"+result);
+		return res.json({
+			"success": true,
+			"message": "查询道具成功",
+			"data":result
+		})
+	})
 })
 // 14 用户游戏中直接交易道具(页面待实现)
 app.post('/giveProductByID', async function(req, res) {
