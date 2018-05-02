@@ -324,6 +324,8 @@ app.post('/createItem', async function(req, res) {
 				"message": "生成道具失败"
 			})
 		}
+		var createItemsId = result.insertedIds
+		logger.debug('生成道具的id列表' + createItemsId);
 		return res.json({
 			"success": true,
 			"message": "生成道具成功"
