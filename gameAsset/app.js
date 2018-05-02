@@ -372,7 +372,48 @@ app.post('/getProductsByOwner', async function(req, res) {
 })
 // 14 用户游戏中直接交易道具(页面待实现)
 app.post('/giveProductByID', async function(req, res) {
-
+	logger.info('<<<<<<<<<<<<<<<<< getProductsByOwner>>>>>>>>>>>>>>>>>');
+	logger.debug('End point : /getProductsByOwner');
+	var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"1","owner":req.username};
+	var newOwner = req.body.to
+	var newItem = {"owner":newOwner};
+	await db.findOne('myuser', {"Name":newOwner}, async function (err, result) {
+					if (err) {
+						return res.json({
+							"success": false,
+							"message": "内部服务器错误"
+						})
+					}
+					if (!result || result.length === 0) {
+						return res.json({
+							"success": false,
+							"message": "找不到用户名:"+newOwner
+						})
+					}
+					await db.updateMany('gameAsset',oldItem,newItem, function (err, result) {
+						if (err) {
+							logger.debug('直接转让道具失败: ' + err);
+							return res.json({
+								"success": false,
+								"message": "直接转让道具失败"
+							})
+						}
+						logger.debug(result)
+						if(result.n==0){
+							logger.debug('直接转让道具失败: ' + result);
+							return res.json({
+								"success": false,
+								"message": "不存在符合条件的道具"
+							})
+						}
+						else{
+							return res.json({
+								"success": true,
+								"message": "直接转让道具成功"
+							})
+						}
+					})
+				})
 })
 // (12生成新道具)游戏公司生成道具
 app.post('/createItem', async function(req, res) {
