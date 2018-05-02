@@ -43,8 +43,8 @@ var query = require('./app/query.js');
 var host = process.env.HOST || hfc.getConfigSetting('host');
 var port = process.env.PORT || hfc.getConfigSetting('port');
 var userType={
-	"Org1":0,
-	"Org2":1
+	"Org1":"0",
+	"Org2":"1"
 }
 var clone = function(a){return JSON.parse(JSON.stringify(a));}
 ///////////////////////////////////////////////////////////////////////////////
@@ -254,7 +254,7 @@ app.post('/login', async function(req, res) {
 		var dbPassword = result.Password
 		var UserID = result._id
 		var orgName = result.orgName
-		var balance = result.Balance
+		var balance = result.Balance+""
 		if (dbPassword === password) {
 			var token = jwt.sign({
 				exp: Math.floor(Date.now() / 1000) + parseInt(hfc.getConfigSetting('jwt_expiretime')),
@@ -282,7 +282,7 @@ app.post('/login', async function(req, res) {
 app.post('/createItem', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< C R E A T E  NEW ITEM>>>>>>>>>>>>>>>>>');
 	logger.debug('End point : /createItem');
-	if (userType[req.orgName]==1) {
+	if (userType[req.orgName]=="1") {
 		res.json({
 				"success": false,
 				"message": "wrong userType:"+userType[req.orgName]
@@ -307,11 +307,15 @@ app.post('/createItem', async function(req, res) {
 		"itemImages":itemImages,
 		"itemPrice":"",
 		"itemHistory":[],
-		"itemStatus":0
+		"itemStatus":"0"
 	}
+	var ItemsNumber = parseInt(itemCount)
 	var createItems=new Array([])
-	createItems[0] = item
-	createItems[1] = clone(item)
+	for (var i = 0; i < ItemsNumber; i++) {
+		(function (i) {
+			createItems[i] = clone(item)
+		})(i);
+	}
 	await db.insertMany('gamaAsset',createItems,function (err, result) {
 		if (err) {
 			logger.debug('生成道具失败: ' + err);
@@ -325,9 +329,6 @@ app.post('/createItem', async function(req, res) {
 			"message": "生成道具成功"
 		})
 	})
-  //
-	// let message = await createChannel.createChannel(channelName, channelConfigPath, req.username, req.orgName);
-	// res.send(message);
 });
 // Create Channel
 app.post('/channels', async function(req, res) {

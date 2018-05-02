@@ -142,10 +142,10 @@ curl -s -X POST \
   -H "content-type: application/json" \
   -d '{
 		"username":"Iris",
-		"userType":0,
+		"userType":"0",
 		"itemName":"pikaqiu",
 		"itemType":"toy",
-		"itemCount":5,
+		"itemCount":"5",
 		"owner":"Iris",
 		"itemCompany":"Tencent",
 		"itemInfo":"this is test item",
