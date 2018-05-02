@@ -164,3 +164,17 @@ curl -s -X POST \
 		"itemID":"5ae955f1baf0be2eb46e87fe"
 
 }'
+echo
+echo "POST request getIssueProductByID  ..."
+echo
+curl -s -X POST \
+  http://localhost:4000/getIssueProductByID \
+  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "content-type: application/json" \
+  -d '{
+		"username":"xiaoxu",
+		"userType":"１",
+		"itemID":"5ae955f1baf0be2eb46e87fe"
+
+}'
+echo

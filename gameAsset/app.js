@@ -375,10 +375,60 @@ app.post('/startIssueProductByID', async function(req, res) {
 })
 // 用户购买发行的道具(用户从厂商得到道具)
 app.post('/getIssueProductByID', async function(req, res) {
-	logger.info('<<<<<<<<<<<<<<<<< C R E A T E  NEW ITEM>>>>>>>>>>>>>>>>>');
-	logger.debug('End point : /createItem');
+	logger.info('<<<<<<<<<<<<<<<<< getIssueProductByID>>>>>>>>>>>>>>>>>');
+	logger.debug('End point : /getIssueProductByID');
+	if (userType[req.orgName]=="1") {
+		res.json({
+				"success": false,
+				"message": "wrong userType:"+userType[req.orgName]
+		});
+		return;
+	};
+	if (req.body.userType=="0") {
+		res.json({
+				"success": false,
+				"message": "userType　should be 1,but got:"+req.body.userType
+		});
+		return;
+	};
+	var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"5"};
+	var newItem = {"itemStatus":"1","owner":req.body.username};
+	await db.updateMany('gamaAsset',oldItem,newItem, function (err, result) {
+		if (err) {
+			logger.debug('发道具给用户失败: ' + err);
+			return res.json({
+				"success": false,
+				"message": "发道具给用户失败"
+			})
+		}
+		logger.debug(result)
+		if(result.n==0){
+			logger.debug('发道具给用户失败: ' + result);
+			return res.json({
+				"success": false,
+				"message": "该道具状态不为５"
+			})
+		}
+		else{
+			return res.json({
+				"success": true,
+				"message": "发道具给用户成功"
+			})
+		}
+	})
 })
 // 用户A将自己的道具出售，提交出售申请
+app.post('/startSellProductByID', async function(req, res) {
+	logger.info('<<<<<<<<<<<<<<<<< startSellProductByID>>>>>>>>>>>>>>>>>');
+	logger.debug('End point : /startSellProductByID');
+	if (userType[req.orgName]=="1") {
+		res.json({
+				"success": false,
+				"message": "wrong userType:"+userType[req.orgName]
+		});
+		return;
+	};
+})
 // 当道具未被其他用户购买时，用户A可取消出售申请
 // 用户B在平台上看到道具出售信息，提交购买申请
 // 用户A同意B的购买申请
