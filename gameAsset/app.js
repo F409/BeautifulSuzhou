@@ -46,6 +46,7 @@ var userType={
 	"Org1":0,
 	"Org2":1
 }
+var clone = function(a){return JSON.parse(JSON.stringify(a));}
 ///////////////////////////////////////////////////////////////////////////////
 //////////////////////////////// SET CONFIGURATONS ////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -222,11 +223,18 @@ app.post('/login', async function(req, res) {
 	logger.debug('End point : /login');
 	logger.debug('User name : ' + username)
 	if (!username) {
-		res.json(getErrorMessage('\'username\''));
+		res.json({
+			"success": false,
+			"message": "请输入用户名"
+		});
 		return;
 	}
 	if (!password) {
-		res.json(getErrorMessage('\'password\''));
+		res.json({
+			"success": false,
+			"message": "请输入密码"}
+
+		);
 		return;
 	}
 	// 根据用户名查询数据库中是否含有该用
@@ -274,21 +282,52 @@ app.post('/login', async function(req, res) {
 app.post('/createItem', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< C R E A T E  NEW ITEM>>>>>>>>>>>>>>>>>');
 	logger.debug('End point : /createItem');
-	var channelName = req.body.channelName;
-	var channelConfigPath = req.body.channelConfigPath;
-	logger.debug('Channel name : ' + channelName);
-	logger.debug('channelConfigPath : ' + channelConfigPath); //../artifacts/channel/mychannel.tx
-	if (!channelName) {
-		res.json(getErrorMessage('\'channelName\''));
+	if (userType[req.orgName]==1) {
+		res.json({
+				"success": false,
+				"message": "wrong userType:"+userType[req.orgName]
+		});
 		return;
 	}
-	if (!channelConfigPath) {
-		res.json(getErrorMessage('\'channelConfigPath\''));
-		return;
+	let itemName=req.body.itemName
+	let itemType=req.body.itemType
+	let itemCount=req.body.itemCount
+	let owner=req.body.owner
+	let itemCompany=req.body.itemCompany
+	let itemInfo=req.body.itemInfo
+	let itemImages=req.body.itemImages
+	var item = {
+		"itemName":itemName,
+		"itemType":itemType,
+		"itemCount":itemCount,
+		"owner":owner,
+		"buyer":"",
+		"itemCompany":itemCompany,
+		"itemInfo":itemInfo,
+		"itemImages":itemImages,
+		"itemPrice":"",
+		"itemHistory":[],
+		"itemStatus":0
 	}
-
-	let message = await createChannel.createChannel(channelName, channelConfigPath, req.username, req.orgName);
-	res.send(message);
+	var createItems=new Array([])
+	createItems[0] = item
+	createItems[1] = clone(item)
+	await db.insertMany('gamaAsset',createItems,function (err, result) {
+		if (err) {
+			logger.debug('生成道具失败: ' + err);
+			return res.json({
+				"success": false,
+				"message": "生成道具失败"
+			})
+		}
+		return res.json({
+			"success": true,
+			"message": "生成道具成功"
+		})
+	})
+  //
+	// let message = await createChannel.createChannel(channelName, channelConfigPath, req.username, req.orgName);
+	// res.send(message);
 });
 // Create Channel
 app.post('/channels', async function(req, res) {

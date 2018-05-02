@@ -51,66 +51,66 @@ function setChaincodePath(){
 }
 
 setChaincodePath
-
-echo "POST request add User on Org1  ..."
-
-response1=$(curl -s -X POST \
-  http://localhost:4000/addUser \
-  -H "content-type: application/json" \
-  -d '{
-		"username":"Iris",
-		"orgName":"Org1",
-		"Password":"1234",
-		"Email":"123456@qq.com",
-		"Balance":100,
-		"AssetList":[],
-		"AssetForSale":[],
-		"TransactionInfo":"GameCompany",
-		"peers": ["peer0.org1.example.com","peer1.org1.example.com"],
-		"fcn":"generateUser",
-		"channelName":"mychannel",
-		"chaincodeName":"mycc"
-		 }')
-echo $response1
-echo "POST request add User on Org2  ..."
-
-response2=$(curl -s -X POST \
-  http://localhost:4000/addUser \
-  -H "content-type: application/json" \
-  -d '{
-		"username":"jingjing",
-		"orgName":"Org2",
-		"Password":"1234",
-		"Email":"123456@qq.com",
-		"Balance":100,
-		"AssetList":[],
-		"AssetForSale":[],
-		"TransactionInfo":"Personal User",
-		"peers": ["peer0.org2.example.com","peer1.org2.example.com"],
-		"fcn":"generateUser",
-		"channelName":"mychannel",
-		"chaincodeName":"mycc"
-		 }')
-echo $response2
-
-response3=$(curl -s -X POST \
-  http://localhost:4000/addUser \
-  -H "content-type: application/json" \
-  -d '{
-		"username":"xiaoxu",
-		"orgName":"Org2",
-		"Password":"1234",
-		"Email":"123456@qq.com",
-		"Balance":100,
-		"AssetList":[],
-		"AssetForSale":[],
-		"TransactionInfo":"Personal User",
-		"peers": ["peer0.org2.example.com","peer1.org2.example.com"],
-		"fcn":"generateUser",
-		"channelName":"mychannel",
-		"chaincodeName":"mycc"
-		 }')
-echo $response3
+#
+# echo "POST request add User on Org1  ..."
+#
+# response1=$(curl -s -X POST \
+#   http://localhost:4000/addUser \
+#   -H "content-type: application/json" \
+#   -d '{
+# 		"username":"Iris",
+# 		"orgName":"Org1",
+# 		"Password":"1234",
+# 		"Email":"123456@qq.com",
+# 		"Balance":100,
+# 		"AssetList":[],
+# 		"AssetForSale":[],
+# 		"TransactionInfo":"GameCompany",
+# 		"peers": ["peer0.org1.example.com","peer1.org1.example.com"],
+# 		"fcn":"generateUser",
+# 		"channelName":"mychannel",
+# 		"chaincodeName":"mycc"
+# 		 }')
+# echo $response1
+# echo "POST request add User on Org2  ..."
+#
+# response2=$(curl -s -X POST \
+#   http://localhost:4000/addUser \
+#   -H "content-type: application/json" \
+#   -d '{
+# 		"username":"jingjing",
+# 		"orgName":"Org2",
+# 		"Password":"1234",
+# 		"Email":"123456@qq.com",
+# 		"Balance":100,
+# 		"AssetList":[],
+# 		"AssetForSale":[],
+# 		"TransactionInfo":"Personal User",
+# 		"peers": ["peer0.org2.example.com","peer1.org2.example.com"],
+# 		"fcn":"generateUser",
+# 		"channelName":"mychannel",
+# 		"chaincodeName":"mycc"
+# 		 }')
+# echo $response2
+#
+# response3=$(curl -s -X POST \
+#   http://localhost:4000/addUser \
+#   -H "content-type: application/json" \
+#   -d '{
+# 		"username":"xiaoxu",
+# 		"orgName":"Org2",
+# 		"Password":"1234",
+# 		"Email":"123456@qq.com",
+# 		"Balance":100,
+# 		"AssetList":[],
+# 		"AssetForSale":[],
+# 		"TransactionInfo":"Personal User",
+# 		"peers": ["peer0.org2.example.com","peer1.org2.example.com"],
+# 		"fcn":"generateUser",
+# 		"channelName":"mychannel",
+# 		"chaincodeName":"mycc"
+# 		 }')
+# echo $response3
 
 
 response4=$(curl -s -X POST \
@@ -121,3 +121,33 @@ response4=$(curl -s -X POST \
 		"password":"1234"
 		 }')
 echo $response4
+response5=$(curl -s -X POST \
+  http://localhost:4000/login \
+  -H "content-type: application/json" \
+  -d '{
+		"username":"Iris",
+		"password":"1234"
+		 }')
+echo $response5
+ORG1_TOKEN=$(echo $response5 | jq ".token" | sed "s/\"//g")
+echo $ORG1_TOKEN
+ORG2_TOKEN=$(echo $response4 | jq ".token" | sed "s/\"//g")
+echo $ORG2_TOKEN
+
+echo "POST request Create new Item  ..."
+echo
+curl -s -X POST \
+  http://localhost:4000/createItem \
+  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "content-type: application/json" \
+  -d '{
+		"username":"Iris",
+		"userType":0,
+		"itemName":"pikaqiu",
+		"itemType":"toy",
+		"itemCount":5,
+		"owner":"Iris",
+		"itemCompany":"Tencent",
+		"itemInfo":"this is test item",
+		"itemImages":"itemImages"
+}'
