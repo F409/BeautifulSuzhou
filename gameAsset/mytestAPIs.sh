@@ -83,114 +83,114 @@ response6=$(curl -s -X POST \
 BUYER_TOKEN=$(echo $response6 | jq ".token" | sed "s/\"//g")
 echo $BUYER_TOKEN
 echo "POST request Create new Item  ..."
-echo
-createItemIds=$(curl -s -X POST \
-  http://localhost:4000/createItem \
-  -H "authorization: Bearer $ORG1_TOKEN" \
-  -H "content-type: application/json" \
-  -d '{
-		"username":"Iris",
-		"userType":"0",
-		"itemName":"pikaqiu",
-		"itemType":"toy",
-		"itemCount":"5",
-		"owner":"Iris",
-		"itemCompany":"Tencent",
-		"itemInfo":"this is test item",
-		"itemImages":"itemImages"
-}')
-createItemIds=$(echo $createItemIds | jq ".itemIDS" | sed "s/\"//g")
-echo $createItemIds
+# echo
+# createItemIds=$(curl -s -X POST \
+#   http://localhost:4000/createItem \
+#   -H "authorization: Bearer $ORG1_TOKEN" \
+#   -H "content-type: application/json" \
+#   -d '{
+# 		"username":"Iris",
+# 		"userType":"0",
+# 		"itemName":"pikaqiu",
+# 		"itemType":"toy",
+# 		"itemCount":"5",
+# 		"owner":"Iris",
+# 		"itemCompany":"Tencent",
+# 		"itemInfo":"this is test item",
+# 		"itemImages":"itemImages"
+# }')
+# createItemIds=$(echo $createItemIds | jq ".itemIDS" | sed "s/\"//g")
+# echo $createItemIds
 # 后面的itemID可以从这个返回值里取
 
-# itemID="5ae99ee530bc2f3e3a98d3fd"
-# echo "POST request startIssueProductByID  ..."
-# echo
-# curl -s -X POST \
-#   http://localhost:4000/startIssueProductByID \
-#   -H "authorization: Bearer $ORG1_TOKEN" \
-#   -H "content-type: application/json" \
-#   -d "{
-# 		\"username\":\"Iris\",
-# 		\"userType\":\"0\",
-# 		\"itemID\":\"$itemID\"
-#
-# }"
-# echo
-# echo "POST request getIssueProductByID  ..."
-# echo
-# curl -s -X POST \
-#   http://localhost:4000/getIssueProductByID \
-#   -H "authorization: Bearer $ORG1_TOKEN" \
-#   -H "content-type: application/json" \
-#   -d "{
-# 		\"username\":\"xiaoxu\",
-# 		\"userType\":\"1\",
-# 		\"itemID\":\"$itemID\"
-#
-# }"
-# echo
-# echo "POST request startSellProductByID  ..."
-# echo
-# curl -s -X POST \
-#   http://localhost:4000/startSellProductByID \
-#   -H "authorization: Bearer $ORG2_TOKEN" \
-#   -H "content-type: application/json" \
-#   -d "{
-# 		\"username\":\"xiaoxu\",
-# 		\"userType\":\"1\",
-# 		\"itemID\":\"$itemID\",
-# 		\"itemPrice\":\"11\"
-# }"
-# echo
-# # # echo
-# # echo "POST request stopSellProductByID  ..."
+itemID="5ae9a8754da37722646227bc"
+echo "POST request startIssueProductByID  ..."
+echo
+curl -s -X POST \
+  http://localhost:4000/startIssueProductByID \
+  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "content-type: application/json" \
+  -d "{
+		\"username\":\"Iris\",
+		\"userType\":\"0\",
+		\"itemID\":\"$itemID\"
+
+}"
+echo
+echo "POST request getIssueProductByID  ..."
+echo
+curl -s -X POST \
+  http://localhost:4000/getIssueProductByID \
+  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "content-type: application/json" \
+  -d "{
+		\"username\":\"xiaoxu\",
+		\"userType\":\"1\",
+		\"itemID\":\"$itemID\"
+
+}"
+echo
+echo "POST request startSellProductByID  ..."
+echo
+curl -s -X POST \
+  http://localhost:4000/startSellProductByID \
+  -H "authorization: Bearer $ORG2_TOKEN" \
+  -H "content-type: application/json" \
+  -d "{
+		\"username\":\"xiaoxu\",
+		\"userType\":\"1\",
+		\"itemID\":\"$itemID\",
+		\"itemPrice\":\"11\"
+}"
+echo
 # # echo
-# # curl -s -X POST \
-# #   http://localhost:4000/stopSellProductByID \
-# #   -H "authorization: Bearer $ORG2_TOKEN" \
-# #   -H "content-type: application/json" \
-# #   -d "{
-# # 		\"username\":\"xiaoxu\",
-# # 		\"userType\":\"1\",
-# # 		\"itemID\":\"$itemID\"
-# # }"
-# echo
-# echo "POST request buyProductByID  ..."
+# echo "POST request stopSellProductByID  ..."
 # echo
 # curl -s -X POST \
-#   http://localhost:4000/buyProductByID \
-#   -H "authorization: Bearer $BUYER_TOKEN" \
-#   -H "content-type: application/json" \
-#   -d "{
-# 		\"username\":\"jingjing\",
-# 		\"userType\":\"1\",
-# 		\"itemID\":\"$itemID\"
-# }"
-# echo
-# echo "POST request confirmSellProductByID  ..."
-# echo
-# curl -s -X POST \
-#   http://localhost:4000/confirmSellProductByID \
+#   http://localhost:4000/stopSellProductByID \
 #   -H "authorization: Bearer $ORG2_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d "{
 # 		\"username\":\"xiaoxu\",
 # 		\"userType\":\"1\",
-# 		\"itemID\":\"$itemID\",
-# 		\"confirm\":true
+# 		\"itemID\":\"$itemID\"
 # }"
-# echo
-# echo "POST request approveSellProductByID  ..."
-# echo
-# curl -s -X POST \
-#   http://localhost:4000/approveSellProductByID \
-#   -H "authorization: Bearer $ORG1_TOKEN" \
-#   -H "content-type: application/json" \
-#   -d "{
-# 		\"username\":\"Tencent\",
-# 		\"userType\":\"0\",
-# 		\"itemID\":\"$itemID\",
-# 		\"approve\":false
-# }"
-# echo
+echo
+echo "POST request buyProductByID  ..."
+echo
+curl -s -X POST \
+  http://localhost:4000/buyProductByID \
+  -H "authorization: Bearer $BUYER_TOKEN" \
+  -H "content-type: application/json" \
+  -d "{
+		\"username\":\"jingjing\",
+		\"userType\":\"1\",
+		\"itemID\":\"$itemID\"
+}"
+echo
+echo "POST request confirmSellProductByID  ..."
+echo
+curl -s -X POST \
+  http://localhost:4000/confirmSellProductByID \
+  -H "authorization: Bearer $ORG2_TOKEN" \
+  -H "content-type: application/json" \
+  -d "{
+		\"username\":\"xiaoxu\",
+		\"userType\":\"1\",
+		\"itemID\":\"$itemID\",
+		\"confirm\":true
+}"
+echo
+echo "POST request approveSellProductByID  ..."
+echo
+curl -s -X POST \
+  http://localhost:4000/approveSellProductByID \
+  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "content-type: application/json" \
+  -d "{
+		\"username\":\"Tencent\",
+		\"userType\":\"0\",
+		\"itemID\":\"$itemID\",
+		\"approve\":true
+}"
+echo

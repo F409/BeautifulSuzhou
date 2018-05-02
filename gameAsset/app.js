@@ -298,6 +298,11 @@ app.post('/createItem', async function(req, res) {
 	let itemCompany=req.body.itemCompany
 	let itemInfo=req.body.itemInfo
 	let itemImages=req.body.itemImages
+	var createdTime = new Date()
+	var history = createdTime+":"+"born"
+	var itemHistory=new Array([])
+	itemHistory[0] = history
+	logger.debug('history: ' + history);
 	var item = {
 		"itemName":itemName,
 		"itemType":itemType,
@@ -308,7 +313,7 @@ app.post('/createItem', async function(req, res) {
 		"itemInfo":itemInfo,
 		"itemImages":itemImages,
 		"itemPrice":"",
-		"itemHistory":[],
+		"itemHistory":itemHistory,
 		"itemStatus":"0"
 	}
 	var ItemsNumber = parseInt(itemCount)
@@ -694,9 +699,11 @@ app.post('/approveSellProductByID', async function(req, res) {
 			var owner = result.owner
 			var buyer = result.buyer
 			var itemHistory = result.itemHistory
-			var transaction = new Date()+":"+owner+"sell to"+buyer
-			var newitemHistory=itemHistory.push(transaction)
-			var newItem = {"itemStatus":"1","owner":buyer,"buyer":"","itemPrice":"","itemHistory":newitemHistory}
+			var createdTime = new Date()
+			var transaction = createdTime + ":"+owner+"=>"+buyer
+			itemHistory.push(transaction)
+			logger.debug('itemHistory: ' + itemHistory);
+			var newItem = {"itemStatus":"1","owner":buyer,"buyer":"","itemPrice":"","itemHistory":itemHistory}
 			await db.findOne('myuser', {"Name":owner }, async function (err, result) {
 				if (err) {
 					return res.json({
