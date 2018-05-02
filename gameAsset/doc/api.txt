@@ -159,7 +159,7 @@ type : POST
 dataType : application/json
 data : {"username":"xxx","userType":"xxx","itemID":"xxx","approve":true/false}
 success : {"success":true/false}
-说明：approve=true 时批准购买请求：请求成功（当前itemID道具的状态为4,itemCompany为username）将itemID道具的状态设置成1，将所有者owner置为buyer，将buyer字段置为空，将itemPrice字段置为空，增加一条流转信息itemHistory，然后success字段返回true，；否则success字段返回false，其余为空。
+说明：approve=true 时批准购买请求：请求成功（当前itemID道具的状态为4,itemCompany为username）将itemID道具的状态设置成1，将owner的账户balance增加itemPrice，将所有者owner置为buyer，将buyer字段置为空，将itemPrice字段置为空，增加一条流转信息itemHistory，然后success字段返回true，；否则success字段返回false，其余为空。
 approve=false 时不批准购买请求：请求成功（当前itemID道具的状态为4,itemCompany为username）将itemID道具的状态设置成2，将buyer账户balance增加itemPrice，同时将该道具的buyer字段置为空，然后success字段返回true，；否则success字段返回false，其余为空。
 
 12 生成新道具  
