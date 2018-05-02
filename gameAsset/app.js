@@ -218,6 +218,7 @@ app.post('/addUser', async function(req, res) {
 			return res.json({"message":message});
 		})
 });
+// (1 登陆)
 app.post('/login', async function(req, res) {
 	var username = req.body.username;
 	var password = md5(req.body.password);
@@ -280,7 +281,141 @@ app.post('/login', async function(req, res) {
 	})
 
 });
-// 游戏公司生成道具
+// 2 获得所有正在交易市场的道具列表
+app.post('/getProductsOnsell', async function(req, res) {
+	logger.info('<<<<<<<<<<<<<<<<< getProductsOnsell>>>>>>>>>>>>>>>>>');
+	logger.debug('End point : /getProductsOnsell');
+	let query = {$or:[{"itemStatus":"2"},{"itemStatus":"3"},{"itemStatus":"4"}]}
+	await db.find('gameAsset',query,async　function (err, result) {
+		if (err) {
+			logger.debug('查询道具失败: ' + err);
+			return res.json({
+				"success": false,
+				"message": "查询道具失败"
+			})
+		}
+		await logger.debug("查询道具成功"+result);
+		return res.json({
+			"success": true,
+			"message": "查询道具成功",
+			"data":result
+		})
+	})
+
+})
+// 3 根据状态和厂商获取道具列表
+app.post('/getProductsByCompanyAndStatus', async function(req, res) {
+	logger.info('<<<<<<<<<<<<<<<<< getProductsByCompanyAndStatus>>>>>>>>>>>>>>>>>');
+	logger.debug('End point : /getProductsByCompanyAndStatus');
+	let itemStatus = req.body.itemStatus
+	let itemCompany = req.body.username
+	let query = {"itemStatus":itemStatus,"itemCompany":itemCompany}
+	await db.find('gameAsset',query,async　function (err, result) {
+		if (err) {
+			logger.debug('查询道具失败: ' + err);
+			return res.json({
+				"success": false,
+				"message": "查询道具失败"
+			})
+		}
+		await logger.debug("查询道具成功"+result);
+		return res.json({
+			"success": true,
+			"message": "查询道具成功",
+			"data":result
+		})
+	})
+})
+// 4 根据道具ID获取道具
+app.post('/getProductByID', async function(req, res) {
+	logger.info('<<<<<<<<<<<<<<<<< getProductByID>>>>>>>>>>>>>>>>>');
+	logger.debug('End point : /getProductByID');
+	let itemID = req.body.itemID
+	let query = {"_id":ObjectId(itemID)}
+	await db.find('gameAsset',query,async　function (err, result) {
+		if (err) {
+			logger.debug('查询道具失败: ' + err);
+			return res.json({
+				"success": false,
+				"message": "查询道具失败"
+			})
+		}
+		await logger.debug("查询道具成功"+result);
+		return res.json({
+			"success": true,
+			"message": "查询道具成功",
+			"data":result[0]
+		})
+	})
+})
+// 6 根据用户获取道具列表
+app.post('/getProductsByOwner', async function(req, res) {
+	logger.info('<<<<<<<<<<<<<<<<< getProductsByOwner>>>>>>>>>>>>>>>>>');
+	logger.debug('End point : /getProductsByOwner');
+	let owner = req.username
+	let query = {"owner":owner}
+	await db.find('gameAsset',query,async　function (err, result) {
+		if (err) {
+			logger.debug('查询道具失败: ' + err);
+			return res.json({
+				"success": false,
+				"message": "查询道具失败"
+			})
+		}
+		await logger.debug("查询道具成功"+result);
+		return res.json({
+			"success": true,
+			"message": "查询道具成功",
+			"data":result
+		})
+	})
+})
+// 14 用户游戏中直接交易道具(页面待实现)
+app.post('/giveProductByID', async function(req, res) {
+	logger.info('<<<<<<<<<<<<<<<<< getProductsByOwner>>>>>>>>>>>>>>>>>');
+	logger.debug('End point : /getProductsByOwner');
+	var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"1","owner":req.username};
+	var newOwner = req.body.to
+	var newItem = {"owner":newOwner};
+	await db.findOne('myuser', {"Name":newOwner}, async function (err, result) {
+					if (err) {
+						return res.json({
+							"success": false,
+							"message": "内部服务器错误"
+						})
+					}
+					if (!result || result.length === 0) {
+						return res.json({
+							"success": false,
+							"message": "找不到用户名:"+newOwner
+						})
+					}
+					await db.updateMany('gameAsset',oldItem,newItem, function (err, result) {
+						if (err) {
+							logger.debug('直接转让道具失败: ' + err);
+							return res.json({
+								"success": false,
+								"message": "直接转让道具失败"
+							})
+						}
+						logger.debug(result)
+						if(result.n==0){
+							logger.debug('直接转让道具失败: ' + result);
+							return res.json({
+								"success": false,
+								"message": "不存在符合条件的道具"
+							})
+						}
+						else{
+							return res.json({
+								"success": true,
+								"message": "直接转让道具成功"
+							})
+						}
+					})
+				})
+})
+// (12生成新道具)游戏公司生成道具
 app.post('/createItem', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< C R E A T E  NEW ITEM>>>>>>>>>>>>>>>>>');
 	logger.debug('End point : /createItem');
@@ -298,6 +433,11 @@ app.post('/createItem', async function(req, res) {
 	let itemCompany=req.body.itemCompany
 	let itemInfo=req.body.itemInfo
 	let itemImages=req.body.itemImages
+	var createdTime = new Date()
+	var history = createdTime+":"+"born"
+	var itemHistory=new Array([])
+	itemHistory[0] = history
+	logger.debug('history: ' + history);
 	var item = {
 		"itemName":itemName,
 		"itemType":itemType,
@@ -308,7 +448,7 @@ app.post('/createItem', async function(req, res) {
 		"itemInfo":itemInfo,
 		"itemImages":itemImages,
 		"itemPrice":"",
-		"itemHistory":[],
+		"itemHistory":itemHistory,
 		"itemStatus":"0"
 	}
 	var ItemsNumber = parseInt(itemCount)
@@ -335,7 +475,7 @@ app.post('/createItem', async function(req, res) {
 		})
 	})
 });
-// 游戏公司将生成的道具发行
+// (10 提交发行请求)游戏公司将生成的道具发行
 app.post('/startIssueProductByID', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< start Issue Product By ID>>>>>>>>>>>>>>>>>');
 	logger.debug('End point : /startIssueProductByID');
@@ -373,7 +513,7 @@ app.post('/startIssueProductByID', async function(req, res) {
 		}
 	})
 })
-// 用户购买发行的道具(用户从厂商得到道具)
+// (13 用户从厂商得到道具或者说厂商发道具)用户购买发行的道具
 app.post('/getIssueProductByID', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< getIssueProductByID>>>>>>>>>>>>>>>>>');
 	logger.debug('End point : /getIssueProductByID');
@@ -417,7 +557,7 @@ app.post('/getIssueProductByID', async function(req, res) {
 		}
 	})
 })
-// 用户A将自己的道具出售，提交出售申请
+// (7提交出售申请)用户A将自己的道具出售，
 app.post('/startSellProductByID', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< startSellProductByID>>>>>>>>>>>>>>>>>');
 	logger.debug('End point : /startSellProductByID');
@@ -455,7 +595,7 @@ app.post('/startSellProductByID', async function(req, res) {
 	})
 
 })
-// 当道具未被其他用户购买时，用户A可取消出售申请
+// (8停止出售请求)当道具未被其他用户购买时，用户A可取消出售申请
 app.post('/stopSellProductByID', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< stopSellProductByID>>>>>>>>>>>>>>>>>');
 	logger.debug('End point : /stopSellProductByID');
@@ -493,7 +633,7 @@ app.post('/stopSellProductByID', async function(req, res) {
 	})
 
 })
-// 用户B在平台上看到道具出售信息，提交购买申请(提交购买请求)
+// (5 提交购买请求)用户B在平台上看到道具出售信息，提交购买申请
 app.post('/buyProductByID', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< buyProductByID>>>>>>>>>>>>>>>>>');
 	logger.debug('End point : /buyProductByID');
@@ -564,7 +704,7 @@ app.post('/buyProductByID', async function(req, res) {
 
 	})
 });
-// 用户A同意B的购买申请(确认他人购买请求)
+// (9确认他人购买请求)用户A同意B的购买申请
 app.post('/confirmSellProductByID', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< confirmSellProductByID>>>>>>>>>>>>>>>>>');
 	logger.debug('End point : /confirmSellProductByID');
@@ -664,7 +804,7 @@ app.post('/confirmSellProductByID', async function(req, res) {
 
 	}
 })
-// A和B的交易请求提交到游戏公司，游戏公司批准玩家的购买请求，交易完成。
+// (11批准玩家购买请求)A和B的交易请求提交到游戏公司，游戏公司批准玩家的购买请求，交易完成。
 app.post('/approveSellProductByID', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< approveSellProductByID>>>>>>>>>>>>>>>>>');
 	logger.debug('End point : /approveSellProductByID');
@@ -694,9 +834,11 @@ app.post('/approveSellProductByID', async function(req, res) {
 			var owner = result.owner
 			var buyer = result.buyer
 			var itemHistory = result.itemHistory
-			var transaction = new Date()+":"+owner+"sell to"+buyer
-			var newitemHistory=itemHistory.push(transaction)
-			var newItem = {"itemStatus":"1","owner":buyer,"buyer":"","itemPrice":"","itemHistory":newitemHistory}
+			var createdTime = new Date()
+			var transaction = createdTime + ":"+owner+"=>"+buyer
+			itemHistory.push(transaction)
+			logger.debug('itemHistory: ' + itemHistory);
+			var newItem = {"itemStatus":"1","owner":buyer,"buyer":"","itemPrice":"","itemHistory":itemHistory}
 			await db.findOne('myuser', {"Name":owner }, async function (err, result) {
 				if (err) {
 					return res.json({

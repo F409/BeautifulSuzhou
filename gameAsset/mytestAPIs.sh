@@ -82,7 +82,7 @@ response6=$(curl -s -X POST \
 		 }')
 BUYER_TOKEN=$(echo $response6 | jq ".token" | sed "s/\"//g")
 echo $BUYER_TOKEN
-echo "POST request Create new Item  ..."
+echo "POST request Create new Item  ...生成新道具"
 echo
 createItemIds=$(curl -s -X POST \
   http://localhost:4000/createItem \
@@ -101,10 +101,11 @@ createItemIds=$(curl -s -X POST \
 }')
 createItemIds=$(echo $createItemIds | jq ".itemIDS" | sed "s/\"//g")
 echo $createItemIds
-# 后面的itemID可以从这个返回值里取
-
-# itemID="5ae99ee530bc2f3e3a98d3fd"
-# echo "POST request startIssueProductByID  ..."
+后面的itemID可以从这个返回值里取
+#
+# itemID="5ae9b606dc20311d3cb20d4d"
+# itemID2="5ae9b606dc20311d3cb20d4b"
+# echo "POST request startIssueProductByID  ...游戏公司将生成的道具发行"
 # echo
 # curl -s -X POST \
 #   http://localhost:4000/startIssueProductByID \
@@ -117,7 +118,20 @@ echo $createItemIds
 #
 # }"
 # echo
-# echo "POST request getIssueProductByID  ..."
+# echo "POST request startIssueProductByID  ...游戏公司将生成的道具发行"
+# echo
+# curl -s -X POST \
+#   http://localhost:4000/startIssueProductByID \
+#   -H "authorization: Bearer $ORG1_TOKEN" \
+#   -H "content-type: application/json" \
+#   -d "{
+# 		\"username\":\"Iris\",
+# 		\"userType\":\"0\",
+# 		\"itemID\":\"$itemID2\"
+#
+# }"
+# echo
+# echo "POST request getIssueProductByID  ...厂商发道具"
 # echo
 # curl -s -X POST \
 #   http://localhost:4000/getIssueProductByID \
@@ -130,7 +144,21 @@ echo $createItemIds
 #
 # }"
 # echo
-# echo "POST request startSellProductByID  ..."
+# echo
+# echo "POST request getIssueProductByID  ...厂商发道具"
+# echo
+# curl -s -X POST \
+#   http://localhost:4000/getIssueProductByID \
+#   -H "authorization: Bearer $ORG1_TOKEN" \
+#   -H "content-type: application/json" \
+#   -d "{
+# 		\"username\":\"xiaoxu\",
+# 		\"userType\":\"1\",
+# 		\"itemID\":\"$itemID2\"
+#
+# }"
+# echo
+# echo "POST request startSellProductByID  ...提交出售申请"
 # echo
 # curl -s -X POST \
 #   http://localhost:4000/startSellProductByID \
@@ -143,8 +171,8 @@ echo $createItemIds
 # 		\"itemPrice\":\"11\"
 # }"
 # echo
-# # # echo
-# # echo "POST request stopSellProductByID  ..."
+# # echo
+# # echo "POST request stopSellProductByID  ...停止出售请求"
 # # echo
 # # curl -s -X POST \
 # #   http://localhost:4000/stopSellProductByID \
@@ -156,7 +184,7 @@ echo $createItemIds
 # # 		\"itemID\":\"$itemID\"
 # # }"
 # echo
-# echo "POST request buyProductByID  ..."
+# echo "POST request buyProductByID  ...提交购买请求"
 # echo
 # curl -s -X POST \
 #   http://localhost:4000/buyProductByID \
@@ -168,7 +196,7 @@ echo $createItemIds
 # 		\"itemID\":\"$itemID\"
 # }"
 # echo
-# echo "POST request confirmSellProductByID  ..."
+# echo "POST request confirmSellProductByID  ...确认他人购买请求"
 # echo
 # curl -s -X POST \
 #   http://localhost:4000/confirmSellProductByID \
@@ -181,7 +209,7 @@ echo $createItemIds
 # 		\"confirm\":true
 # }"
 # echo
-# echo "POST request approveSellProductByID  ..."
+# echo "POST request approveSellProductByID  ...批准玩家购买请求"
 # echo
 # curl -s -X POST \
 #   http://localhost:4000/approveSellProductByID \
@@ -192,5 +220,76 @@ echo $createItemIds
 # 		\"userType\":\"0\",
 # 		\"itemID\":\"$itemID\",
 # 		\"approve\":false
+# }"
+# echo
+# echo "POST request getProductsOnsell  ...获得所有正在交易市场的道具列表"
+# curl -s -X POST \
+#   http://localhost:4000/getProductsOnsell \
+#   -H "authorization: Bearer $ORG1_TOKEN" \
+#   -H "content-type: application/json" \
+#   -d "{
+# 		\"username\":\"Iris\",
+# 		\"userType\":\"0\"
+# }"
+# echo
+# echo
+# echo "POST request getProductsByCompanyAndStatus  ...根据状态和厂商获取道具列表"
+# curl -s -X POST \
+#   http://localhost:4000/getProductsByCompanyAndStatus \
+#   -H "authorization: Bearer $ORG1_TOKEN" \
+#   -H "content-type: application/json" \
+#   -d "{
+# 		\"username\":\"Tencent\",
+# 		\"userType\":\"0\",
+# 		\"itemStatus\":\"0\"
+# }"
+# echo
+# echo
+# echo "POST request getProductByID  ...根据道具ID获取道具"
+# curl -s -X POST \
+#   http://localhost:4000/getProductByID \
+#   -H "authorization: Bearer $ORG1_TOKEN" \
+#   -H "content-type: application/json" \
+#   -d "{
+# 		\"username\":\"Tencent\",
+# 		\"userType\":\"0\",
+# 		\"itemID\":\"$itemID\"
+# }"
+# echo
+# echo
+# echo "POST request getProductsByOwner  ...根据用户获取道具列表"
+# curl -s -X POST \
+#   http://localhost:4000/getProductsByOwner \
+#   -H "authorization: Bearer $ORG1_TOKEN" \
+#   -H "content-type: application/json" \
+#   -d "{
+# 		\"username\":\"Iris\",
+# 		\"userType\":\"0\"
+# }"
+# echo
+# echo "POST request giveProductByID  ... 用户游戏中直接交易道具(页面待实现)"
+# echo
+# curl -s -X POST \
+#   http://localhost:4000/giveProductByID \
+#   -H "authorization: Bearer $ORG2_TOKEN" \
+#   -H "content-type: application/json" \
+#   -d "{
+# 		\"username\":\"xiaoxu\",
+# 		\"userType\":\"1\",
+# 		\"itemID\":\"$itemID2\",
+# 		\"to\":\"jingjing\"
+# }"
+# echo
+# echo "POST request giveProductByID  ... 用户游戏中直接交易道具(页面待实现)"
+# echo
+# curl -s -X POST \
+#   http://localhost:4000/giveProductByID \
+#   -H "authorization: Bearer $ORG2_TOKEN" \
+#   -H "content-type: application/json" \
+#   -d "{
+# 		\"username\":\"xiaoxu\",
+# 		\"userType\":\"1\",
+# 		\"itemID\":\"$itemID2\",
+# 		\"to\":\"jingjing2\"
 # }"
 # echo

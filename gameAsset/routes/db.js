@@ -105,7 +105,7 @@ exports.find = function(collectionName, queryJson, callback) {
 //     } else {
 //       count = count * limit
 //     }
-
+//
 //     let cursor = db.collection(collectionName).find(json).limit(limit).skip(count).sort(sort)
 //     cursor.toArray(function(err, results) {
 //       if (err) {
@@ -119,6 +119,21 @@ exports.find = function(collectionName, queryJson, callback) {
 //   })
 // }
 
+exports.find = function(collectionName, queryJson, callback) {
+  _connectDB(function(err, db) {
+    let cursor = db.collection(collectionName).find(queryJson)
+    cursor.toArray(function(err, results) {
+      if (err) {
+        callback(err, null)
+        db.close()
+        return
+      }
+      console.log(results)
+      callback(err, results)
+      db.close()
+    })
+  })
+}
 // 查找单个数据
 exports.findOne = function(collectionName, queryJson, callback) {
   _connectDB(function(err, db) {
