@@ -318,7 +318,7 @@ app.post('/createItem', async function(req, res) {
 			createItems[i] = clone(item)
 		})(i);
 	}
-	await db.insertMany('gamaAsset',createItems,function (err, result) {
+	await db.insertMany('gameAsset',createItems,function (err, result) {
 		if (err) {
 			logger.debug('生成道具失败: ' + err);
 			return res.json({
@@ -330,7 +330,8 @@ app.post('/createItem', async function(req, res) {
 		logger.debug('生成道具的id列表' + createItemsId);
 		return res.json({
 			"success": true,
-			"message": "生成道具成功"
+			"message": "生成道具成功",
+			"itemIDS":createItemsId
 		})
 	})
 });
@@ -348,7 +349,7 @@ app.post('/startIssueProductByID', async function(req, res) {
 	logger.debug("req.body.itemID="+req.body.itemID)
 	var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"0"};
 	var newItem = {"itemStatus":"5"};
-	await db.updateMany('gamaAsset',oldItem,newItem, function (err, result) {
+	await db.updateMany('gameAsset',oldItem,newItem, function (err, result) {
 		if (err) {
 			logger.debug('发行道具失败: ' + err);
 			return res.json({
@@ -392,7 +393,7 @@ app.post('/getIssueProductByID', async function(req, res) {
 	};
 	var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"5"};
 	var newItem = {"itemStatus":"1","owner":req.body.username};
-	await db.updateMany('gamaAsset',oldItem,newItem, function (err, result) {
+	await db.updateMany('gameAsset',oldItem,newItem, function (err, result) {
 		if (err) {
 			logger.debug('发道具给用户失败: ' + err);
 			return res.json({
@@ -429,7 +430,7 @@ app.post('/startSellProductByID', async function(req, res) {
 	};
 	var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"1","owner":req.body.username};
 	var newItem = {"itemStatus":"2","itemPrice":req.body.itemPrice};
-	await db.updateMany('gamaAsset',oldItem,newItem, function (err, result) {
+	await db.updateMany('gameAsset',oldItem,newItem, function (err, result) {
 		if (err) {
 			logger.debug('提交出售请求失败: ' + err);
 			return res.json({
@@ -467,7 +468,7 @@ app.post('/stopSellProductByID', async function(req, res) {
 	};
 	var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"2","owner":req.body.username};
 	var newItem = {"itemStatus":"1"};
-	await db.updateMany('gamaAsset',oldItem,newItem, function (err, result) {
+	await db.updateMany('gameAsset',oldItem,newItem, function (err, result) {
 		if (err) {
 			logger.debug('停止出售请求失败: ' + err);
 			return res.json({
@@ -506,7 +507,7 @@ app.post('/buyProductByID', async function(req, res) {
 	var UserID = req.UserID
 	var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"2"};
 	var newItem = {"itemStatus":"3","buyer":req.username};
-	await db.findOne('gamaAsset',oldItem, async function (err, result) {
+	await db.findOne('gameAsset',oldItem, async function (err, result) {
 		if (err) {
 			return res.json({
 				"success": false,
@@ -543,7 +544,7 @@ app.post('/buyProductByID', async function(req, res) {
 						"message": "内部服务器错误"
 					})
 				}
-				await db.updateMany('gamaAsset',oldItem,newItem, function (err, result) {
+				await db.updateMany('gameAsset',oldItem,newItem, function (err, result) {
 					if (err) {
 						logger.debug('内部服务器错误: ' + err);
 						return res.json({
@@ -577,7 +578,7 @@ app.post('/confirmSellProductByID', async function(req, res) {
 	if(req.body.confirm){
 		var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"3","owner":req.username};
 		var newItem = {"itemStatus":"4"};
-		await db.updateMany('gamaAsset',oldItem,newItem, function (err, result) {
+		await db.updateMany('gameAsset',oldItem,newItem, function (err, result) {
 			if (err) {
 				return res.json({
 					"success": false,
@@ -603,7 +604,7 @@ app.post('/confirmSellProductByID', async function(req, res) {
 	else {
 		var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"3","owner":req.username};
 		var newItem = {"itemStatus":"2","buyer":""};
-		await db.findOne('gamaAsset',oldItem, async function (err, result) {
+		await db.findOne('gameAsset',oldItem, async function (err, result) {
 			if (err) {
 				return res.json({
 					"success": false,
@@ -641,7 +642,7 @@ app.post('/confirmSellProductByID', async function(req, res) {
 							"message": "内部服务器错误"
 						})
 					}
-					await db.updateMany('gamaAsset',oldItem,newItem, function (err, result) {
+					await db.updateMany('gameAsset',oldItem,newItem, function (err, result) {
 						if (err) {
 							logger.debug('内部服务器错误: ' + err);
 							return res.json({
@@ -664,6 +665,141 @@ app.post('/confirmSellProductByID', async function(req, res) {
 	}
 })
 // A和B的交易请求提交到游戏公司，游戏公司批准玩家的购买请求，交易完成。
+app.post('/approveSellProductByID', async function(req, res) {
+	logger.info('<<<<<<<<<<<<<<<<< approveSellProductByID>>>>>>>>>>>>>>>>>');
+	logger.debug('End point : /approveSellProductByID');
+	if (userType[req.orgName]=="1") {
+		res.json({
+				"success": false,
+				"message": "wrong userType,should be 1,got"+userType[req.orgName]
+		});
+		return;
+	};
+	var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"4","itemCompany":req.body.username};
+	if(req.body.approve){
+		await db.findOne('gameAsset',oldItem, async function (err, result) {
+			if (err) {
+				return res.json({
+					"success": false,
+					"message": "内部服务器错误"
+				})
+			}
+			if (!result || result.length === 0) {
+				return res.json({
+					"success": false,
+					"message": "找不到该道具"
+				})
+			}
+			var itemPrice =parseInt(result.itemPrice)
+			var owner = result.owner
+			var buyer = result.buyer
+			var itemHistory = result.itemHistory
+			var transaction = new Date()+":"+owner+"sell to"+buyer
+			var newitemHistory=itemHistory.push(transaction)
+			var newItem = {"itemStatus":"1","owner":buyer,"buyer":"","itemPrice":"","itemHistory":newitemHistory}
+			await db.findOne('myuser', {"Name":owner }, async function (err, result) {
+				if (err) {
+					return res.json({
+						"success": false,
+						"message": "内部服务器错误"
+					})
+				}
+				if (!result || result.length === 0) {
+					return res.json({
+						"success": false,
+						"message": "找不到用户名"
+					})
+				}
+				var Balance = result.Balance
+				var newBalance = Balance+itemPrice
+				await db.updateMany('myuser',{"Name":owner },{"Balance":newBalance},async function (err, result) {
+					if (err) {
+						logger.debug('内部服务器错误: ' + err);
+						return res.json({
+							"success": false,
+							"message": "内部服务器错误"
+						})
+					}
+					await db.updateMany('gameAsset',oldItem,newItem, function (err, result) {
+						if (err) {
+							logger.debug('内部服务器错误: ' + err);
+							return res.json({
+								"success": false,
+								"message": "内部服务器错误"
+							})
+						}
+						logger.debug(result)
+							return res.json({
+								"success": true,
+								"message": "批准玩家购买请求成功"
+							})
+					})
+				})
+			})
+
+		})
+	}else{
+		var newItem = {"itemStatus":"2","buyer":""};
+		await db.findOne('gameAsset',oldItem, async function (err, result) {
+			if (err) {
+				return res.json({
+					"success": false,
+					"message": "内部服务器错误"
+				})
+			}
+			if (!result || result.length === 0) {
+				return res.json({
+					"success": false,
+					"message": "找不到该道具"
+				})
+			}
+			var itemPrice =parseInt(result.itemPrice)
+			var buyer = result.buyer
+			await db.findOne('myuser', {"Name":buyer }, async function (err, result) {
+				if (err) {
+					return res.json({
+						"success": false,
+						"message": "内部服务器错误"
+					})
+				}
+				if (!result || result.length === 0) {
+					return res.json({
+						"success": false,
+						"message": "找不到用户名"
+					})
+				}
+				var Balance = result.Balance
+				var newBalance = Balance+itemPrice
+				await db.updateMany('myuser',{"Name":buyer },{"Balance":newBalance},async function (err, result) {
+					if (err) {
+						logger.debug('内部服务器错误: ' + err);
+						return res.json({
+							"success": false,
+							"message": "内部服务器错误"
+						})
+					}
+					await db.updateMany('gameAsset',oldItem,newItem, function (err, result) {
+						if (err) {
+							logger.debug('内部服务器错误: ' + err);
+							return res.json({
+								"success": false,
+								"message": "内部服务器错误"
+							})
+						}
+
+						logger.debug(result)
+							return res.json({
+								"success": true,
+								"message": "不批准玩家购买请求成功"
+							})
+					})
+				})
+			})
+
+		})
+
+	}
+})
 // Create Channel
 app.post('/channels', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< C R E A T E  C H A N N E L >>>>>>>>>>>>>>>>>');
