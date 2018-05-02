@@ -201,19 +201,19 @@ curl -s -X POST \
 		\"itemPrice\":\"11\"
 }"
 echo
-# echo
+# # echo
 # echo "POST request stopSellProductByID  ..."
 # echo
 # curl -s -X POST \
 #   http://localhost:4000/stopSellProductByID \
 #   -H "authorization: Bearer $ORG2_TOKEN" \
 #   -H "content-type: application/json" \
-#   -d '{
-# 		"username":"xiaoxu",
-# 		"userType":"1",
-# 		"itemID":$itemID
-# }'
-# echo
+#   -d "{
+# 		\"username\":\"xiaoxu\",
+# 		\"userType\":\"1\",
+# 		\"itemID\":\"$itemID\"
+# }"
+echo
 echo "POST request buyProductByID  ..."
 echo
 curl -s -X POST \
