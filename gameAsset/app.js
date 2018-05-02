@@ -362,7 +362,7 @@ app.post('/startIssueProductByID', async function(req, res) {
 			logger.debug('发行道具失败: ' + result);
 			return res.json({
 				"success": false,
-				"message": "该道具状态不为０"
+				"message": "不存在符合条件的道具"
 			})
 		}
 		else{
@@ -406,7 +406,7 @@ app.post('/getIssueProductByID', async function(req, res) {
 			logger.debug('发道具给用户失败: ' + result);
 			return res.json({
 				"success": false,
-				"message": "该道具状态不为５"
+				"message": "不存在符合条件的道具"
 			})
 		}
 		else{
@@ -421,15 +421,78 @@ app.post('/getIssueProductByID', async function(req, res) {
 app.post('/startSellProductByID', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< startSellProductByID>>>>>>>>>>>>>>>>>');
 	logger.debug('End point : /startSellProductByID');
-	if (userType[req.orgName]=="1") {
+	if (userType[req.orgName]=="0") {
 		res.json({
 				"success": false,
-				"message": "wrong userType:"+userType[req.orgName]
+				"message": "wrong userType,should be 1,got"+userType[req.orgName]
 		});
 		return;
 	};
+	var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"1","owner":req.body.username};
+	var newItem = {"itemStatus":"2","itemPrice":req.body.itemPrice};
+	await db.updateMany('gamaAsset',oldItem,newItem, function (err, result) {
+		if (err) {
+			logger.debug('提交出售请求失败: ' + err);
+			return res.json({
+				"success": false,
+				"message": "提交出售请求失败"
+			})
+		}
+		logger.debug(result)
+		if(result.n==0){
+			logger.debug('提交出售请求失败: ' + result);
+			return res.json({
+				"success": false,
+				"message": "不存在符合条件的道具"
+			})
+		}
+		else{
+			return res.json({
+				"success": true,
+				"message": "提交出售请求成功"
+			})
+		}
+	})
+
 })
 // 当道具未被其他用户购买时，用户A可取消出售申请
+app.post('/stopSellProductByID', async function(req, res) {
+	logger.info('<<<<<<<<<<<<<<<<< stopSellProductByID>>>>>>>>>>>>>>>>>');
+	logger.debug('End point : /stopSellProductByID');
+	if (userType[req.orgName]=="0") {
+		res.json({
+				"success": false,
+				"message": "wrong userType,should be 1,got"+userType[req.orgName]
+		});
+		return;
+	};
+	var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"2","owner":req.body.username};
+	var newItem = {"itemStatus":"１"};
+	await db.updateMany('gamaAsset',oldItem,newItem, function (err, result) {
+		if (err) {
+			logger.debug('停止出售请求失败: ' + err);
+			return res.json({
+				"success": false,
+				"message": "停止出售请求失败"
+			})
+		}
+		logger.debug(result)
+		if(result.n==0){
+			logger.debug('停止出售请求失败: ' + result);
+			return res.json({
+				"success": false,
+				"message": "不存在符合条件的道具"
+			})
+		}
+		else{
+			return res.json({
+				"success": true,
+				"message": "停止出售请求成功"
+			})
+		}
+	})
+
+})
 // 用户B在平台上看到道具出售信息，提交购买申请
 // 用户A同意B的购买申请
 // A和B的交易请求提交到游戏公司，游戏公司批准玩家的购买请求，交易完成。

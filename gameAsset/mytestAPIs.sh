@@ -151,30 +151,56 @@ echo $ORG2_TOKEN
 # 		"itemInfo":"this is test item",
 # 		"itemImages":"itemImages"
 # }'
-
-echo "POST request startIssueProductByID  ..."
+# 
+# echo "POST request startIssueProductByID  ..."
+# echo
+# curl -s -X POST \
+#   http://localhost:4000/startIssueProductByID \
+#   -H "authorization: Bearer $ORG1_TOKEN" \
+#   -H "content-type: application/json" \
+#   -d '{
+# 		"username":"Iris",
+# 		"userType":"0",
+# 		"itemID":"5ae955f1baf0be2eb46e87fe"
+#
+# }'
+# echo
+# echo "POST request getIssueProductByID  ..."
+# echo
+# curl -s -X POST \
+#   http://localhost:4000/getIssueProductByID \
+#   -H "authorization: Bearer $ORG1_TOKEN" \
+#   -H "content-type: application/json" \
+#   -d '{
+# 		"username":"xiaoxu",
+# 		"userType":"１",
+# 		"itemID":"5ae955f1baf0be2eb46e87fe"
+#
+# }'
+# echo
+# echo "POST request startSellProductByID  ..."
+# echo
+# curl -s -X POST \
+#   http://localhost:4000/startSellProductByID \
+#   -H "authorization: Bearer $ORG2_TOKEN" \
+#   -H "content-type: application/json" \
+#   -d '{
+# 		"username":"xiaoxu",
+# 		"userType":"１",
+# 		"itemID":"5ae955f1baf0be2eb46e87fe",
+# 		"itemPrice":"10"
+# }'
+# echo
+echo
+echo "POST request stopSellProductByID  ..."
 echo
 curl -s -X POST \
-  http://localhost:4000/startIssueProductByID \
-  -H "authorization: Bearer $ORG1_TOKEN" \
-  -H "content-type: application/json" \
-  -d '{
-		"username":"Iris",
-		"userType":"0",
-		"itemID":"5ae955f1baf0be2eb46e87fe"
-
-}'
-echo
-echo "POST request getIssueProductByID  ..."
-echo
-curl -s -X POST \
-  http://localhost:4000/getIssueProductByID \
-  -H "authorization: Bearer $ORG1_TOKEN" \
+  http://localhost:4000/stopSellProductByID \
+  -H "authorization: Bearer $ORG2_TOKEN" \
   -H "content-type: application/json" \
   -d '{
 		"username":"xiaoxu",
 		"userType":"１",
 		"itemID":"5ae955f1baf0be2eb46e87fe"
-
 }'
 echo
