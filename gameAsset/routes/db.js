@@ -58,7 +58,21 @@ exports.insertOne = function(collectionName, json, callback) {
     })
   })
 }
-
+exports.insertMany = function(collectionName, json, callback) {
+  _connectDB(function(err, db) {
+    db.collection(collectionName).insertMany(json, function(err, result) {
+      if (err) {
+        console.log(err);
+        callback(err, null)
+        db.close()
+        return
+      }
+      console.log(result);
+      callback(err, result)
+      db.close()
+    })
+  })
+}
 // 查找数据
 exports.find = function(collectionName, queryJson, callback) {
   _connectDB(function(err, db) {
