@@ -103,7 +103,7 @@ echo "POST request Create new Item  ..."
 # echo $createItemIds
 # 后面的itemID可以从这个返回值里取
 
-itemID="5ae9a8754da37722646227bc"
+itemID="5ae9b39ec4b6f303309a1ce0"
 echo "POST request startIssueProductByID  ..."
 echo
 curl -s -X POST \
@@ -143,7 +143,7 @@ curl -s -X POST \
 		\"itemPrice\":\"11\"
 }"
 echo
-# # echo
+# echo
 # echo "POST request stopSellProductByID  ..."
 # echo
 # curl -s -X POST \
@@ -191,6 +191,16 @@ curl -s -X POST \
 		\"username\":\"Tencent\",
 		\"userType\":\"0\",
 		\"itemID\":\"$itemID\",
-		\"approve\":true
+		\"approve\":false
+}"
+echo
+echo "POST request getProductsOnsell  ..."
+curl -s -X POST \
+  http://localhost:4000/getProductsOnsell \
+  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "content-type: application/json" \
+  -d "{
+		\"username\":\"Iris\",
+		\"userType\":\"0\"
 }"
 echo
