@@ -168,6 +168,18 @@ curl -s -X POST \
 		\"userType\":\"0\"
 }"
 echo
+echo
+echo "POST request getProductsByOwnerAndStatus  ...根据状态和拥有者获取道具列表"
+curl -s -X POST \
+  http://localhost:4000/api/getProductsByOwnerAndStatus \
+  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "content-type: application/json" \
+  -d "{
+		\"username\":\"Iris\",
+		\"userType\":\"0\",
+		\"itemStatus\":\"0\"
+}"
+echo
 # echo "POST request getIssueProductByID  ...厂商发道具"
 # echo
 # curl -s -X POST \

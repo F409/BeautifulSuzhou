@@ -327,6 +327,29 @@ app.post('/api/getProductsOnsell', async function(req, res) {
 	})
 
 })
+// 3 根据状态和拥有者获取道具列表
+app.post('/api/getProductsByOwnerAndStatus', async function(req, res) {
+	logger.info('<<<<<<<<<<<<<<<<< getProductsByOwnerAndStatus>>>>>>>>>>>>>>>>>');
+	logger.debug('End point : /api/getProductsByOwnerAndStatus');
+	let itemStatus = req.body.itemStatus
+	let owner = req.body.username
+	let query = {"itemStatus":itemStatus,"owner":owner}
+	await db.find('gameAsset',query,async　function (err, result) {
+		if (err) {
+			logger.debug('查询道具失败: ' + err);
+			return res.json({
+				"success": false,
+				"message": "查询道具失败"
+			})
+		}
+		await logger.debug("查询道具成功"+result);
+		return res.json({
+			"success": true,
+			"message": "查询道具成功",
+			"data":result
+		})
+	})
+})
 // 3 根据状态和厂商获取道具列表
 app.post('/api/getProductsByCompanyAndStatus', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< getProductsByCompanyAndStatus>>>>>>>>>>>>>>>>>');
