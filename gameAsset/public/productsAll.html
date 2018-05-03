@@ -54,49 +54,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	</div>
 	<div class="products">
 		<div class="container">
-			<div class="col-md-12 products-right">
-				<div class="products-right-grids-bottom">
-					<div class="col-md-4 products-right-grids-bottom-grid">
-						<div class="new-collections-grid1 products-right-grid1 animated wow slideInUp" data-wow-delay=".5s" onclick='items("123")' title="查看详情">
-							<div class="new-collections-grid1-image">
-								<a class="product-image"><img src="images/19.jpg" alt=" " class="img-responsive"></a>
-							</div>
-						
-							<h4><a>大标题</a></h4>
-							<p>简介简介简介简介简介简介简介简介简介简介简介</p>
-							<div class="simpleCart_shelfItem products-right-grid1-add-cart">
-								<p><span class="item_price">￥250</span></p>
-							</div>
-						</div>	
-					</div>
-					<div class="col-md-4 products-right-grids-bottom-grid">
-						<div class="new-collections-grid1 products-right-grid1 animated wow slideInUp" data-wow-delay=".5s" onclick='items("456")' title="查看详情">
-							<div class="new-collections-grid1-image">
-								<a class="product-image"><img src="images/19.jpg" alt=" " class="img-responsive"></a>
-							</div>
-							<h4><a>大标题</a></h4>
-							<p>简介简介简介简介简介简介简介简介简介简介简介</p>
-							<div class="simpleCart_shelfItem products-right-grid1-add-cart">
-								<p><span class="item_price">￥250</span></p>
-							</div>
-						</div>	
-					</div>
-					<div class="col-md-4 products-right-grids-bottom-grid">
-						<div class="new-collections-grid1 products-right-grid1 animated wow slideInUp" data-wow-delay=".5s" onclick='items("789")' title="查看详情">
-							<div class="new-collections-grid1-image">
-								<a class="product-image"><img src="images/19.jpg" alt=" " class="img-responsive"></a>
-							</div>
-							<h4><a>大标题</a></h4>
-							<p>简介简介简介简介简介简介简介简介简介简介简介</p>
-							<div class="simpleCart_shelfItem products-right-grid1-add-cart">
-								<p><span class="item_price">￥250</span></p>
-							</div>
-						</div>	
-					</div>
-
-					<div class="clearfix"> </div>
-				</div>
-			</div>
+			<div class="col-md-12 products-right" id="allItems"></div>
 			<div class="clearfix"> </div>
 		</div>
 	</div>
@@ -106,6 +64,100 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 function items(id){
 	window.location.href='single.html?id='+id; 
 }
+
+// 所有道具
+var data = {};
+	data['username']=d_username;
+	data['userType']=d_userType;
+	var dataJSON = JSON.stringify(data);
+	$.ajax({
+		type: "POST",
+		url: "/api/getProductsOnsell",
+		data: dataJSON,
+		beforeSend: function(request) {
+			request.setRequestHeader("content-type", "application/json");
+			request.setRequestHeader("authorization","Bearer "+d_token);
+		},
+		success: function(result) {
+			if(result['success']==true){
+
+				if(result['data'].length==0){
+					$("#allItems").append(
+						'<div class="products-right-grids-bottom">'+
+							'<div class="col-md-4 products-right-grids-bottom-grid">'+
+								'<div class="new-collections-grid1 products-right-grid1 animated wow slideInUp" data-wow-delay=".5s" onclick="items("123")" title="查看详情">'+
+									'<div class="new-collections-grid1-image"><a class="product-image"></div>'+
+									'<h4><a>暂无商品</a></h4>'+
+								'</div>'+
+							'</div>'+
+							'<div class="clearfix"> </div>'+
+						'</div>');
+				}else{
+					for(let i=0;i<result['data'].length-2;i=i+3){
+						$("#allItems").append(
+						'<div class="products-right-grids-bottom">'+
+							'<div class="col-md-4 products-right-grids-bottom-grid">'+
+								'<div class="new-collections-grid1 products-right-grid1 animated wow slideInUp" data-wow-delay=".5s" onclick="items(\''+result['data'][i]['_id']+'\')" title="查看详情">'+
+									'<div class="new-collections-grid1-image"><a class="product-image"><img src="'+result['data'][i]['itemImages'][0]+'" alt=" " class="img-responsive"></a></div>'+
+									'<h4><a>'+result['data'][i]['itemName']+'</a></h4><p>'+result['data'][i]['itemInfo']+'</p>'+
+									'<div class="simpleCart_shelfItem products-right-grid1-add-cart"><p><span class="item_price">￥'+result['data'][i]['itemPrice']+'</span></p></div>'+
+								'</div>'+
+							'</div>'+
+							'<div class="col-md-4 products-right-grids-bottom-grid">'+
+								'<div class="new-collections-grid1 products-right-grid1 animated wow slideInUp" data-wow-delay=".5s" onclick="items(\''+result['data'][i+1]['_id']+'\')" title="查看详情">'+
+									'<div class="new-collections-grid1-image"><a class="product-image"><img src="'+result['data'][i+1]['itemImages'][0]+'" alt=" " class="img-responsive"></a></div>'+
+									'<h4><a>'+result['data'][i+1]['itemName']+'</a></h4><p>'+result['data'][i+1]['itemInfo']+'</p>'+
+									'<div class="simpleCart_shelfItem products-right-grid1-add-cart"><p><span class="item_price">￥'+result['data'][i+1]['itemPrice']+'</span></p></div>'+
+								'</div>'+
+							'</div>'+
+							'<div class="col-md-4 products-right-grids-bottom-grid">'+
+								'<div class="new-collections-grid1 products-right-grid1 animated wow slideInUp" data-wow-delay=".5s" onclick="items("'+result['data'][i+2]['_id']+'")" title="查看详情">'+
+									'<div class="new-collections-grid1-image"><a class="product-image"><img src="'+result['data'][i+2]['itemImages'][0]+'" alt=" " class="img-responsive"></a></div>'+
+									'<h4><a>'+result['data'][i+2]['itemName']+'</a></h4><p>'+result['data'][i+2]['itemInfo']+'</p>'+
+									'<div class="simpleCart_shelfItem products-right-grid1-add-cart"><p><span class="item_price">￥'+result['data'][i+2]['itemPrice']+'</span></p></div>'+
+								'</div>'+
+							'</div>'+
+							'<div class="clearfix"> </div>'+
+						'</div>');
+					}
+					let tt = result['data'].length % 3;
+					if (tt == 1){
+						$("#allItems").append('<div class="products-right-grids-bottom">'+
+								'<div class="col-md-4 products-right-grids-bottom-grid">'+
+									'<div class="new-collections-grid1 products-right-grid1 animated wow slideInUp" data-wow-delay=".5s" onclick="items(\''+result['data'][result['data'].length-1]['_id']+'\')" title="查看详情">'+
+										'<div class="new-collections-grid1-image"><a class="product-image"><img src="'+result['data'][result['data'].length-1]['itemImages'][0]+'" alt=" " class="img-responsive"></a></div>'+
+										'<h4><a>'+result['data'][result['data'].length-1]['itemName']+'</a></h4><p>'+result['data'][result['data'].length-1]['itemInfo']+'</p>'+
+										'<div class="simpleCart_shelfItem products-right-grid1-add-cart"><p><span class="item_price">￥'+result['data'][result['data'].length-1]['itemPrice']+'</span></p></div>'+
+									'</div>'+
+								'</div>'+
+							'<div class="clearfix"> </div>'+
+						'</div>');
+					}else if (tt == 2){
+						$("#allItems").append('<div class="products-right-grids-bottom">'+
+								'<div class="col-md-4 products-right-grids-bottom-grid">'+
+									'<div class="new-collections-grid1 products-right-grid1 animated wow slideInUp" data-wow-delay=".5s" onclick="items(\''+result['data'][result['data'].length-2]['_id']+'\')" title="查看详情">'+
+										'<div class="new-collections-grid1-image"><a class="product-image"><img src="'+result['data'][result['data'].length-2]['itemImages'][0]+'" alt=" " class="img-responsive"></a></div>'+
+										'<h4><a>'+result['data'][result['data'].length-2]['itemName']+'</a></h4><p>'+result['data'][result['data'].length-2]['itemInfo']+'</p>'+
+										'<div class="simpleCart_shelfItem products-right-grid1-add-cart"><p><span class="item_price">￥'+result['data'][result['data'].length-2]['itemPrice']+'</span></p></div>'+
+									'</div>'+
+								'</div>'+
+								'<div class="col-md-4 products-right-grids-bottom-grid">'+
+									'<div class="new-collections-grid1 products-right-grid1 animated wow slideInUp" data-wow-delay=".5s" onclick="items(\''+result['data'][result['data'].length-1]['_id']+'\')" title="查看详情">'+
+										'<div class="new-collections-grid1-image"><a class="product-image"><img src="'+result['data'][result['data'].length-1]['itemImages'][0]+'" alt=" " class="img-responsive"></a></div>'+
+										'<h4><a>'+result['data'][result['data'].length-1]['itemName']+'</a></h4><p>'+result['data'][result['data'].length-1]['itemInfo']+'</p>'+
+										'<div class="simpleCart_shelfItem products-right-grid1-add-cart"><p><span class="item_price">￥'+result['data'][result['data'].length-1]['itemPrice']+'</span></p></div>'+
+									'</div>'+
+								'</div>'+
+								'<div class="clearfix"> </div>'+
+							'</div>');
+					}
+				}	
+			}else{
+				alert('获取道具列表错误！');
+			}
+		}
+	});
+
 $('#DemoTitle').html('交易平台系统');
 </script>
 

@@ -28,8 +28,17 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <link href="css/animate.min.css" rel="stylesheet"> 
 <script src="js/wow.min.js"></script>
 <script>
- new WOW().init();
-</script>
+		new WOW().init();
+		function GetQueryString(name){
+			var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+			var r = window.location.search.substr(1).match(reg);
+			if(r!=null)return  unescape(r[2]); return null;
+		}
+		var singleID=GetQueryString("id");
+		if(!singleID){
+			window.location.href='index.html'; 
+		}
+		</script>
 <!-- //animation-effect -->
 </head>
 	
@@ -53,65 +62,44 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			<div class="col-md-12 single-right">
 				<div class="col-md-5 single-right-left animated wow slideInUp" data-wow-delay=".5s">
 					<div class="flexslider">
-						<ul class="slides">
-							<li data-thumb="images/si.jpg">
-								<div class="thumb-image"> <img src="images/si.jpg" data-imagezoom="true" class="img-responsive"> </div>
-							</li>
-							<li data-thumb="images/si1.jpg">
-								 <div class="thumb-image"> <img src="images/si1.jpg" data-imagezoom="true" class="img-responsive"> </div>
-							</li>
-							<li data-thumb="images/si2.jpg">
-							   <div class="thumb-image"> <img src="images/si2.jpg" data-imagezoom="true" class="img-responsive"> </div>
-							</li> 
+						<ul class="slides" id="images">
 						</ul>
 					</div>
 					<!-- flixslider -->
 						<script defer src="js/jquery.flexslider.js"></script>
 						<link rel="stylesheet" href="css/flexslider.css" type="text/css" media="screen" />
-						<script>
-						// Can also be used with $(document).ready()
-						$(window).load(function() {
-						  $('.flexslider').flexslider({
-							animation: "slide",
-							controlNav: "thumbnails"
-						  });
-						});
-						</script>
+						
 					<!-- flixslider -->
 				</div>
 				<div class="col-md-7 single-right-left simpleCart_shelfItem animated wow slideInRight" data-wow-delay=".5s">
-					<h3 id="ItemsId">道具名称</h3>
-					<h4><span class="item_price">￥550</span></h4>
-					<div class="description">
-						<h5><i>简介</i></h5>
-						<p>简介简介简介简介简介简介简介简介简介简介简介简介简介简介简介简介简介简介简介简介简介</p>
-					</div>
-					<div class="description">
-						<h5><i>唯一ID</i></h5>
-							<p>123</p>
-					</div>
-					<div class="description">
-						<h5><i>游戏名称</i></h5>
-							<p>王者荣耀</p>
-					</div>
-					<div class="description">
-						<h5><i>装备类型</i></h5>
-							<p>皮肤</p>
-					</div>
-					<div class="description">
-						<h5><i>发行数量</i></h5>
-							<p>1000</p>
-					</div>
-					<div class="description">
-							<h5><i>流转信息</i></h5>
-							<p>2017.01.01 游戏厂商生成</p>
-							<p>2017.01.02 A购买</p>
-							<p>2017.01.03 B购买</p>
-					</div>
-					<div class="description">
-						<h5><i>当前所有者</i></h5>
-							<p>B</p>
-					</div>
+						<h3 id="itemName">道具名称</h3>
+						<div class="description">
+							<h5><i>简介</i></h5>
+							<p  id="itemInfo"></p>
+						</div>
+						<div class="description">
+							<h5><i>唯一ID</i></h5>
+								<p id="itemID"></p>
+						</div>
+						<div class="description">
+							<h5><i>游戏公司</i></h5>
+								<p id="itemCompany"></p>
+						</div>
+						<div class="description">
+							<h5><i>装备类型</i></h5>
+								<p id="itemType"></p>
+						</div>
+						<div class="description">
+							<h5><i>发行数量</i></h5>
+								<p id="itemCount"></p>
+						</div>
+						<div class="description" id="history">
+								<h5><i>流转信息</i></h5>
+						</div>
+						<div class="description">
+							<h5><i>当前所有者</i></h5>
+								<p id="owner">B</p>
+						</div>
 					<div class="occasion-cart" onclick='buy()'>
 						<a class="item_add" href="#">打怪得到</a>
 					</div>
@@ -124,9 +112,79 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <!-- //single -->
 <script type="text/javascript">
 	function buy(){
-		alert('购买成功');
-		window.location.href='center.html'; 
+		let cdata = {};
+		cdata['username']=d_username;
+		cdata['userType']=d_userType;
+		cdata['itemID']=singleID;
+		let cdataJSON = JSON.stringify(cdata);
+		$.ajax({
+				type: "POST",
+				url: "/api/getIssueProductByID",
+				data: cdataJSON,
+				beforeSend: function(request) {
+					request.setRequestHeader("content-type", "application/json");
+					request.setRequestHeader("authorization","Bearer "+d_token);
+				},
+				success: function(result) {
+					if(result['success']==true){
+						alert('打怪获得成功 ');
+						window.location.href='center.html'; 
+					}else{
+						alert('未知错误');
+					}
+					
+				}
+			}); 
 	}
+	// 指定道具信息
+	var data = {};
+	data['username']=d_username;
+	data['userType']=d_userType;
+	data['itemID']=singleID;
+	var dataJSON = JSON.stringify(data);
+	$.ajax({
+		type: "POST",
+		url: "/api/getProductByID",
+		data: dataJSON,
+		beforeSend: function(request) {
+			request.setRequestHeader("content-type", "application/json");
+			request.setRequestHeader("authorization","Bearer "+d_token);
+		},
+		success: function(result) {
+			if(result['success']==true){
+
+				$("#itemName").html(result['data']['itemName']);
+				$("#itemInfo").html(result['data']['itemInfo']);
+				$("#itemID").html(result['data']['_id']);
+				$("#itemCompany").html(result['data']['itemCompany']);
+				$("#itemType").html(result['data']['itemType']);
+				$("#itemCount").html(result['data']['itemCount']);
+				$("#owner").html(result['data']['owner']);
+
+				for(let j=0;j<result['data']['itemHistory'].length;j++){
+					$("#history").append('<p>'+result['data']['itemHistory'][j]+'</p>');
+				}
+				for(let k=0;k<result['data']['itemImages'].length;k++){
+					$("#images").append('<li><div> <img src="'+result['data']['itemImages'][k]+'"> </div></li>');
+				}
+				// 图片模式设置
+				$('.flexslider').flexslider({
+							animation: "fade",
+							slideshow: true, 
+							slideshowSpeed: 5000, 
+							animationSpeed: 600,
+							prevText: "Previous",          
+							nextText: "Next",  
+							directionNav: true, 
+							controlNav: true
+						  });
+
+			}else{
+				alert('获取道具列表错误！');
+			}
+		}
+	});
+
 	$('#DemoTitle').html('游戏厂商系统');
 </script>
 <!-- footer -->

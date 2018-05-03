@@ -45,8 +45,8 @@ document.writeln('								<ul class="dropdown-menu multi-column columns-3">');
 document.writeln('									<div class="row">');
 document.writeln('										<div class="col-sm-12">');
 document.writeln('											<ul class="multi-column-dropdown">');
-document.writeln('												<h6><a href="productsSpec.html">打怪得装备</a></h6>');
-document.writeln('												<h6><a href="giveSpec.html">游戏内赠与</a></h6>');
+document.writeln('												<h6><a href="productsSpec.html?company=ccc">打怪得装备</a></h6>');
+document.writeln('												<h6><a href="giveSpec.html?company=ccc">游戏内赠与</a></h6>');
 document.writeln('											</ul>');
 document.writeln('										</div>');
 document.writeln('										<div class="clearfix"></div>');
@@ -72,6 +72,6 @@ $('#loginOut').on('click', function () {
 	localStorage.removeItem('d-userType');
 	localStorage.removeItem('d-balance');
 	localStorage.removeItem('d-token');
-	location.reload();
+	self.location='index.html';
 	console.log('localStorage删除完毕');
 });
