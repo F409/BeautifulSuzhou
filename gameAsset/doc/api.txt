@@ -68,6 +68,15 @@ data : {"username":"xxx","userType":"xxx","itemStatus":"xxx"}
 success : {"success":true/false,"data":["xxx","yyy"]}
 说明：请求成功success字段返回true，data返回所有owner为username并且状态itemStatus为itemStatus的所有道具数组；否则success字段返回false，其余为空。
 
+3 根据状态和拥有者，厂商获取道具列表
+
+url : /api/getProductsByOwnerAndStatusAnditemCompany
+type : POST
+dataType : application/json
+data : {"username":"xxx","userType":"xxx","itemStatus":"xxx","itemCompany":"xxx"}
+success : {"success":true/false,"data":["xxx","yyy"]}
+说明：请求成功success字段返回true，data返回所有owner为username并且状态itemStatus为itemStatus,itemCompany为itemCompany的所有道具数组；否则success字段返回false，其余为空。
+
 3 根据状态和厂商获取道具列表
 
 url : /api/getProductsByCompanyAndStatus

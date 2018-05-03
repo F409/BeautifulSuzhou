@@ -180,6 +180,19 @@ curl -s -X POST \
 		\"itemStatus\":\"0\"
 }"
 echo
+echo
+echo "POST request getProductsByOwnerAndStatusAnditemCompany  ...根据状态和拥有者,厂商获取道具列表"
+curl -s -X POST \
+  http://localhost:4000/api/getProductsByOwnerAndStatusAnditemCompany \
+  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "content-type: application/json" \
+  -d "{
+		\"username\":\"Iris\",
+		\"userType\":\"0\",
+		\"itemStatus\":\"0\",
+		\"itemCompany\":\"Tencent\"
+}"
+echo
 # echo "POST request getIssueProductByID  ...厂商发道具"
 # echo
 # curl -s -X POST \
