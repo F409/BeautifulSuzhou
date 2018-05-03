@@ -479,8 +479,8 @@ app.post('/api/createItem', async function(req, res) {
 	let itemCompany=req.body.itemCompany
 	let itemInfo=req.body.itemInfo
 	let itemImages=req.body.itemImages
-	var createdTime = new Date()
-	var history = createdTime+":"+"born"
+	var createdTime =(new Date()).toLocaleDateString() + " " + (new Date()).toLocaleTimeString()
+	var history = createdTime+" "+"born in "+itemCompany
 	var itemHistory=new Array([])
 	itemHistory[0] = history
 	logger.debug('history: ' + history);
@@ -578,30 +578,51 @@ app.post('/api/getIssueProductByID', async function(req, res) {
 		return;
 	};
 	var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"5"};
-	var newItem = {"itemStatus":"1","owner":req.body.username};
-	await db.updateMany('gameAsset',oldItem,newItem, function (err, result) {
-		if (err) {
-			logger.debug('发道具给用户失败: ' + err);
-			return res.json({
-				"success": false,
-				"message": "发道具给用户失败"
+	await db.findOne('gameAsset',oldItem, async function (err, result) {
+			if (err) {
+				return res.json({
+					"success": false,
+					"message": "内部服务器错误"
+				})
+			}
+			if (!result || result.length === 0) {
+				return res.json({
+					"success": false,
+					"message": "找不到该道具"
+				})
+			}
+			var owner = result.itemCompany
+			var buyer = req.body.username
+			var itemHistory = result.itemHistory
+			var createdTime = (new Date()).toLocaleDateString() + " " + (new Date()).toLocaleTimeString()
+			var transaction = createdTime + " "+owner+"=>"+buyer
+			itemHistory.push(transaction)
+			logger.debug('itemHistory: ' + itemHistory);
+			var newItem = {"itemStatus":"1","owner":buyer,"itemHistory":itemHistory};
+			await db.updateMany('gameAsset',oldItem,newItem, function (err, result) {
+				if (err) {
+					logger.debug('发道具给用户失败: ' + err);
+					return res.json({
+						"success": false,
+						"message": "发道具给用户失败"
+					})
+				}
+				logger.debug(result)
+				if(result.n==0){
+					logger.debug('发道具给用户失败: ' + result);
+					return res.json({
+						"success": false,
+						"message": "不存在符合条件的道具"
+					})
+				}
+				else{
+					return res.json({
+						"success": true,
+						"message": "发道具给用户成功"
+					})
+				}
 			})
-		}
-		logger.debug(result)
-		if(result.n==0){
-			logger.debug('发道具给用户失败: ' + result);
-			return res.json({
-				"success": false,
-				"message": "不存在符合条件的道具"
-			})
-		}
-		else{
-			return res.json({
-				"success": true,
-				"message": "发道具给用户成功"
-			})
-		}
-	})
+		})
 })
 // (7提交出售申请)用户A将自己的道具出售，
 app.post('/api/startSellProductByID', async function(req, res) {
@@ -880,8 +901,8 @@ app.post('/api/approveSellProductByID', async function(req, res) {
 			var owner = result.owner
 			var buyer = result.buyer
 			var itemHistory = result.itemHistory
-			var createdTime = new Date()
-			var transaction = createdTime + ":"+owner+"=>"+buyer
+			var createdTime = (new Date()).toLocaleDateString() + " " + (new Date()).toLocaleTimeString()
+			var transaction = createdTime + " "+owner+"=>"+buyer
 			itemHistory.push(transaction)
 			logger.debug('itemHistory: ' + itemHistory);
 			var newItem = {"itemStatus":"1","owner":buyer,"buyer":"","itemPrice":"","itemHistory":itemHistory}
