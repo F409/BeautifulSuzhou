@@ -60,7 +60,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				<div class="filter-price animated" data-wow-delay=".5s">
 					<h3>我的道具</h3>
 					<ul class="dropdown-menu1">
-						<li><div id="" style="text-align:center;">5</div></li>	
+						<li><div id="myItemsNum" style="text-align:center;">0</div></li>	
 					</ul>
 				</div>
 			</div>
@@ -68,7 +68,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				<div class="filter-price animated" data-wow-delay=".5s">
 					<h3>待处理请求</h3>
 					<ul class="dropdown-menu1">
-						<li><div id="" style="text-align:center;">7</div></li>	
+						<li><div  id="doItemsNum" style="text-align:center;">0</div></li>	
 					</ul>
 				</div>
 			</div>
@@ -78,15 +78,15 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 		<div id="select1c" class="checkout">
 			<div class="container" style="text-align:center;">
-					<h3>账户名称: <span>哈哈哈</span></h3>
-					<h3>账户余额: <span>￥5000</span></h3>
+					<h3>账户名称: <span id="username"></span></h3>
+					<h3>账户余额: <span id="balance">￥</span></h3>
 			</div>
 		</div>
 
 		<div id="select2c" class="checkout hidden">
 			<div class="container">
 				<div class="checkout-right animated" data-wow-delay=".5s">
-					<table class="timetable_sub">
+					<table class="timetable_sub" id="myItems">
 						<thead>
 							<tr>
 								<th>道具ID</th>	
@@ -101,18 +101,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								<th>交易价格</th>
 							</tr>
 						</thead>
-						<tr class="rem1">
-							<td class="invert">12345</td>
-							<td class="invert">大保健</td>
-							<td class="invert">皮肤</td>
-							<td class="invert">1000</td>
-							<td class="invert">2017.01.01 游戏厂商生成</br>2017.01.02 A购买</br>2017.01.03 B购买</td>
-							<td class="invert">简介12345</td>
-							<td class="invert-image"><a href="single.html"><img src="images/22.jpg" alt=" " class="img-responsive" /></a></td>
-							<td class="invert"><button type="button" class="btn btn-success upd" data-toggle="modal" data-target="#exampleModal" data-whatever="12345">可出售</button><button type="button" class="btn btn-warning" disabled>正在出售中</button><button type="button" class="btn btn-danger" onclick="StopSell(123)">停止出售</button></td>
-							<td class="invert">B</td>
-							<td class="invert">1000</td>
-						</tr>
 					</table>
 					
 				</div>
@@ -121,7 +109,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		<div id="select3c" class="checkout hidden">
 			<div class="container">
 				<div class="checkout-right animated" data-wow-delay=".5s">
-					<table class="timetable_sub">
+					<table class="timetable_sub"  id="doItems">
 						<thead>
 							<tr>
 								<th>道具ID</th>	
@@ -136,18 +124,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								<th>操作</th>
 							</tr>
 						</thead>
-						<tr class="rem1">
-							<td class="invert">12345</td>
-							<td class="invert">大保健</td>
-							<td class="invert">皮肤</td>
-							<td class="invert">1000</td>
-							<td class="invert">B</td>
-							<td class="invert">￥250</td>
-							<td class="invert">2017.01.01 游戏厂商生成</br>2017.01.02 A购买</br>2017.01.03 B购买</td>
-							<td class="invert">简介12345</td>
-							<td class="invert-image"><a href="single.html"><img src="images/22.jpg" alt=" " class="img-responsive" /></a></td>
-							<td class="invert">是否同意B的购买?</br></br><button type="button" class="btn btn-success" onclick="ConfirmSell(123)">同意</button><button type="button" class="btn btn-danger"onclick="CancelSell(123)">取消</button><button type="button" class="btn btn-info" disabled>正在购买中</button></td>
-						</tr>
 					</table>
 				</div>
 			</div>
@@ -181,14 +157,33 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	  </div>
 
 <script type="text/javascript">
-	function ConfirmSell(id){
-		alert('确认出售成功');
-		window.location.href='center.html?id='+id; 
+	function ConfirmSell(id,status){
+		let cdata = {};
+		cdata['username']=d_username;
+		cdata['userType']=d_userType;
+		cdata['itemID']=id;
+		cdata['confirm']=status==="true";
+		let cdataJSON = JSON.stringify(cdata);
+		$.ajax({
+				type: "POST",
+				url: "/api/confirmSellProductByID",
+				data: cdataJSON,
+				beforeSend: function(request) {
+					request.setRequestHeader("content-type", "application/json");
+					request.setRequestHeader("authorization","Bearer "+d_token);
+				},
+				success: function(result) {
+					if(result['success']==true){
+						alert('执行成功 ');
+						window.location.href='center.html'; 
+					}else{
+						alert('未知错误');
+					}
+					
+				}
+			}); 
 	}
-	function CancelSell(id){
-		alert('取消出售成功');
-		window.location.href='center.html?id='+id; 
-	}
+
 	$('#select1').on('click', function () {
 		$('#select1').addClass("bg-danger");
 		$('#select2').removeClass("bg-danger");
@@ -220,14 +215,198 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		modal.find('#itemsID').val(recipient);
 	});
 	function StartSell(){
-		alert('确认出售成功 ID'+$('#itemsID').val()+' 价格'+$('#itemsPrice').val());
-		window.location.reload(true); 
+		let sdata = {};
+		sdata['username']=d_username;
+		sdata['userType']=d_userType;
+		sdata['itemID']=$('#itemsID').val();
+		sdata['itemPrice']=$('#itemsPrice').val();
+		let sdataJSON = JSON.stringify(sdata);
+		$.ajax({
+				type: "POST",
+				url: "/api/startSellProductByID",
+				data: sdataJSON,
+				beforeSend: function(request) {
+					request.setRequestHeader("content-type", "application/json");
+					request.setRequestHeader("authorization","Bearer "+d_token);
+				},
+				success: function(result) {
+					if(result['success']==true){
+						alert(' 出售成功');
+						window.location.reload(true); 
+					}else{
+						alert('未知错误');
+					}
+					
+				}
+			});
 	}
 	function StopSell(id){
-		alert('停止出售成功'+id);
-		window.location.reload(true); 
+		let sdata = {};
+		sdata['username']=d_username;
+		sdata['userType']=d_userType;
+		sdata['itemID']=id;
+		let sdataJSON = JSON.stringify(sdata);
+		$.ajax({
+				type: "POST",
+				url: "/api/stopSellProductByID",
+				data: sdataJSON,
+				beforeSend: function(request) {
+					request.setRequestHeader("content-type", "application/json");
+					request.setRequestHeader("authorization","Bearer "+d_token);
+				},
+				success: function(result) {
+					if(result['success']==true){
+						alert('停止 '+id+' 出售成功');
+						window.location.reload(true); 
+					}else{
+						alert('未知错误');
+					}
+					
+				}
+			});
 	}
+
+	// 我的道具
+	var data = {};
+	data['username']=d_username;
+	data['userType']=d_userType;
+	// data['itemStatus']="0";
+	var dataJSON = JSON.stringify(data);
+	$.ajax({
+		type: "POST",
+		url: "/api/getProductsByOwner",
+		data: dataJSON,
+		beforeSend: function(request) {
+			request.setRequestHeader("content-type", "application/json");
+			request.setRequestHeader("authorization","Bearer "+d_token);
+		},
+		success: function(result) {
+			if(result['success']==true){
+
+				$("#myItemsNum").html(result['data'].length);
+
+				if(result['data'].length==0){
+					$("#myItems").append(
+						'<tr class="rem1">'+
+							'<td class="invert">暂无</td>'+
+							'<td class="invert"></td>'+
+							'<td class="invert"></td>'+
+							'<td class="invert"></td>'+
+							'<td class="invert"></td>'+
+							'<td class="invert"></td>'+
+							'<td class="invert"></td>'+
+							'<td class="invert"></td>'+
+							'<td class="invert"></td>'+
+							'<td class="invert"></td>'+
+						'</tr>');
+				}else{
+					for(let i=0;i<result['data'].length;i++){
+						$("#allItems").append(
+							'<tr class="rem1">'+
+								'<td class="invert">'+result['data'][i]['_id']+'</td>'+
+								'<td class="invert">'+result['data'][i]['itemName']+'</td>'+
+								'<td class="invert">'+result['data'][i]['itemType']+'</td>'+
+								'<td class="invert">'+result['data'][i]['itemCount']+'</td>'+
+								'<td class="invert" id="myhistory'+i+'"></td>'+
+								'<td class="invert">'+result['data'][i]['itemInfo']+'</td>'+
+								'<td class="invert-image" id="myimages'+i+'"></td>'+
+								'<td class="invert" id="mybutton'+i+'"></td>'+
+								'<td class="invert">'+result['data'][i]['buyer']+'</td>'+
+								'<td class="invert">'+result['data'][i]['itemPrice']+'</td>'+
+							'</tr>'
+						);
+						for(let j=0;j<result['data'][i]['itemHistory'].length;j++){
+							$("#myhistory"+i).append(result['data'][i]['itemHistory'][j]+'</br>');
+						}
+						for(let k=0;k<result['data'][i]['itemImages'].length;k++){
+							$("#myimages"+i).append('<a href="#"><img src="'+result['data'][i]['itemImages'][k]+'" alt=" " class="img-responsive" style="display:inline-block;"/></a>');
+						}
+						if(result['data'][i]['itemStatus']=="1"){
+							$("#mybutton"+i).append('<button type="button" class="btn btn-success upd" data-toggle="modal" data-target="#exampleModal" data-whatever="'+result['data'][i]['_id']+'">可出售</button>');
+						}else if(result['data'][i]['itemStatus']=="2"){
+							$("#mybutton"+i).append('<button type="button" class="btn btn-danger" onclick="StopSell("'+result['data'][i]['_id']+'")">停止出售</button>');
+						}else{
+							$("#mybutton"+i).append('<button type="button" class="btn btn-warning" disabled>正在出售中</button>');
+						}
+					}
+				}	
+			}else{
+				alert('获取道具列表错误！');
+			}
+		}
+	});
+
+	// 待处理道具
+	data['itemStatus']="3";
+	dataJSON = JSON.stringify(data);
+	$.ajax({
+		type: "POST",
+		url: "/api/getProductsByOwnerAndStatus",
+		data: dataJSON,
+		beforeSend: function(request) {
+			request.setRequestHeader("content-type", "application/json");
+			request.setRequestHeader("authorization","Bearer "+d_token);
+		},
+		success: function(result) {
+			if(result['success']==true){
+
+				$("#doItemsNum").html(result['data'].length);
+
+				if(result['data'].length==0){
+					$("#doItems").append(
+						'<tr class="rem1">'+
+							'<td class="invert">暂无</td>'+
+							'<td class="invert"></td>'+
+							'<td class="invert"></td>'+
+							'<td class="invert"></td>'+
+							'<td class="invert"></td>'+
+							'<td class="invert"></td>'+
+							'<td class="invert"></td>'+
+							'<td class="invert"></td>'+
+							'<td class="invert"></td>'+
+							'<td class="invert"></td>'+
+						'</tr>');
+				}else{
+					for(let i=0;i<result['data'].length;i++){
+						$("#doItems").append(
+							'<tr class="rem1">'+
+								'<td class="invert">'+result['data'][i]['_id']+'</td>'+
+								'<td class="invert">'+result['data'][i]['itemName']+'</td>'+
+								'<td class="invert">'+result['data'][i]['itemType']+'</td>'+
+								'<td class="invert">'+result['data'][i]['itemCount']+'</td>'+
+								'<td class="invert">'+result['data'][i]['buyer']+'</td>'+
+								'<td class="invert">'+result['data'][i]['itemPrice']+'</td>'+
+								'<td class="invert" id="dohistory'+i+'"></td>'+
+								'<td class="invert">'+result['data'][i]['itemInfo']+'</td>'+
+								'<td class="invert-image" id="doimages'+i+'"></td>'+
+								'<td class="invert">是否同意 '+result['data'][i]['buyer']+' 的购买?</br></br><button type="button" class="btn btn-success" onclick="ConfirmSell("'+result['data'][i]['_id']+'","true")">同意</button><button type="button" class="btn btn-danger"onclick="ConfirmSell("'+result['data'][i]['_id']+'","false")">取消</button></td>'+
+							'</tr>'
+						);
+						for(let j=0;j<result['data'][i]['itemHistory'].length;j++){
+							$("#dohistory"+i).append(result['data'][i]['itemHistory'][j]+'</br>');
+						}
+						for(let k=0;k<result['data'][i]['itemImages'].length;k++){
+							console.log(result['data'][i]['itemImages'][k]);
+							$("#doimages"+i).append('<a href="#"><img src="'+result['data'][i]['itemImages'][k]+'" alt=" " class="img-responsive" style="display:inline-block;"/></a>');
+						}
+					}
+				}				
+			}else{
+				alert('获取道具列表错误！');
+			}
+		}
+	});
+
+	if(!d_token){
+		window.location.href='login.html'; 
+	}
+	if(d_userType=="0"){
+		window.location.href='centerSpec.html'; 
+	}
+	
 	$('#DemoTitle').html('交易平台系统');
+	$('#username').append(d_username);
+	$('#balance').append(d_balance);
 </script>
 <!-- footer -->
 <script type="text/javascript" src="js/footer.js"></script>

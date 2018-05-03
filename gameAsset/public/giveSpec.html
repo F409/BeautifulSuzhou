@@ -28,8 +28,17 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <link href="css/animate.min.css" rel="stylesheet"> 
 <script src="js/wow.min.js"></script>
 <script>
- new WOW().init();
-</script>
+		new WOW().init();
+		function GetQueryString(name){
+			var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+			var r = window.location.search.substr(1).match(reg);
+			if(r!=null)return  unescape(r[2]); return null;
+		}
+		var companyID=GetQueryString("company");
+		if(!companyID){
+			window.location.href='index.html'; 
+		}
+		</script>
 <!-- //animation-effect -->
 </head>
 	
@@ -52,7 +61,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				<div class="filter-price animated" data-wow-delay=".5s">
 					<h3>可赠送道具</h3>
 					<ul class="dropdown-menu1">
-						<li><div id="" style="text-align:center;">5</div></li>	
+						<li><div id="allItemsNum" style="text-align:center;">0</div></li>	
 					</ul>
 				</div>
 			</div>
@@ -72,7 +81,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								<th>流转信息</th>
 								<th>简介</th>
 								<th>图片</th>
-								<th>状态</th>
+								<th>操作</th>
 							</tr>
 						</thead>
 						<tr class="rem1">
@@ -126,8 +135,95 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		modal.find('#itemsID').val(recipient);
 	});
 	function giveItem(){
-		alert('确认出售成功 ID'+$('#itemsID').val()+' 赠送对象 '+$('#to').val());
-		window.location.reload(true); 
+		let sdata = {};
+		sdata['username']=d_username;
+		sdata['userType']=d_userType;
+		sdata['itemID']=$('#itemsID').val();
+		sdata['to']=$('#to').val();
+		let sdataJSON = JSON.stringify(sdata);
+		$.ajax({
+				type: "POST",
+				url: "/api/giveProductByID",
+				data: sdataJSON,
+				beforeSend: function(request) {
+					request.setRequestHeader("content-type", "application/json");
+					request.setRequestHeader("authorization","Bearer "+d_token);
+				},
+				success: function(result) {
+					if(result['success']==true){
+						alert('赠送成功');
+						window.location.reload(true); 
+					}else{
+						alert('未知错误');
+					}
+					
+				}
+			}); 
+	}
+
+	// 所有可赠送道具
+	var data = {};
+	data['username']=d_username;
+	data['userType']=d_userType;
+	data['itemStatus']="1";
+	data['itemCompany']=companyID;
+	var dataJSON = JSON.stringify(data);
+	$.ajax({
+		type: "POST",
+		url: "/api/getProductsByOwnerAndStatusAndCompany",
+		data: dataJSON,
+		beforeSend: function(request) {
+			request.setRequestHeader("content-type", "application/json");
+			request.setRequestHeader("authorization","Bearer "+d_token);
+		},
+		success: function(result) {
+			if(result['success']==true){
+
+				$("#allItemsNum").html(result['data'].length);
+
+				if(result['data'].length==0){
+					$("#allItems").append(
+						'<tr class="rem1">'+
+							'<td class="invert">暂无</td>'+
+							'<td class="invert"></td>'+
+							'<td class="invert"></td>'+
+							'<td class="invert"></td>'+
+							'<td class="invert"></td>'+
+							'<td class="invert"></td>'+
+							'<td class="invert"></td>'+
+							'<td class="invert"></td>'+
+						'</tr>');
+				}else{
+					for(let i=0;i<result['data'].length;i++){
+						$("#allItems").append(
+							'<tr class="rem1">'+
+								'<td class="invert">'+result['data'][i]['_id']+'</td>'+
+								'<td class="invert">'+result['data'][i]['itemName']+'</td>'+
+								'<td class="invert">'+result['data'][i]['itemType']+'</td>'+
+								'<td class="invert">'+result['data'][i]['itemCount']+'</td>'+
+								'<td class="invert" id="history'+i+'"></td>'+
+								'<td class="invert">'+result['data'][i]['itemInfo']+'</td>'+
+								'<td class="invert-image" id="images'+i+'"></td>'+
+								'<td class="invert"><button type="button" class="btn btn-success upd" data-toggle="modal" data-target="#exampleModal" data-whatever="'+result['data'][i]['_id']+'">赠送道具</button></td>'+
+							'</tr>'
+						);
+						for(let j=0;j<result['data'][i]['itemHistory'].length;j++){
+							$("#history"+i).append(result['data'][i]['itemHistory'][j]+'</br>');
+						}
+						for(let k=0;k<result['data'][i]['itemImages'].length;k++){
+							$("#images"+i).append('<a href="#"><img src="'+result['data'][i]['itemImages'][k]+'" alt=" " class="img-responsive" style="display:inline-block;"/></a>');
+						}
+					}
+				}	
+			}else{
+				alert('获取道具列表错误！');
+			}
+		}
+	});
+
+
+	if(!d_token){
+		window.location.href='login.html'; 
 	}
 	$('#DemoTitle').html('游戏厂商系统');
 </script>
