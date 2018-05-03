@@ -394,6 +394,28 @@ app.post('/api/getProductsByOwner', async function(req, res) {
 		})
 	})
 })
+// 6 根据厂商获取道具列表
+app.post('/api/getProductsByCompany', async function(req, res) {
+	logger.info('<<<<<<<<<<<<<<<<< getProductsByCompany>>>>>>>>>>>>>>>>>');
+	logger.debug('End point : /api/getProductsByCompany');
+	let itemCompany = req.body.username
+	let query = {"itemCompany":itemCompany}
+	await db.find('gameAsset',query,async　function (err, result) {
+		if (err) {
+			logger.debug('查询道具失败: ' + err);
+			return res.json({
+				"success": false,
+				"message": "查询道具失败"
+			})
+		}
+		await logger.debug("查询道具成功"+result);
+		return res.json({
+			"success": true,
+			"message": "查询道具成功",
+			"data":result
+		})
+	})
+})
 // 14 用户游戏中直接交易道具(页面待实现)
 app.post('/api/giveProductByID', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< getProductsByOwner>>>>>>>>>>>>>>>>>');

@@ -103,7 +103,17 @@ createItemIds=$(curl -s -X POST \
 createItemIds=$(echo $createItemIds | jq ".itemIDS" | sed "s/\"//g")
 echo $createItemIds
 # 后面的itemID可以从这个返回值里取
-#
+echo
+echo
+echo "POST request getProductsByCompany  ...根据厂商获取道具列表"
+curl -s -X POST \
+  http://localhost:4000/api/getProductsByCompany \
+  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "content-type: application/json" \
+  -d "{
+		\"username\":\"Tencent\",
+		\"userType\":\"0\"
+}"
 # itemID="5aea83395ab0982998937eed"
 # itemID2="5aea83395ab0982998937eec"
 # echo "POST request startIssueProductByID  ...游戏公司将生成的道具发行"
