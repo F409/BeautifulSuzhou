@@ -586,13 +586,13 @@ app.post('/api/startIssueProductByID', async function(req, res) {
 app.post('/api/getIssueProductByID', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< getIssueProductByID>>>>>>>>>>>>>>>>>');
 	logger.debug('End point : /api/getIssueProductByID');
-	if (userType[req.orgName]=="1") {
-		res.json({
-				"success": false,
-				"message": "wrong userType:"+userType[req.orgName]
-		});
-		return;
-	};
+	// if (userType[req.orgName]=="1") {
+	// 	res.json({
+	// 			"success": false,
+	// 			"message": "wrong userType:"+userType[req.orgName]
+	// 	});
+	// 	return;
+	// };
 	if (req.body.userType=="0") {
 		res.json({
 				"success": false,

@@ -115,7 +115,7 @@ curl -s -X POST \
 		\"userType\":\"0\"
 }"
 echo
-itemID="5aeaeec5284e78640a328c09"
+itemID="5aeaeec5284e78640a328c08"
 itemID2="5aea83395ab0982998937eec"
 echo "POST request startIssueProductByID  ...游戏公司将生成的道具发行"
 echo
@@ -144,11 +144,11 @@ curl -s -X POST \
 #
 # }"
 echo
-echo "POST request getIssueProductByID  ...厂商发道具"
+echo "POST request getIssueProductByID  ...用户从厂商得到道具或者说厂商发道具"
 echo
 curl -s -X POST \
   http://localhost:4000/api/getIssueProductByID \
-  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "authorization: Bearer $ORG2_TOKEN" \
   -H "content-type: application/json" \
   -d "{
 		\"username\":\"xiaoxu\",
