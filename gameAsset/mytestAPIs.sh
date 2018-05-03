@@ -53,7 +53,7 @@ function setChaincodePath(){
 setChaincodePath
 
 response4=$(curl -s -X POST \
-  http://localhost:4000/login \
+  http://localhost:4000/api/login \
   -H "content-type: application/json" \
   -d '{
 		"username":"xiaoxu",
@@ -61,7 +61,7 @@ response4=$(curl -s -X POST \
 		 }')
 echo $response4
 response5=$(curl -s -X POST \
-  http://localhost:4000/login \
+  http://localhost:4000/api/login \
   -H "content-type: application/json" \
   -d '{
 		"username":"Iris",
@@ -74,18 +74,19 @@ ORG2_TOKEN=$(echo $response4 | jq ".token" | sed "s/\"//g")
 echo $ORG2_TOKEN
 
 response6=$(curl -s -X POST \
-  http://localhost:4000/login \
+  http://localhost:4000/api/login \
   -H "content-type: application/json" \
   -d '{
 		"username":"jingjing",
 		"password":"1234"
 		 }')
+echo $response6
 BUYER_TOKEN=$(echo $response6 | jq ".token" | sed "s/\"//g")
 echo $BUYER_TOKEN
 echo "POST request Create new Item  ...生成新道具"
 echo
 createItemIds=$(curl -s -X POST \
-  http://localhost:4000/createItem \
+  http://localhost:4000/api/createItem \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json" \
   -d '{
@@ -101,14 +102,14 @@ createItemIds=$(curl -s -X POST \
 }')
 createItemIds=$(echo $createItemIds | jq ".itemIDS" | sed "s/\"//g")
 echo $createItemIds
-后面的itemID可以从这个返回值里取
+# 后面的itemID可以从这个返回值里取
 #
-# itemID="5ae9b606dc20311d3cb20d4d"
-# itemID2="5ae9b606dc20311d3cb20d4b"
+# itemID="5aea83395ab0982998937eed"
+# itemID2="5aea83395ab0982998937eec"
 # echo "POST request startIssueProductByID  ...游戏公司将生成的道具发行"
 # echo
 # curl -s -X POST \
-#   http://localhost:4000/startIssueProductByID \
+#   http://localhost:4000/api/startIssueProductByID \
 #   -H "authorization: Bearer $ORG1_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d "{
@@ -121,7 +122,7 @@ echo $createItemIds
 # echo "POST request startIssueProductByID  ...游戏公司将生成的道具发行"
 # echo
 # curl -s -X POST \
-#   http://localhost:4000/startIssueProductByID \
+#   http://localhost:4000/api/startIssueProductByID \
 #   -H "authorization: Bearer $ORG1_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d "{
@@ -134,7 +135,7 @@ echo $createItemIds
 # echo "POST request getIssueProductByID  ...厂商发道具"
 # echo
 # curl -s -X POST \
-#   http://localhost:4000/getIssueProductByID \
+#   http://localhost:4000/api/getIssueProductByID \
 #   -H "authorization: Bearer $ORG1_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d "{
@@ -148,7 +149,7 @@ echo $createItemIds
 # echo "POST request getIssueProductByID  ...厂商发道具"
 # echo
 # curl -s -X POST \
-#   http://localhost:4000/getIssueProductByID \
+#   http://localhost:4000/api/getIssueProductByID \
 #   -H "authorization: Bearer $ORG1_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d "{
@@ -161,7 +162,7 @@ echo $createItemIds
 # echo "POST request startSellProductByID  ...提交出售申请"
 # echo
 # curl -s -X POST \
-#   http://localhost:4000/startSellProductByID \
+#   http://localhost:4000/api/startSellProductByID \
 #   -H "authorization: Bearer $ORG2_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d "{
@@ -175,7 +176,7 @@ echo $createItemIds
 # # echo "POST request stopSellProductByID  ...停止出售请求"
 # # echo
 # # curl -s -X POST \
-# #   http://localhost:4000/stopSellProductByID \
+# #   http://localhost:4000/api/stopSellProductByID \
 # #   -H "authorization: Bearer $ORG2_TOKEN" \
 # #   -H "content-type: application/json" \
 # #   -d "{
@@ -187,7 +188,7 @@ echo $createItemIds
 # echo "POST request buyProductByID  ...提交购买请求"
 # echo
 # curl -s -X POST \
-#   http://localhost:4000/buyProductByID \
+#   http://localhost:4000/api/buyProductByID \
 #   -H "authorization: Bearer $BUYER_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d "{
@@ -199,7 +200,7 @@ echo $createItemIds
 # echo "POST request confirmSellProductByID  ...确认他人购买请求"
 # echo
 # curl -s -X POST \
-#   http://localhost:4000/confirmSellProductByID \
+#   http://localhost:4000/api/confirmSellProductByID \
 #   -H "authorization: Bearer $ORG2_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d "{
@@ -212,7 +213,7 @@ echo $createItemIds
 # echo "POST request approveSellProductByID  ...批准玩家购买请求"
 # echo
 # curl -s -X POST \
-#   http://localhost:4000/approveSellProductByID \
+#   http://localhost:4000/api/approveSellProductByID \
 #   -H "authorization: Bearer $ORG1_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d "{
@@ -224,7 +225,7 @@ echo $createItemIds
 # echo
 # echo "POST request getProductsOnsell  ...获得所有正在交易市场的道具列表"
 # curl -s -X POST \
-#   http://localhost:4000/getProductsOnsell \
+#   http://localhost:4000/api/getProductsOnsell \
 #   -H "authorization: Bearer $ORG1_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d "{
@@ -235,7 +236,7 @@ echo $createItemIds
 # echo
 # echo "POST request getProductsByCompanyAndStatus  ...根据状态和厂商获取道具列表"
 # curl -s -X POST \
-#   http://localhost:4000/getProductsByCompanyAndStatus \
+#   http://localhost:4000/api/getProductsByCompanyAndStatus \
 #   -H "authorization: Bearer $ORG1_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d "{
@@ -247,7 +248,7 @@ echo $createItemIds
 # echo
 # echo "POST request getProductByID  ...根据道具ID获取道具"
 # curl -s -X POST \
-#   http://localhost:4000/getProductByID \
+#   http://localhost:4000/api/getProductByID \
 #   -H "authorization: Bearer $ORG1_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d "{
@@ -259,7 +260,7 @@ echo $createItemIds
 # echo
 # echo "POST request getProductsByOwner  ...根据用户获取道具列表"
 # curl -s -X POST \
-#   http://localhost:4000/getProductsByOwner \
+#   http://localhost:4000/api/getProductsByOwner \
 #   -H "authorization: Bearer $ORG1_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d "{
@@ -270,7 +271,7 @@ echo $createItemIds
 # echo "POST request giveProductByID  ... 用户游戏中直接交易道具(页面待实现)"
 # echo
 # curl -s -X POST \
-#   http://localhost:4000/giveProductByID \
+#   http://localhost:4000/api/giveProductByID \
 #   -H "authorization: Bearer $ORG2_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d "{
@@ -283,7 +284,7 @@ echo $createItemIds
 # echo "POST request giveProductByID  ... 用户游戏中直接交易道具(页面待实现)"
 # echo
 # curl -s -X POST \
-#   http://localhost:4000/giveProductByID \
+#   http://localhost:4000/api/giveProductByID \
 #   -H "authorization: Bearer $ORG2_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d "{

@@ -32,6 +32,7 @@ const db = require('./routes/db.js')
 var ObjectId = require('mongodb').ObjectId;
 require('./config.js');
 var hfc = require('fabric-client');
+var path = require('path');
 
 var helper = require('./app/helper.js');
 var createChannel = require('./app/create-channel.js');
@@ -61,21 +62,24 @@ app.use(bodyParser.urlencoded({
 }));
 // set secret variable
 app.set('secret', 'thisismysecret');
-app.use(expressJWT({
+app.use('/api',expressJWT({
 	secret: 'thisismysecret'
 }).unless({
-	path: ['/addUser','/users','/login']
+	path: ['/api/addUser','/api/users','/api/login']
 }));
 app.use(bearerToken());
 app.use(function(req, res, next) {
 	logger.debug(' ------>>>>>> new request for %s',req.originalUrl);
-	if (req.originalUrl.indexOf('/users') >= 0) {
+	if (!(req.originalUrl.indexOf('/api') >= 0)) {
+	return next();
+  }
+	if (req.originalUrl.indexOf('/api/users') >= 0) {
 		return next();
 	}
-	if (req.originalUrl.indexOf('/addUser') >= 0) {
+	if (req.originalUrl.indexOf('/api/addUser') >= 0) {
 		return next();
 	}
-	if (req.originalUrl.indexOf('/login') >= 0) {
+	if (req.originalUrl.indexOf('/api/login') >= 0) {
 		return next();
 	}
 	var token = req.token;
@@ -84,7 +88,7 @@ app.use(function(req, res, next) {
 			res.send({
 				success: false,
 				message: 'Failed to authenticate token. Make sure to include the ' +
-					'token returned from /users call in the authorization header ' +
+					'token returned from /api/login call in the authorization header ' +
 					' as a Bearer token'
 			});
 			return;
@@ -99,7 +103,7 @@ app.use(function(req, res, next) {
 		}
 	});
 });
-
+app.use(express.static(path.join(__dirname, 'public')));
 ///////////////////////////////////////////////////////////////////////////////
 //////////////////////////////// START SERVER /////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -120,10 +124,10 @@ function getErrorMessage(field) {
 ///////////////////////// REST ENDPOINTS START HERE ///////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 // Register and enroll user区块链安装链码以及初始化
-app.post('/Users', async function(req, res) {
+app.post('/api/Users', async function(req, res) {
 	var username = req.body.username;
 	var orgName = req.body.orgName;
-	logger.debug('End point : /users');
+	logger.debug('End point : /api/users');
 	logger.debug('User name : ' + username);
 	logger.debug('Org name  : ' + orgName);
 	if (!username) {
@@ -151,11 +155,11 @@ app.post('/Users', async function(req, res) {
 	}
 	});
 // Register and enroll user往mongodb和区块链上写数据
-app.post('/addUser', async function(req, res) {
+app.post('/api/addUser', async function(req, res) {
 	logger.debug(req.body)
 	var username = req.body.username;
 	var orgName = req.body.orgName;
-	logger.debug('End point : /users');
+	logger.debug('End point : /api/users');
 	logger.debug('User name : ' + username);
 	logger.debug('Org name  : ' + orgName);
 	if (!username) {
@@ -239,10 +243,10 @@ app.post('/addUser', async function(req, res) {
 
 });
 // (1 登陆)
-app.post('/login', async function(req, res) {
+app.post('/api/login', async function(req, res) {
 	var username = req.body.username;
 	var password = md5(req.body.password);
-	logger.debug('End point : /login');
+	logger.debug('End point : /api/login');
 	logger.debug('User name : ' + username)
 	if (!username) {
 		res.json({
@@ -302,9 +306,9 @@ app.post('/login', async function(req, res) {
 
 });
 // 2 获得所有正在交易市场的道具列表
-app.post('/getProductsOnsell', async function(req, res) {
+app.post('/api/getProductsOnsell', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< getProductsOnsell>>>>>>>>>>>>>>>>>');
-	logger.debug('End point : /getProductsOnsell');
+	logger.debug('End point : /api/getProductsOnsell');
 	let query = {$or:[{"itemStatus":"2"},{"itemStatus":"3"},{"itemStatus":"4"}]}
 	await db.find('gameAsset',query,async　function (err, result) {
 		if (err) {
@@ -324,9 +328,9 @@ app.post('/getProductsOnsell', async function(req, res) {
 
 })
 // 3 根据状态和厂商获取道具列表
-app.post('/getProductsByCompanyAndStatus', async function(req, res) {
+app.post('/api/getProductsByCompanyAndStatus', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< getProductsByCompanyAndStatus>>>>>>>>>>>>>>>>>');
-	logger.debug('End point : /getProductsByCompanyAndStatus');
+	logger.debug('End point : /api/getProductsByCompanyAndStatus');
 	let itemStatus = req.body.itemStatus
 	let itemCompany = req.body.username
 	let query = {"itemStatus":itemStatus,"itemCompany":itemCompany}
@@ -347,9 +351,9 @@ app.post('/getProductsByCompanyAndStatus', async function(req, res) {
 	})
 })
 // 4 根据道具ID获取道具
-app.post('/getProductByID', async function(req, res) {
+app.post('/api/getProductByID', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< getProductByID>>>>>>>>>>>>>>>>>');
-	logger.debug('End point : /getProductByID');
+	logger.debug('End point : /api/getProductByID');
 	let itemID = req.body.itemID
 	let query = {"_id":ObjectId(itemID)}
 	await db.find('gameAsset',query,async　function (err, result) {
@@ -369,9 +373,9 @@ app.post('/getProductByID', async function(req, res) {
 	})
 })
 // 6 根据用户获取道具列表
-app.post('/getProductsByOwner', async function(req, res) {
+app.post('/api/getProductsByOwner', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< getProductsByOwner>>>>>>>>>>>>>>>>>');
-	logger.debug('End point : /getProductsByOwner');
+	logger.debug('End point : /api/getProductsByOwner');
 	let owner = req.username
 	let query = {"owner":owner}
 	await db.find('gameAsset',query,async　function (err, result) {
@@ -391,9 +395,9 @@ app.post('/getProductsByOwner', async function(req, res) {
 	})
 })
 // 14 用户游戏中直接交易道具(页面待实现)
-app.post('/giveProductByID', async function(req, res) {
+app.post('/api/giveProductByID', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< getProductsByOwner>>>>>>>>>>>>>>>>>');
-	logger.debug('End point : /getProductsByOwner');
+	logger.debug('End point : /api/getProductsByOwner');
 	var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"1","owner":req.username};
 	var newOwner = req.body.to
 	var newItem = {"owner":newOwner};
@@ -436,9 +440,9 @@ app.post('/giveProductByID', async function(req, res) {
 				})
 })
 // (12生成新道具)游戏公司生成道具
-app.post('/createItem', async function(req, res) {
+app.post('/api/createItem', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< C R E A T E  NEW ITEM>>>>>>>>>>>>>>>>>');
-	logger.debug('End point : /createItem');
+	logger.debug('End point : /api/createItem');
 	if (userType[req.orgName]=="1") {
 		res.json({
 				"success": false,
@@ -496,9 +500,9 @@ app.post('/createItem', async function(req, res) {
 	})
 });
 // (10 提交发行请求)游戏公司将生成的道具发行
-app.post('/startIssueProductByID', async function(req, res) {
+app.post('/api/startIssueProductByID', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< start Issue Product By ID>>>>>>>>>>>>>>>>>');
-	logger.debug('End point : /startIssueProductByID');
+	logger.debug('End point : /api/startIssueProductByID');
 	if (userType[req.orgName]=="1") {
 		res.json({
 				"success": false,
@@ -534,9 +538,9 @@ app.post('/startIssueProductByID', async function(req, res) {
 	})
 })
 // (13 用户从厂商得到道具或者说厂商发道具)用户购买发行的道具
-app.post('/getIssueProductByID', async function(req, res) {
+app.post('/api/getIssueProductByID', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< getIssueProductByID>>>>>>>>>>>>>>>>>');
-	logger.debug('End point : /getIssueProductByID');
+	logger.debug('End point : /api/getIssueProductByID');
 	if (userType[req.orgName]=="1") {
 		res.json({
 				"success": false,
@@ -578,9 +582,9 @@ app.post('/getIssueProductByID', async function(req, res) {
 	})
 })
 // (7提交出售申请)用户A将自己的道具出售，
-app.post('/startSellProductByID', async function(req, res) {
+app.post('/api/startSellProductByID', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< startSellProductByID>>>>>>>>>>>>>>>>>');
-	logger.debug('End point : /startSellProductByID');
+	logger.debug('End point : /api/startSellProductByID');
 	if (userType[req.orgName]=="0") {
 		res.json({
 				"success": false,
@@ -616,9 +620,9 @@ app.post('/startSellProductByID', async function(req, res) {
 
 })
 // (8停止出售请求)当道具未被其他用户购买时，用户A可取消出售申请
-app.post('/stopSellProductByID', async function(req, res) {
+app.post('/api/stopSellProductByID', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< stopSellProductByID>>>>>>>>>>>>>>>>>');
-	logger.debug('End point : /stopSellProductByID');
+	logger.debug('End point : /api/stopSellProductByID');
 	if (userType[req.orgName]=="0") {
 		res.json({
 				"success": false,
@@ -654,9 +658,9 @@ app.post('/stopSellProductByID', async function(req, res) {
 
 })
 // (5 提交购买请求)用户B在平台上看到道具出售信息，提交购买申请
-app.post('/buyProductByID', async function(req, res) {
+app.post('/api/buyProductByID', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< buyProductByID>>>>>>>>>>>>>>>>>');
-	logger.debug('End point : /buyProductByID');
+	logger.debug('End point : /api/buyProductByID');
 	if (userType[req.orgName]=="0") {
 		res.json({
 				"success": false,
@@ -725,9 +729,9 @@ app.post('/buyProductByID', async function(req, res) {
 	})
 });
 // (9确认他人购买请求)用户A同意B的购买申请
-app.post('/confirmSellProductByID', async function(req, res) {
+app.post('/api/confirmSellProductByID', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< confirmSellProductByID>>>>>>>>>>>>>>>>>');
-	logger.debug('End point : /confirmSellProductByID');
+	logger.debug('End point : /api/confirmSellProductByID');
 	if (userType[req.orgName]=="0") {
 		res.json({
 				"success": false,
@@ -825,9 +829,9 @@ app.post('/confirmSellProductByID', async function(req, res) {
 	}
 })
 // (11批准玩家购买请求)A和B的交易请求提交到游戏公司，游戏公司批准玩家的购买请求，交易完成。
-app.post('/approveSellProductByID', async function(req, res) {
+app.post('/api/approveSellProductByID', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< approveSellProductByID>>>>>>>>>>>>>>>>>');
-	logger.debug('End point : /approveSellProductByID');
+	logger.debug('End point : /api/approveSellProductByID');
 	if (userType[req.orgName]=="1") {
 		res.json({
 				"success": false,
@@ -963,9 +967,9 @@ app.post('/approveSellProductByID', async function(req, res) {
 	}
 })
 // Create Channel
-app.post('/channels', async function(req, res) {
+app.post('/api/channels', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< C R E A T E  C H A N N E L >>>>>>>>>>>>>>>>>');
-	logger.debug('End point : /channels');
+	logger.debug('End point : /api/channels');
 	var channelName = req.body.channelName;
 	var channelConfigPath = req.body.channelConfigPath;
 	logger.debug('Channel name : ' + channelName);
@@ -983,7 +987,7 @@ app.post('/channels', async function(req, res) {
 	res.send(message);
 });
 // Join Channel
-app.post('/channels/:channelName/peers', async function(req, res) {
+app.post('/api/channels/:channelName/peers', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< J O I N  C H A N N E L >>>>>>>>>>>>>>>>>');
 	var channelName = req.params.channelName;
 	var peers = req.body.peers;
@@ -1005,7 +1009,7 @@ app.post('/channels/:channelName/peers', async function(req, res) {
 	res.send(message);
 });
 // Install chaincode on target peers
-app.post('/chaincodes', async function(req, res) {
+app.post('/api/chaincodes', async function(req, res) {
 	logger.debug('==================== INSTALL CHAINCODE ==================');
 	var peers = req.body.peers;
 	var chaincodeName = req.body.chaincodeName;
@@ -1040,7 +1044,7 @@ app.post('/chaincodes', async function(req, res) {
 	let message = await install.installChaincode(peers, chaincodeName, chaincodePath, chaincodeVersion, chaincodeType, req.username, req.orgName)
 	res.send(message);});
 // Instantiate chaincode on target peers
-app.post('/channels/:channelName/chaincodes', async function(req, res) {
+app.post('/api/channels/:channelName/chaincodes', async function(req, res) {
 	logger.debug('==================== INSTANTIATE CHAINCODE ==================');
 	var peers = req.body.peers;
 	var chaincodeName = req.body.chaincodeName;
@@ -1081,7 +1085,7 @@ app.post('/channels/:channelName/chaincodes', async function(req, res) {
 	res.send(message);
 });
 // Invoke transaction on chaincode on target peers
-app.post('/channels/:channelName/chaincodes/:chaincodeName', async function(req, res) {
+app.post('/api/channels/:channelName/chaincodes/:chaincodeName', async function(req, res) {
 	logger.debug('==================== INVOKE ON CHAINCODE ==================');
 	var peers = req.body.peers;
 	var chaincodeName = req.params.chaincodeName;
@@ -1113,7 +1117,7 @@ app.post('/channels/:channelName/chaincodes/:chaincodeName', async function(req,
 	res.send(message);
 });
 // Query on chaincode on target peers
-app.get('/channels/:channelName/chaincodes/:chaincodeName', async function(req, res) {
+app.get('/api/channels/:channelName/chaincodes/:chaincodeName', async function(req, res) {
 	logger.debug('==================== QUERY BY CHAINCODE ==================');
 	var channelName = req.params.channelName;
 	var chaincodeName = req.params.chaincodeName;
@@ -1150,7 +1154,7 @@ app.get('/channels/:channelName/chaincodes/:chaincodeName', async function(req, 
 	res.send(message);
 });
 //  Query Get Block by BlockNumber
-app.get('/channels/:channelName/blocks/:blockId', async function(req, res) {
+app.get('/api/channels/:channelName/blocks/:blockId', async function(req, res) {
 	logger.debug('==================== GET BLOCK BY NUMBER ==================');
 	let blockId = req.params.blockId;
 	let peer = req.query.peer;
@@ -1166,7 +1170,7 @@ app.get('/channels/:channelName/blocks/:blockId', async function(req, res) {
 	res.send(message);
 });
 // Query Get Transaction by Transaction ID
-app.get('/channels/:channelName/transactions/:trxnId', async function(req, res) {
+app.get('/api/channels/:channelName/transactions/:trxnId', async function(req, res) {
 	logger.debug('================ GET TRANSACTION BY TRANSACTION_ID ======================');
 	logger.debug('channelName : ' + req.params.channelName);
 	let trxnId = req.params.trxnId;
@@ -1180,7 +1184,7 @@ app.get('/channels/:channelName/transactions/:trxnId', async function(req, res) 
 	res.send(message);
 });
 // Query Get Block by Hash
-app.get('/channels/:channelName/blocks', async function(req, res) {
+app.get('/api/channels/:channelName/blocks', async function(req, res) {
 	logger.debug('================ GET BLOCK BY HASH ======================');
 	logger.debug('channelName : ' + req.params.channelName);
 	let hash = req.query.hash;
@@ -1194,7 +1198,7 @@ app.get('/channels/:channelName/blocks', async function(req, res) {
 	res.send(message);
 });
 //Query for Channel Information
-app.get('/channels/:channelName', async function(req, res) {
+app.get('/api/channels/:channelName', async function(req, res) {
 	logger.debug('================ GET CHANNEL INFORMATION ======================');
 	logger.debug('channelName : ' + req.params.channelName);
 	let peer = req.query.peer;
@@ -1203,7 +1207,7 @@ app.get('/channels/:channelName', async function(req, res) {
 	res.send(message);
 });
 //Query for Channel instantiated chaincodes
-app.get('/channels/:channelName/chaincodes', async function(req, res) {
+app.get('/api/channels/:channelName/chaincodes', async function(req, res) {
 	logger.debug('================ GET INSTANTIATED CHAINCODES ======================');
 	logger.debug('channelName : ' + req.params.channelName);
 	let peer = req.query.peer;
@@ -1212,7 +1216,7 @@ app.get('/channels/:channelName/chaincodes', async function(req, res) {
 	res.send(message);
 });
 // Query to fetch all Installed/instantiated chaincodes
-app.get('/chaincodes', async function(req, res) {
+app.get('/api/chaincodes', async function(req, res) {
 	var peer = req.query.peer;
 	var installType = req.query.type;
 	logger.debug('================ GET INSTALLED CHAINCODES ======================');
@@ -1221,7 +1225,7 @@ app.get('/chaincodes', async function(req, res) {
 	res.send(message);
 });
 // Query to fetch channels
-app.get('/channels', async function(req, res) {
+app.get('/api/channels', async function(req, res) {
 	logger.debug('================ GET CHANNELS ======================');
 	logger.debug('peer: ' + req.query.peer);
 	var peer = req.query.peer;
