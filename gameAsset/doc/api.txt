@@ -16,7 +16,6 @@
         itemCount
         owner
         buyer
-        releaseTime
         itemPrice
         itemHistory[]
         itemInfo

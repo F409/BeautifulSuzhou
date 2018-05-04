@@ -53,7 +53,7 @@ var GameAssetByItem={
 	"Number":"itemCount",
 	"GameCompany":"itemCompany",
 	"GameName":"itemName",
-	"ReleaseTime":"releaseTime",
+	"ReleaseTime":"2017-11-25T08:31:01.956Z",
 	"Owner":"owner",
 	"AssetInfo":"itemInfo",
 	"TransactionInfo":"itemHistory"
@@ -592,9 +592,9 @@ app.post('/api/startIssueProductByID', async function(req, res) {
 		return;
 	};
 	logger.debug("req.body.itemID="+req.body.itemID)
-	var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"0"};
-	var releaseTime =(new Date()).toLocaleString()
-	var newItem = {"itemStatus":"5","releaseTime":releaseTime};
+	// var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"0"};
+	var oldItem = {"_id":ObjectId(req.body.itemID)};
+	var newItem = {"itemStatus":"5"};
 	await db.findOne('gameAsset',oldItem,async function(err,result){
 		if (err) {
 			logger.debug('服务器错误: ' + err);
@@ -693,16 +693,24 @@ app.post('/api/getIssueProductByID', async function(req, res) {
 			var buyer = req.body.username
 			var itemHistory = result.itemHistory
 			var createdTime =(new Date()).toLocaleString();
-			var transaction = createdTime + " "+owner+"=>"+buyer
+			var transaction = createdTime + " "+owner+" to "+buyer
 			itemHistory.push(transaction)
 			logger.debug('itemHistory: ' + itemHistory);
 			var newItem = {"itemStatus":"1","owner":buyer,"itemHistory":itemHistory};
+      //上链代码
+			var peers = ["peer0.org2.example.com","peer1.org2.example.com"];
+			var chaincodeName = "mycc";
+			var channelName = "mychannel";
+			var fcn = "changeGameAssetOwner";
+			var args = [req.body.itemID,buyer,transaction]
+			let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, fcn, args, req.username, req.orgName);
 			await db.updateMany('gameAsset',oldItem,newItem, function (err, result) {
 				if (err) {
 					logger.debug('发道具给用户失败: ' + err);
 					return res.json({
 						"success": false,
-						"message": "发道具给用户失败"
+						"message": "发道具给用户失败",
+						"blockMessage":message
 					})
 				}
 				logger.debug(result)
@@ -710,13 +718,15 @@ app.post('/api/getIssueProductByID', async function(req, res) {
 					logger.debug('发道具给用户失败: ' + result);
 					return res.json({
 						"success": false,
-						"message": "不存在符合条件的道具"
+						"message": "不存在符合条件的道具",
+						"blockMessage":message
 					})
 				}
 				else{
 					return res.json({
 						"success": true,
-						"message": "发道具给用户成功"
+						"message": "发道具给用户成功",
+						"blockMessage":message
 					})
 				}
 			})
@@ -1000,7 +1010,7 @@ app.post('/api/approveSellProductByID', async function(req, res) {
 			var buyer = result.buyer
 			var itemHistory = result.itemHistory
 			var createdTime = (new Date()).toLocaleString();
-			var transaction = createdTime + " "+owner+"=>"+buyer
+			var transaction = createdTime + " "+owner+" to "+buyer
 			itemHistory.push(transaction)
 			logger.debug('itemHistory: ' + itemHistory);
 			var newItem = {"itemStatus":"1","owner":buyer,"buyer":"","itemPrice":"","itemHistory":itemHistory}

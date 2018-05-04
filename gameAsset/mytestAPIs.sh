@@ -100,7 +100,7 @@ echo $BUYER_TOKEN
 # 		"itemInfo":"this is test item",
 # 		"itemImages":"itemImages"
 # }')
-# createItemIds=$(echo $createItemIds | jq ".itemIDS" | sed "s/\"//g")
+# # createItemIds=$(echo $createItemIds | jq ".itemIDS" | sed "s/\"//g")
 # echo $createItemIds
 # 后面的itemID可以从这个返回值里取
 echo
@@ -114,8 +114,8 @@ curl -s -X POST \
 		\"username\":\"Tencent\",
 		\"userType\":\"0\"
 }"
-# echo
-itemID="5aec1d28b15dc247558f0690"
+echo
+itemID="5aec24f513b2ae2575186302"
 # itemID2="5aea83395ab0982998937eec"
 echo "POST request startIssueProductByID  ...游戏公司将生成的道具发行"
 echo
@@ -134,8 +134,31 @@ echo
 echo "GET query chaincode:getGameAssetInfo on peer1 of Org1"
 echo
 curl -s -X GET \
-  "http://localhost:4000/api/channels/mychannel/chaincodes/mycc?peer=peer0.org1.example.com&fcn=getGameAssetInfo&args=%5b%225aec1d28b15dc247558f0690%22%5d" \
-  -H "authorization: Bearer $ORG1_TOKEN" \
+  "http://localhost:4000/api/channels/mychannel/chaincodes/mycc?peer=peer0.org1.example.com&fcn=getGameAssetInfo&args=%5b%225aec24f513b2ae2575186302%22%5d" \
+  -H "authorization: Bearer $ORG2_TOKEN" \
+  -H "content-type: application/json"
+echo
+
+echo
+echo "POST request getIssueProductByID  ...用户从厂商得到道具或者说厂商发道具"
+echo
+curl -s -X POST \
+  http://localhost:4000/api/getIssueProductByID \
+  -H "authorization: Bearer $ORG2_TOKEN" \
+  -H "content-type: application/json" \
+  -d "{
+		\"username\":\"xiaoxu\",
+		\"userType\":\"1\",
+		\"itemID\":\"$itemID\"
+
+}"
+echo
+echo
+echo "GET query chaincode:getGameAssetInfo on peer1 of Org1"
+echo
+curl -s -X GET \
+  "http://localhost:4000/api/channels/mychannel/chaincodes/mycc?peer=peer0.org1.example.com&fcn=getGameAssetInfo&args=%5b%225aec24f513b2ae2575186302%22%5d" \
+  -H "authorization: Bearer $ORG2_TOKEN" \
   -H "content-type: application/json"
 echo
 # echo
@@ -151,20 +174,6 @@ echo
 # 		\"itemID\":\"$itemID2\"
 #
 # }"
-# echo
-# echo "POST request getIssueProductByID  ...用户从厂商得到道具或者说厂商发道具"
-# echo
-# curl -s -X POST \
-#   http://localhost:4000/api/getIssueProductByID \
-#   -H "authorization: Bearer $ORG2_TOKEN" \
-#   -H "content-type: application/json" \
-#   -d "{
-# 		\"username\":\"xiaoxu\",
-# 		\"userType\":\"1\",
-# 		\"itemID\":\"$itemID\"
-#
-# }"
-# echo
 # echo
 # echo "POST request getProductsByCompany  ...根据厂商获取道具列表"
 # curl -s -X POST \
