@@ -161,19 +161,7 @@ curl -s -X GET \
   -H "authorization: Bearer $ORG2_TOKEN" \
   -H "content-type: application/json"
 echo
-# echo
-# echo "POST request startIssueProductByID  ...游戏公司将生成的道具发行"
-# echo
-# curl -s -X POST \
-#   http://localhost:4000/api/startIssueProductByID \
-#   -H "authorization: Bearer $ORG1_TOKEN" \
-#   -H "content-type: application/json" \
-#   -d "{
-# 		\"username\":\"Iris\",
-# 		\"userType\":\"0\",
-# 		\"itemID\":\"$itemID2\"
-#
-# }"
+
 # echo
 # echo "POST request getProductsByCompany  ...根据厂商获取道具列表"
 # curl -s -X POST \
@@ -209,20 +197,7 @@ echo
 # 		\"itemStatus\":\"0\",
 # 		\"itemCompany\":\"Tencent\"
 # }"
-# echo
-# echo "POST request getIssueProductByID  ...厂商发道具"
-# echo
-# curl -s -X POST \
-#   http://localhost:4000/api/getIssueProductByID \
-#   -H "authorization: Bearer $ORG1_TOKEN" \
-#   -H "content-type: application/json" \
-#   -d "{
-# 		\"username\":\"xiaoxu\",
-# 		\"userType\":\"1\",
-# 		\"itemID\":\"$itemID2\"
-#
-# }"
-# echo
+
 echo "POST request startSellProductByID  ...提交出售申请"
 echo
 curl -s -X POST \
@@ -294,6 +269,24 @@ curl -s -X GET \
   -H "authorization: Bearer $ORG2_TOKEN" \
   -H "content-type: application/json"
 echo
+echo "POST request giveProductByID  ... 用户游戏中直接交易道具(页面待实现)"
+echo
+curl -s -X POST \
+  http://localhost:4000/api/giveProductByID \
+  -H "authorization: Bearer $BUYER_TOKEN" \
+  -H "content-type: application/json" \
+  -d "{
+		\"username\":\"jingjing\",
+		\"userType\":\"1\",
+		\"itemID\":\"$itemID\",
+		\"to\":\"xiaoxu\"
+}"
+echo
+curl -s -X GET \
+  "http://localhost:4000/api/channels/mychannel/chaincodes/mycc?peer=peer0.org1.example.com&fcn=getGameAssetInfo&args=%5b%225aec24f513b2ae2575186302%22%5d" \
+  -H "authorization: Bearer $BUYER_TOKEN" \
+  -H "content-type: application/json"
+echo
 # echo "POST request getProductsOnsell  ...获得所有正在交易市场的道具列表"
 # curl -s -X POST \
 #   http://localhost:4000/api/getProductsOnsell \
@@ -337,31 +330,5 @@ echo
 #   -d "{
 # 		\"username\":\"Iris\",
 # 		\"userType\":\"0\"
-# }"
-# echo
-# echo "POST request giveProductByID  ... 用户游戏中直接交易道具(页面待实现)"
-# echo
-# curl -s -X POST \
-#   http://localhost:4000/api/giveProductByID \
-#   -H "authorization: Bearer $ORG2_TOKEN" \
-#   -H "content-type: application/json" \
-#   -d "{
-# 		\"username\":\"xiaoxu\",
-# 		\"userType\":\"1\",
-# 		\"itemID\":\"$itemID2\",
-# 		\"to\":\"jingjing\"
-# }"
-# echo
-# echo "POST request giveProductByID  ... 用户游戏中直接交易道具(页面待实现)"
-# echo
-# curl -s -X POST \
-#   http://localhost:4000/api/giveProductByID \
-#   -H "authorization: Bearer $ORG2_TOKEN" \
-#   -H "content-type: application/json" \
-#   -d "{
-# 		\"username\":\"xiaoxu\",
-# 		\"userType\":\"1\",
-# 		\"itemID\":\"$itemID2\",
-# 		\"to\":\"jingjing2\"
 # }"
 # echo

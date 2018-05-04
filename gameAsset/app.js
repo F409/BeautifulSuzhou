@@ -479,10 +479,10 @@ app.post('/api/getProductsByCompany', async function(req, res) {
 app.post('/api/giveProductByID', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< getProductsByOwner>>>>>>>>>>>>>>>>>');
 	logger.debug('End point : /api/getProductsByOwner');
-	var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"1","owner":req.username};
-	var newOwner = req.body.to
-	var newItem = {"owner":newOwner};
-	await db.findOne('myuser', {"Name":newOwner}, async function (err, result) {
+	var buyer = req.body.to
+	var owner = req.username
+	var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"1","owner":owner};
+	await db.findOne('gameAsset', oldItem, async function (err, result) {
 					if (err) {
 						return res.json({
 							"success": false,
@@ -492,10 +492,21 @@ app.post('/api/giveProductByID', async function(req, res) {
 					if (!result || result.length === 0) {
 						return res.json({
 							"success": false,
-							"message": "找不到用户名:"+newOwner
+							"message": "找不到符合条件的道具"
 						})
 					}
-					await db.updateMany('gameAsset',oldItem,newItem, function (err, result) {
+					var itemHistory = result.itemHistory
+					var createdTime = (new Date()).toLocaleString();
+					var transaction = createdTime + " "+owner+" to "+buyer
+					itemHistory.push(transaction)
+					var newItem = {"owner":buyer,"itemHistory":itemHistory};
+					//上链代码
+					var peers = ["peer0.org2.example.com","peer1.org2.example.com"];
+					var chaincodeName = "mycc";
+					var channelName = "mychannel";
+					var fcn = "changeGameAssetOwner";
+					var args = [req.body.itemID,buyer,transaction]
+					await db.updateMany('gameAsset',oldItem,newItem,async function (err, result) {
 						if (err) {
 							logger.debug('直接转让道具失败: ' + err);
 							return res.json({
@@ -512,9 +523,11 @@ app.post('/api/giveProductByID', async function(req, res) {
 							})
 						}
 						else{
+							let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, fcn, args, req.username, req.orgName);
 							return res.json({
 								"success": true,
-								"message": "直接转让道具成功"
+								"message": "直接转让道具成功",
+								"blockMessage":message
 							})
 						}
 					})
@@ -704,6 +717,7 @@ app.post('/api/getIssueProductByID', async function(req, res) {
 			var fcn = "changeGameAssetOwner";
 			var args = [req.body.itemID,buyer,transaction]
 			let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, fcn, args, req.username, req.orgName);
+
 			await db.updateMany('gameAsset',oldItem,newItem, function (err, result) {
 				if (err) {
 					logger.debug('发道具给用户失败: ' + err);
