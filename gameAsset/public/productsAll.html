@@ -203,11 +203,12 @@ var data = {};
 					}
 				}	
 			}else{
-				alert('获取道具列表错误！');
+				alert(result['message']);
 			}
 		}
 	});
-
+	$('#youxi').addClass('hide');
+	//$('#shichang').addClass('hide');
 $('#DemoTitle').html('交易平台系统');
 </script>
 

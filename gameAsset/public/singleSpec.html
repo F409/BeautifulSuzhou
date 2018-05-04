@@ -127,10 +127,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				},
 				success: function(result) {
 					if(result['success']==true){
-						alert('打怪获得成功 ');
+						alert(result['message']);
 						window.location.href='center.html'; 
 					}else{
-						alert('未知错误');
+						alert(result['message']);
 					}
 					
 				}
@@ -180,12 +180,13 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						  });
 
 			}else{
-				alert('获取道具列表错误！');
+				alert(result['message']);
 			}
 		}
 	});
-
-	$('#DemoTitle').html('游戏厂商系统');
+	//$('#youxi').addClass('hide');
+	$('#shichang').addClass('hide');
+	$('#DemoTitle').html('游戏内商城');
 </script>
 <!-- footer -->
 <script type="text/javascript" src="js/footer.js"></script>

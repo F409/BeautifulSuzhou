@@ -129,10 +129,10 @@ if(!singleID){
 				},
 				success: function(result) {
 					if(result['success']==true){
-						alert('提交购买成功 ');
+						alert(result['message']);
 						window.location.href='center.html'; 
 					}else{
-						alert('未知错误');
+						alert(result['message']);
 					}
 					
 				}
@@ -183,12 +183,13 @@ if(!singleID){
 						  });
 
 			}else{
-				alert('获取道具列表错误！');
+				alert(result['message']);
 			}
 		}
 	});
 
-
+	$('#youxi').addClass('hide');
+	//$('#shichang').addClass('hide');
 	$('#DemoTitle').html('交易平台系统');
 </script>
 <!-- footer -->

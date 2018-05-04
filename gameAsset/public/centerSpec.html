@@ -201,10 +201,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				},
 				success: function(result) {
 					if(result['success']==true){
-						alert('发行 '+id+' 成功');
+						alert(result['message']);
 						window.location.href='centerSpec.html'; 
 					}else{
-						alert('未知错误');
+						alert(result['message']);
 					}
 					
 				}
@@ -229,10 +229,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				},
 				success: function(result) {
 					if(result['success']==true){
-						alert('执行成功 ');
+						alert(result['message']);
 						window.location.href='centerSpec.html'; 
 					}else{
-						alert('未知错误');
+						alert(result['message']);
 					}
 					
 				}
@@ -295,10 +295,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				},
 				success: function(result) {
 					if(result['success']==true){
-						alert('创建成功 ');
+						alert(result['message']);
 						window.location.href='centerSpec.html'; 
 					}else{
-						alert('未知错误');
+						alert(result['message']);
 					}
 					
 				}
@@ -375,7 +375,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 					}
 				}	
 			}else{
-				alert('获取道具列表错误！');
+				alert(result['message']);
 			}
 		}
 	});
@@ -439,12 +439,14 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 					}
 				}				
 			}else{
-				alert('获取道具列表错误！');
+				alert(result['message']);
 			}
 		}
 	});
 	// 标题
-	$('#DemoTitle').html('游戏厂商系统');
+	$('#DemoTitle').html('游戏厂商管理系统');
+	$('#youxi').addClass('hide');
+	$('#shichang').addClass('hide');
 	if(!d_token){
 		window.location.href='login.html'; 
 	}
