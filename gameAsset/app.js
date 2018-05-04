@@ -1014,6 +1014,13 @@ app.post('/api/approveSellProductByID', async function(req, res) {
 			itemHistory.push(transaction)
 			logger.debug('itemHistory: ' + itemHistory);
 			var newItem = {"itemStatus":"1","owner":buyer,"buyer":"","itemPrice":"","itemHistory":itemHistory}
+			//上链代码
+			var peers = ["peer0.org1.example.com","peer1.org1.example.com"];
+			var chaincodeName = "mycc";
+			var channelName = "mychannel";
+			var fcn = "changeGameAssetOwner";
+			var args = [req.body.itemID,buyer,transaction]
+
 			await db.findOne('myuser', {"Name":owner }, async function (err, result) {
 				if (err) {
 					return res.json({
@@ -1037,18 +1044,20 @@ app.post('/api/approveSellProductByID', async function(req, res) {
 							"message": "内部服务器错误"
 						})
 					}
+					let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, fcn, args, req.username, req.orgName);
 					await db.updateMany('gameAsset',oldItem,newItem, function (err, result) {
 						if (err) {
 							logger.debug('内部服务器错误: ' + err);
 							return res.json({
 								"success": false,
-								"message": "内部服务器错误"
+								"message": "内部服务器错误",
 							})
 						}
 						logger.debug(result)
 							return res.json({
 								"success": true,
-								"message": "批准玩家购买请求成功"
+								"message": "批准玩家购买请求成功",
+								"blockMessage":message
 							})
 					})
 				})

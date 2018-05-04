@@ -223,70 +223,77 @@ echo
 #
 # }"
 # echo
-# echo "POST request startSellProductByID  ...提交出售申请"
+echo "POST request startSellProductByID  ...提交出售申请"
+echo
+curl -s -X POST \
+  http://localhost:4000/api/startSellProductByID \
+  -H "authorization: Bearer $ORG2_TOKEN" \
+  -H "content-type: application/json" \
+  -d "{
+		\"username\":\"xiaoxu\",
+		\"userType\":\"1\",
+		\"itemID\":\"$itemID\",
+		\"itemPrice\":\"11\"
+}"
+echo
+# echo
+# echo "POST request stopSellProductByID  ...停止出售请求"
 # echo
 # curl -s -X POST \
-#   http://localhost:4000/api/startSellProductByID \
+#   http://localhost:4000/api/stopSellProductByID \
 #   -H "authorization: Bearer $ORG2_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d "{
 # 		\"username\":\"xiaoxu\",
-# 		\"userType\":\"1\",
-# 		\"itemID\":\"$itemID\",
-# 		\"itemPrice\":\"11\"
-# }"
-# echo
-# # echo
-# # echo "POST request stopSellProductByID  ...停止出售请求"
-# # echo
-# # curl -s -X POST \
-# #   http://localhost:4000/api/stopSellProductByID \
-# #   -H "authorization: Bearer $ORG2_TOKEN" \
-# #   -H "content-type: application/json" \
-# #   -d "{
-# # 		\"username\":\"xiaoxu\",
-# # 		\"userType\":\"1\",
-# # 		\"itemID\":\"$itemID\"
-# # }"
-# echo
-# echo "POST request buyProductByID  ...提交购买请求"
-# echo
-# curl -s -X POST \
-#   http://localhost:4000/api/buyProductByID \
-#   -H "authorization: Bearer $BUYER_TOKEN" \
-#   -H "content-type: application/json" \
-#   -d "{
-# 		\"username\":\"jingjing\",
 # 		\"userType\":\"1\",
 # 		\"itemID\":\"$itemID\"
 # }"
-# echo
-# echo "POST request confirmSellProductByID  ...确认他人购买请求"
-# echo
-# curl -s -X POST \
-#   http://localhost:4000/api/confirmSellProductByID \
-#   -H "authorization: Bearer $ORG2_TOKEN" \
-#   -H "content-type: application/json" \
-#   -d "{
-# 		\"username\":\"xiaoxu\",
-# 		\"userType\":\"1\",
-# 		\"itemID\":\"$itemID\",
-# 		\"confirm\":true
-# }"
-# echo
-# echo "POST request approveSellProductByID  ...批准玩家购买请求"
-# echo
-# curl -s -X POST \
-#   http://localhost:4000/api/approveSellProductByID \
-#   -H "authorization: Bearer $ORG1_TOKEN" \
-#   -H "content-type: application/json" \
-#   -d "{
-# 		\"username\":\"Tencent\",
-# 		\"userType\":\"0\",
-# 		\"itemID\":\"$itemID\",
-# 		\"approve\":true
-# }"
-# echo
+echo
+echo "POST request buyProductByID  ...提交购买请求"
+echo
+curl -s -X POST \
+  http://localhost:4000/api/buyProductByID \
+  -H "authorization: Bearer $BUYER_TOKEN" \
+  -H "content-type: application/json" \
+  -d "{
+		\"username\":\"jingjing\",
+		\"userType\":\"1\",
+		\"itemID\":\"$itemID\"
+}"
+echo
+echo "POST request confirmSellProductByID  ...确认他人购买请求"
+echo
+curl -s -X POST \
+  http://localhost:4000/api/confirmSellProductByID \
+  -H "authorization: Bearer $ORG2_TOKEN" \
+  -H "content-type: application/json" \
+  -d "{
+		\"username\":\"xiaoxu\",
+		\"userType\":\"1\",
+		\"itemID\":\"$itemID\",
+		\"confirm\":true
+}"
+echo
+echo "POST request approveSellProductByID  ...批准玩家购买请求"
+echo
+curl -s -X POST \
+  http://localhost:4000/api/approveSellProductByID \
+  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "content-type: application/json" \
+  -d "{
+		\"username\":\"Tencent\",
+		\"userType\":\"0\",
+		\"itemID\":\"$itemID\",
+		\"approve\":true
+}"
+echo
+echo "GET query chaincode:getGameAssetInfo on peer1 of Org1"
+echo
+curl -s -X GET \
+  "http://localhost:4000/api/channels/mychannel/chaincodes/mycc?peer=peer0.org1.example.com&fcn=getGameAssetInfo&args=%5b%225aec24f513b2ae2575186302%22%5d" \
+  -H "authorization: Bearer $ORG2_TOKEN" \
+  -H "content-type: application/json"
+echo
 # echo "POST request getProductsOnsell  ...获得所有正在交易市场的道具列表"
 # curl -s -X POST \
 #   http://localhost:4000/api/getProductsOnsell \
