@@ -640,14 +640,13 @@ app.post('/api/startIssueProductByID', async function(req, res) {
 		var fcn = "generateAsset";
 		var args =new Array([]);
 		args[0] = JSON.stringify(blockItem);
-		let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, fcn, args, req.username, req.orgName);
-		await db.updateMany('gameAsset',oldItem,newItem, function (err, result) {
+
+		await db.updateMany('gameAsset',oldItem,newItem,async function (err, result) {
 			if (err) {
 				logger.debug('发行道具失败: ' + err);
 				return res.json({
 					"success": false,
-					"message": "发行道具失败",
-					"blockMessage":message
+					"message": "发行道具失败"
 				})
 			}
 			logger.debug(result)
@@ -655,11 +654,11 @@ app.post('/api/startIssueProductByID', async function(req, res) {
 				logger.debug('发行道具失败: ' + result);
 				return res.json({
 					"success": false,
-					"message": "不存在符合条件的道具",
-					"blockMessage":message
+					"message": "不存在符合条件的道具"
 				})
 			}
 			else{
+				let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, fcn, args, req.username, req.orgName);
 				return res.json({
 					"success": true,
 					"message": "发行道具成功",
@@ -716,15 +715,12 @@ app.post('/api/getIssueProductByID', async function(req, res) {
 			var channelName = "mychannel";
 			var fcn = "changeGameAssetOwner";
 			var args = [req.body.itemID,buyer,transaction]
-			let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, fcn, args, req.username, req.orgName);
-
-			await db.updateMany('gameAsset',oldItem,newItem, function (err, result) {
+			await db.updateMany('gameAsset',oldItem,newItem,async function (err, result) {
 				if (err) {
 					logger.debug('发道具给用户失败: ' + err);
 					return res.json({
 						"success": false,
-						"message": "发道具给用户失败",
-						"blockMessage":message
+						"message": "发道具给用户失败"
 					})
 				}
 				logger.debug(result)
@@ -732,11 +728,11 @@ app.post('/api/getIssueProductByID', async function(req, res) {
 					logger.debug('发道具给用户失败: ' + result);
 					return res.json({
 						"success": false,
-						"message": "不存在符合条件的道具",
-						"blockMessage":message
+						"message": "不存在符合条件的道具"
 					})
 				}
 				else{
+					let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, fcn, args, req.username, req.orgName);
 					return res.json({
 						"success": true,
 						"message": "发道具给用户成功",
@@ -1058,15 +1054,16 @@ app.post('/api/approveSellProductByID', async function(req, res) {
 							"message": "内部服务器错误"
 						})
 					}
-					let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, fcn, args, req.username, req.orgName);
-					await db.updateMany('gameAsset',oldItem,newItem, function (err, result) {
+
+					await db.updateMany('gameAsset',oldItem,newItem,async function (err, result) {
 						if (err) {
 							logger.debug('内部服务器错误: ' + err);
 							return res.json({
 								"success": false,
-								"message": "内部服务器错误",
+								"message": "内部服务器错误"
 							})
 						}
+						let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, fcn, args, req.username, req.orgName);
 						logger.debug(result)
 							return res.json({
 								"success": true,

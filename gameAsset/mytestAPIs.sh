@@ -287,6 +287,8 @@ curl -s -X GET \
   -H "authorization: Bearer $BUYER_TOKEN" \
   -H "content-type: application/json"
 echo
+#############################以上是上链部分测试，注意要用新的itemID替换原来的进行测试###################
+################################################################################################
 # echo "POST request getProductsOnsell  ...获得所有正在交易市场的道具列表"
 # curl -s -X POST \
 #   http://localhost:4000/api/getProductsOnsell \
