@@ -242,7 +242,7 @@ app.post('/api/addUser', async function(req, res) {
 	})
 
 });
-// (1 登陆)
+// (1 登录)
 app.post('/api/login', async function(req, res) {
 	var username = req.body.username;
 	var password = md5(req.body.password);
@@ -309,7 +309,7 @@ app.post('/api/login', async function(req, res) {
 app.post('/api/getProductsOnsell', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< getProductsOnsell>>>>>>>>>>>>>>>>>');
 	logger.debug('End point : /api/getProductsOnsell');
-	let query = {$or:[{"itemStatus":"2"},{"itemStatus":"3"},{"itemStatus":"4"}]}
+	let query = {"itemStatus":"2"};
 	await db.find('gameAsset',query,async　function (err, result) {
 		if (err) {
 			logger.debug('查询道具失败: ' + err);

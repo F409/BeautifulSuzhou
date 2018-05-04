@@ -14,7 +14,7 @@ document.writeln('					<ul>');
 if(d_token){ // 已登录
 	document.writeln('						<li id="loginInfo">欢迎您 '+d_username+' !</li>');
 	document.writeln('						<li id="center"><i class="glyphicon glyphicon-user" aria-hidden="true"></i><a href="center.html">信息中心</a></li>');
-	document.writeln('						<li id="loginOut"><i class="glyphicon glyphicon-log-out" aria-hidden="true"></i><a href="#">注销登陆</a></li>');
+	document.writeln('						<li id="loginOut"><i class="glyphicon glyphicon-log-out" aria-hidden="true"></i><a href="#">注销登录</a></li>');
 }else{ // 未登录
 	document.writeln('						<li id="loginInfo">请您登录系统 ！</li>');
 	document.writeln('						<li id="login"><i class="glyphicon glyphicon-log-in" aria-hidden="true"></i><a href="login.html">登录</a></li>');
@@ -66,7 +66,7 @@ document.writeln('			</div>');
 document.writeln('		</div>');
 document.writeln('	</div>');
 
-// 取消登陆
+// 取消登录
 $('#loginOut').on('click', function () {
 	localStorage.removeItem('d-username');
 	localStorage.removeItem('d-userType');

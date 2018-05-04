@@ -71,7 +71,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		<div id="select2c" class="checkout">
 			<div class="container">
 				<div class="checkout-right animated" data-wow-delay=".5s">
-					<table class="timetable_sub">
+					<table class="timetable_sub" id="allItems">
 						<thead>
 							<tr>
 								<th>道具ID</th>	
@@ -84,16 +84,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								<th>操作</th>
 							</tr>
 						</thead>
-						<tr class="rem1">
-							<td class="invert">12345</td>
-							<td class="invert">大保健</td>
-							<td class="invert">皮肤</td>
-							<td class="invert">1000</td>
-							<td class="invert">2017.01.01 游戏厂商生成</br>2017.01.02 A购买</br>2017.01.03 B购买</td>
-							<td class="invert">简介12345</td>
-							<td class="invert-image"><a href="single.html"><img src="images/22.jpg" alt=" " class="img-responsive" /></a></td>
-							<td class="invert"><button type="button" class="btn btn-success upd" data-toggle="modal" data-target="#exampleModal" data-whatever="12345">赠送道具</button></td>
-						</tr>
 					</table>
 					
 				</div>
@@ -170,7 +160,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	var dataJSON = JSON.stringify(data);
 	$.ajax({
 		type: "POST",
-		url: "/api/getProductsByOwnerAndStatusAndCompany",
+		url: "/api/getProductsByOwnerAndStatusAnditemCompany",
 		data: dataJSON,
 		beforeSend: function(request) {
 			request.setRequestHeader("content-type", "application/json");

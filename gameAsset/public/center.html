@@ -149,7 +149,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			  </form>
 			</div>
 			<div class="modal-footer">
-			  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			  <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 			  <button type="button" class="btn btn-primary" onclick="StartSell()">确认</button>
 			</div>
 		  </div>
@@ -301,7 +301,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						'</tr>');
 				}else{
 					for(let i=0;i<result['data'].length;i++){
-						$("#allItems").append(
+						$("#myItems").append(
 							'<tr class="rem1">'+
 								'<td class="invert">'+result['data'][i]['_id']+'</td>'+
 								'<td class="invert">'+result['data'][i]['itemName']+'</td>'+
@@ -324,7 +324,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						if(result['data'][i]['itemStatus']=="1"){
 							$("#mybutton"+i).append('<button type="button" class="btn btn-success upd" data-toggle="modal" data-target="#exampleModal" data-whatever="'+result['data'][i]['_id']+'">可出售</button>');
 						}else if(result['data'][i]['itemStatus']=="2"){
-							$("#mybutton"+i).append('<button type="button" class="btn btn-danger" onclick="StopSell("'+result['data'][i]['_id']+'")">停止出售</button>');
+							$("#mybutton"+i).append('<button type="button" class="btn btn-danger" onclick="StopSell(\''+result['data'][i]['_id']+'\')">停止出售</button>');
 						}else{
 							$("#mybutton"+i).append('<button type="button" class="btn btn-warning" disabled>正在出售中</button>');
 						}
@@ -379,7 +379,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								'<td class="invert" id="dohistory'+i+'"></td>'+
 								'<td class="invert">'+result['data'][i]['itemInfo']+'</td>'+
 								'<td class="invert-image" id="doimages'+i+'"></td>'+
-								'<td class="invert">是否同意 '+result['data'][i]['buyer']+' 的购买?</br></br><button type="button" class="btn btn-success" onclick="ConfirmSell("'+result['data'][i]['_id']+'","true")">同意</button><button type="button" class="btn btn-danger"onclick="ConfirmSell("'+result['data'][i]['_id']+'","false")">取消</button></td>'+
+								'<td class="invert">是否同意 '+result['data'][i]['buyer']+' 的购买?</br></br><button type="button" class="btn btn-success" onclick="ConfirmSell(\''+result['data'][i]['_id']+'\',\'true\')">同意</button><button type="button" class="btn btn-danger"onclick="ConfirmSell(\''+result['data'][i]['_id']+'\',\'false\')">取消</button></td>'+
 							'</tr>'
 						);
 						for(let j=0;j<result['data'][i]['itemHistory'].length;j++){

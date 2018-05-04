@@ -80,20 +80,23 @@ var data = {};
 		},
 		success: function(result) {
 			if(result['success']==true){
-
 				if(result['data'].length==0){
 					$("#allItems").append(
 						'<div class="products-right-grids-bottom">'+
 							'<div class="col-md-4 products-right-grids-bottom-grid">'+
 								'<div class="new-collections-grid1 products-right-grid1 animated wow slideInUp" data-wow-delay=".5s" onclick="items("123")" title="查看详情">'+
 									'<div class="new-collections-grid1-image"><a class="product-image"></div>'+
-									'<h4><a>暂无商品</a></h4>'+
+									'<h4><a>暂无可购买商品</a></h4>'+
 								'</div>'+
 							'</div>'+
 							'<div class="clearfix"> </div>'+
 						'</div>');
 				}else{
-					for(let i=0;i<result['data'].length-2;i=i+3){
+					for(let i=0;i<result['data'].length-2;){
+						if(result['data'][i]['owner']==d_username){
+							i=i+1;
+							continue;
+						}
 						$("#allItems").append(
 						'<div class="products-right-grids-bottom">'+
 							'<div class="col-md-4 products-right-grids-bottom-grid">'+
@@ -119,9 +122,10 @@ var data = {};
 							'</div>'+
 							'<div class="clearfix"> </div>'+
 						'</div>');
+						i=i+3;
 					}
 					let tt = result['data'].length % 3;
-					if (tt == 1){
+					if (tt == 1 && result['data'][result['data'].length-1]['owner']!=d_username){
 						$("#allItems").append('<div class="products-right-grids-bottom">'+
 								'<div class="col-md-4 products-right-grids-bottom-grid">'+
 									'<div class="new-collections-grid1 products-right-grid1 animated wow slideInUp" data-wow-delay=".5s" onclick="items(\''+result['data'][result['data'].length-1]['_id']+'\')" title="查看详情">'+
@@ -132,24 +136,70 @@ var data = {};
 								'</div>'+
 							'<div class="clearfix"> </div>'+
 						'</div>');
-					}else if (tt == 2){
-						$("#allItems").append('<div class="products-right-grids-bottom">'+
-								'<div class="col-md-4 products-right-grids-bottom-grid">'+
-									'<div class="new-collections-grid1 products-right-grid1 animated wow slideInUp" data-wow-delay=".5s" onclick="items(\''+result['data'][result['data'].length-2]['_id']+'\')" title="查看详情">'+
-										'<div class="new-collections-grid1-image"><a class="product-image"><img src="'+result['data'][result['data'].length-2]['itemImages'][0]+'" alt=" " class="img-responsive"></a></div>'+
-										'<h4><a>'+result['data'][result['data'].length-2]['itemName']+'</a></h4><p>'+result['data'][result['data'].length-2]['itemInfo']+'</p>'+
-										'<div class="simpleCart_shelfItem products-right-grid1-add-cart"><p><span class="item_price">￥'+result['data'][result['data'].length-2]['itemPrice']+'</span></p></div>'+
-									'</div>'+
+					}else if (tt == 1 && result['data'][result['data'].length-1]['owner']==d_username){
+						$("#allItems").append(
+						'<div class="products-right-grids-bottom">'+
+							'<div class="col-md-4 products-right-grids-bottom-grid">'+
+								'<div class="new-collections-grid1 products-right-grid1 animated wow slideInUp" data-wow-delay=".5s" onclick="items("123")" title="查看详情">'+
+									'<div class="new-collections-grid1-image"><a class="product-image"></div>'+
+									'<h4><a>暂无可购买商品</a></h4>'+
 								'</div>'+
-								'<div class="col-md-4 products-right-grids-bottom-grid">'+
-									'<div class="new-collections-grid1 products-right-grid1 animated wow slideInUp" data-wow-delay=".5s" onclick="items(\''+result['data'][result['data'].length-1]['_id']+'\')" title="查看详情">'+
-										'<div class="new-collections-grid1-image"><a class="product-image"><img src="'+result['data'][result['data'].length-1]['itemImages'][0]+'" alt=" " class="img-responsive"></a></div>'+
-										'<h4><a>'+result['data'][result['data'].length-1]['itemName']+'</a></h4><p>'+result['data'][result['data'].length-1]['itemInfo']+'</p>'+
-										'<div class="simpleCart_shelfItem products-right-grid1-add-cart"><p><span class="item_price">￥'+result['data'][result['data'].length-1]['itemPrice']+'</span></p></div>'+
+							'</div>'+
+							'<div class="clearfix"> </div>'+
+						'</div>');
+					}else if (tt == 2 ){
+						if (result['data'][result['data'].length-1]['owner']==d_username){
+							$("#allItems").append('<div class="products-right-grids-bottom">'+
+									'<div class="col-md-4 products-right-grids-bottom-grid">'+
+										'<div class="new-collections-grid1 products-right-grid1 animated wow slideInUp" data-wow-delay=".5s" onclick="items(\''+result['data'][result['data'].length-2]['_id']+'\')" title="查看详情">'+
+											'<div class="new-collections-grid1-image"><a class="product-image"><img src="'+result['data'][result['data'].length-2]['itemImages'][0]+'" alt=" " class="img-responsive"></a></div>'+
+											'<h4><a>'+result['data'][result['data'].length-2]['itemName']+'</a></h4><p>'+result['data'][result['data'].length-2]['itemInfo']+'</p>'+
+											'<div class="simpleCart_shelfItem products-right-grid1-add-cart"><p><span class="item_price">￥'+result['data'][result['data'].length-2]['itemPrice']+'</span></p></div>'+
+										'</div>'+
 									'</div>'+
-								'</div>'+
-								'<div class="clearfix"> </div>'+
-							'</div>');
+									'<div class="clearfix"> </div>'+
+								'</div>');
+						}else if (result['data'][result['data'].length-2]['owner']==d_username){
+							$("#allItems").append('<div class="products-right-grids-bottom">'+
+									'<div class="col-md-4 products-right-grids-bottom-grid">'+
+										'<div class="new-collections-grid1 products-right-grid1 animated wow slideInUp" data-wow-delay=".5s" onclick="items(\''+result['data'][result['data'].length-1]['_id']+'\')" title="查看详情">'+
+											'<div class="new-collections-grid1-image"><a class="product-image"><img src="'+result['data'][result['data'].length-1]['itemImages'][0]+'" alt=" " class="img-responsive"></a></div>'+
+											'<h4><a>'+result['data'][result['data'].length-1]['itemName']+'</a></h4><p>'+result['data'][result['data'].length-1]['itemInfo']+'</p>'+
+											'<div class="simpleCart_shelfItem products-right-grid1-add-cart"><p><span class="item_price">￥'+result['data'][result['data'].length-1]['itemPrice']+'</span></p></div>'+
+										'</div>'+
+									'</div>'+
+									'<div class="clearfix"> </div>'+
+								'</div>');
+						}else if(result['data'][result['data'].length-2]['owner']!=d_username&&result['data'][result['data'].length-2]['owner']!=d_username){
+							$("#allItems").append('<div class="products-right-grids-bottom">'+
+									'<div class="col-md-4 products-right-grids-bottom-grid">'+
+										'<div class="new-collections-grid1 products-right-grid1 animated wow slideInUp" data-wow-delay=".5s" onclick="items(\''+result['data'][result['data'].length-2]['_id']+'\')" title="查看详情">'+
+											'<div class="new-collections-grid1-image"><a class="product-image"><img src="'+result['data'][result['data'].length-2]['itemImages'][0]+'" alt=" " class="img-responsive"></a></div>'+
+											'<h4><a>'+result['data'][result['data'].length-2]['itemName']+'</a></h4><p>'+result['data'][result['data'].length-2]['itemInfo']+'</p>'+
+											'<div class="simpleCart_shelfItem products-right-grid1-add-cart"><p><span class="item_price">￥'+result['data'][result['data'].length-2]['itemPrice']+'</span></p></div>'+
+										'</div>'+
+									'</div>'+
+									'<div class="col-md-4 products-right-grids-bottom-grid">'+
+										'<div class="new-collections-grid1 products-right-grid1 animated wow slideInUp" data-wow-delay=".5s" onclick="items(\''+result['data'][result['data'].length-1]['_id']+'\')" title="查看详情">'+
+											'<div class="new-collections-grid1-image"><a class="product-image"><img src="'+result['data'][result['data'].length-1]['itemImages'][0]+'" alt=" " class="img-responsive"></a></div>'+
+											'<h4><a>'+result['data'][result['data'].length-1]['itemName']+'</a></h4><p>'+result['data'][result['data'].length-1]['itemInfo']+'</p>'+
+											'<div class="simpleCart_shelfItem products-right-grid1-add-cart"><p><span class="item_price">￥'+result['data'][result['data'].length-1]['itemPrice']+'</span></p></div>'+
+										'</div>'+
+									'</div>'+
+									'<div class="clearfix"> </div>'+
+								'</div>');
+						}else{
+							$("#allItems").append(
+								'<div class="products-right-grids-bottom">'+
+									'<div class="col-md-4 products-right-grids-bottom-grid">'+
+										'<div class="new-collections-grid1 products-right-grid1 animated wow slideInUp" data-wow-delay=".5s" onclick="items("123")" title="查看详情">'+
+											'<div class="new-collections-grid1-image"><a class="product-image"></div>'+
+											'<h4><a>暂无可购买商品</a></h4>'+
+										'</div>'+
+									'</div>'+
+									'<div class="clearfix"> </div>'+
+								'</div>');
+						}
 					}
 				}	
 			}else{

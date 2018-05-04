@@ -35,7 +35,7 @@ index.html
 
 (login.html)
 
-1 登陆
+1 登录
 
 url : /api/login
 type : POST
@@ -54,7 +54,7 @@ type : POST
 dataType : application/json
 data : {"username":"xxx","userType":"xxx"}
 success : {"success":true/false,"data":["xxx","yyy"]}
-说明：请求成功success字段返回true，data返回所有道具状态为（2，3，4）的所有道具数组；否则success字段返回false，其余为空。
+说明：请求成功success字段返回true，data返回所有道具状态为（2）的所有道具数组；否则success字段返回false，其余为空。
 
 
 (productsSpec.html)

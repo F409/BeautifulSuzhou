@@ -35,7 +35,7 @@ index.html
 
 (login.html)
 
-1 登陆
+1 登录
 
 url : /api/login
 type : POST
