@@ -605,8 +605,8 @@ app.post('/api/startIssueProductByID', async function(req, res) {
 		return;
 	};
 	logger.debug("req.body.itemID="+req.body.itemID)
-	// var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"0"};
-	var oldItem = {"_id":ObjectId(req.body.itemID)};
+	var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"0"};
+	// var oldItem = {"_id":ObjectId(req.body.itemID)};
 	var newItem = {"itemStatus":"5"};
 	await db.findOne('gameAsset',oldItem,async function(err,result){
 		if (err) {
