@@ -169,7 +169,7 @@ TRX_ID=$(curl -s -X POST \
   -d '{
 	"peers": ["peer0.org1.example.com","peer1.org1.example.com"],
 	"fcn":"generateAsset",
-	"args":["{\"AssetID\":\"001\",\"Type\":\"money\",\"Number\":16,\"GameCompany\":\"Tencent\",\"GameName\":\"chiji\",\"ReleaseTime\":\"2018-04-29T05:05:13.359Z\",\"Owner\":\"Liyiming\",\"AssetInfo\":\"nothing\",\"TransactionInfo\":[\"init\"]}"]
+	"args":["{\"AssetID\":\"001\",\"Type\":\"money\",\"Number\":16,\"GameCompany\":\"Tencent\",\"GameName\":\"chiji\",\"ReleaseTime\":\"2017-11-25T08:31:01.956Z\",\"Owner\":\"Liyiming\",\"AssetInfo\":\"nothing\",\"TransactionInfo\":[\"init\"]}"]
 }')
 echo "Transacton ID is $TRX_ID"
 echo
