@@ -42,7 +42,7 @@ type GameAsset struct {
 	ReleaseTime     time.Time `json:"ReleaseTime"`
 	Owner           string    `json:"Owner"`
 	AssetInfo       string    `json:"AssetInfo"`
-	TransactionInfo string    `json:"TransactionInfo"`
+	TransactionInfo []string  `json:"TransactionInfo"`
 }
 
 //information for User
@@ -179,8 +179,9 @@ func (t *GameAssetChaincode) changeGameAssetOwner(stub shim.ChaincodeStubInterfa
 
 	GameAssetObj.Owner = NewOwner
 	//采用‘ + ’作为解析的分隔符
-	NewTransactionInfo := GameAssetObj.TransactionInfo + " + " + TransactionInfo
-	GameAssetObj.TransactionInfo = NewTransactionInfo
+	GameAssetObj.TransactionInfo = append(GameAssetObj.TransactionInfo, TransactionInfo)
+	// NewTransactionInfo := GameAssetObj.TransactionInfo + " + " + TransactionInfo
+	// GameAssetObj.TransactionInfo = NewTransactionInfo
 
 	jsonAsBytes, _ := json.Marshal(GameAssetObj)
 	err = stub.PutState(AssetID, []byte(jsonAsBytes))
