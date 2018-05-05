@@ -417,8 +417,15 @@ app.post('/api/getProductByID', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< getProductByID>>>>>>>>>>>>>>>>>');
 	logger.debug('End point : /api/getProductByID');
 	let itemID = req.body.itemID
+	if (itemID.length < "5aec24f513b2ae2575186302".length){
+		return res.json({
+			"success": false,
+			"message": "id长度错误,长度应为:"+"5aec24f513b2ae2575186302".length
+		})
+	}
+
 	let query = {"_id":ObjectId(itemID)}
-	await db.find('gameAsset',query,async　function (err, result) {
+	await db.findOne('gameAsset',query,async　function (err, result) {
 		if (err) {
 			logger.debug('查询道具失败: ' + err);
 			return res.json({
@@ -426,11 +433,17 @@ app.post('/api/getProductByID', async function(req, res) {
 				"message": "查询道具失败"
 			})
 		}
+		if (!result || result.length === 0) {
+			return res.json({
+				"success": false,
+				"message": "id不存在"
+			})
+		}
 		await logger.debug("查询道具成功"+result);
 		return res.json({
 			"success": true,
 			"message": "查询道具成功",
-			"data":result[0]
+			"data":result
 		})
 	})
 })
@@ -608,8 +621,8 @@ app.post('/api/startIssueProductByID', async function(req, res) {
 		return;
 	};
 	logger.debug("req.body.itemID="+req.body.itemID)
-	// var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"0"};
-	var oldItem = {"_id":ObjectId(req.body.itemID)};
+	var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"0"};
+	// var oldItem = {"_id":ObjectId(req.body.itemID)};
 	var newItem = {"itemStatus":"5"};
 	await db.findOne('gameAsset',oldItem,async function(err,result){
 		if (err) {

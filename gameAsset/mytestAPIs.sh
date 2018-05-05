@@ -312,17 +312,28 @@ echo
 # }"
 # echo
 # echo
-# echo "POST request getProductByID  ...根据道具ID获取道具"
-# curl -s -X POST \
-#   http://localhost:4000/api/getProductByID \
-#   -H "authorization: Bearer $ORG1_TOKEN" \
-#   -H "content-type: application/json" \
-#   -d "{
-# 		\"username\":\"Tencent\",
-# 		\"userType\":\"0\",
-# 		\"itemID\":\"$itemID\"
-# }"
-# echo
+echo "POST request getProductByID  ...根据道具ID获取道具"
+curl -s -X POST \
+  http://localhost:4000/api/getProductByID \
+  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "content-type: application/json" \
+  -d "{
+		\"username\":\"Tencent\",
+		\"userType\":\"0\",
+		\"itemID\":\"666666666666666666666666\"
+}"
+echo
+echo "POST request getProductByID  ...根据道具ID获取道具"
+curl -s -X POST \
+  http://localhost:4000/api/getProductByID \
+  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "content-type: application/json" \
+  -d "{
+		\"username\":\"Tencent\",
+		\"userType\":\"0\",
+		\"itemID\":\"$itemID\"
+}"
+echo
 # echo
 # echo "POST request getProductsByOwner  ...根据用户获取道具列表"
 # curl -s -X POST \
