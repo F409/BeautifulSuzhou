@@ -406,8 +406,27 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	$('#youxi').addClass('hide');
 	$('#shichang').addClass('hide');
 	$('#DemoTitle').html('交易平台系统');
+	var datal = {};
+			datal['username']=d_username;
+			datal['password']=storage['d-password']
+			var dataJSONl = JSON.stringify(datal);
+
+			$.ajax({
+				type: "POST",
+				url: "/api/login",
+				data: dataJSONl,
+				beforeSend: function(request) {
+					request.setRequestHeader("content-type", "application/json");
+				},
+				success: function(result) {
+					if(result['success']==true){
+						storage['d-balance'] = result['balance'];
+						$('#balance').append(result['balance']);
+						storage['d-token'] = result['token'];
+					}
+				}
+			});
 	$('#username').append(d_username);
-	$('#balance').append(d_balance);
 </script>
 <!-- footer -->
 <script type="text/javascript" src="js/footer.js"></script>

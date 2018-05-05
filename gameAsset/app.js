@@ -76,7 +76,7 @@ app.set('secret', 'thisismysecret');
 app.use('/api',expressJWT({
 	secret: 'thisismysecret'
 }).unless({
-	path: ['/api/addUser','/api/users','/api/login']
+	path: ['/api/addUser','/api/users','/api/login','/api/getProductByID']
 }));
 app.use(bearerToken());
 app.use(function(req, res, next) {
@@ -91,6 +91,9 @@ app.use(function(req, res, next) {
 		return next();
 	}
 	if (req.originalUrl.indexOf('/api/login') >= 0) {
+		return next();
+	}
+	if (req.originalUrl.indexOf('/api/getProductByID') >= 0) {
 		return next();
 	}
 	var token = req.token;

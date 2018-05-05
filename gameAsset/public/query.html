@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>查询道具</title>
+<!-- for-mobile-apps -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="Best Store Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, 
+Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
+<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false);
+		function hideURLbar(){ window.scrollTo(0,1); } </script>
+<!-- //for-mobile-apps -->
+<link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
+<link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
+<!-- js -->
+<script src="js/jquery.min.js"></script>
+<!-- //js -->
+<!-- cart -->
+	<script src="js/simpleCart.min.js"> </script>
+<!-- cart -->
+<link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
+<!-- for bootstrap working -->
+	<script type="text/javascript" src="js/bootstrap-3.1.1.min.js"></script>
+<!-- //for bootstrap working -->
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+<!-- animation-effect -->
+<link href="css/animate.min.css" rel="stylesheet"> 
+<script src="js/wow.min.js"></script>
+<script>
+ new WOW().init();
+</script>
+<!-- //animation-effect -->
+</head>
+	
+<body>
+<!-- header -->
+<script type="text/javascript" src="js/header.js"></script>
+<!-- //header -->
+<div class="products">
+	<div class="container text-center">
+			<form class="form-inline" id="queryForm">
+				<div class="form-group">
+					<label for="exampleId">道具ID</label>
+					<input type="text" class="form-control" id="exampleId" placeholder="">
+				</div>
+				<button type="submit" class="btn btn-default">查询道具</button>
+			</form>
+	</div>
+</div>
+
+
+<!-- single -->
+<div class="single hide" id="single">
+	<div class="container">
+		<div class="col-md-12 single-right">
+			<div class="col-md-5 single-right-left animated wow slideInUp" data-wow-delay=".5s">
+				<div class="flexslider">
+					<ul class="slides" id="images">
+					</ul>
+				</div>
+				<!-- flixslider -->
+					<script defer src="js/jquery.flexslider.js"></script>
+					<link rel="stylesheet" href="css/flexslider.css" type="text/css" media="screen" />
+					<script>
+					</script>
+				<!-- flixslider -->
+			</div>
+			<div class="col-md-7 single-right-left simpleCart_shelfItem animated wow slideInRight" data-wow-delay=".5s">
+				<h3 id="itemName">道具名称</h3>
+				<!-- <h4><span class="item_price">￥</span><span class="item_price" id="itemPrice"></span></h4> -->
+				<div class="description">
+					<h5><i>简介</i></h5>
+					<p  id="itemInfo"></p>
+				</div>
+				<div class="description">
+					<h5><i>唯一ID</i></h5>
+						<p id="itemID"></p>
+				</div>
+				<div class="description">
+					<h5><i>游戏公司</i></h5>
+						<p id="itemCompany"></p>
+				</div>
+				<div class="description">
+					<h5><i>装备类型</i></h5>
+						<p id="itemType"></p>
+				</div>
+				<div class="description">
+					<h5><i>发行数量</i></h5>
+						<p id="itemCount"></p>
+				</div>
+				<div class="description" id="history">
+						<h5><i>流转信息</i></h5>
+				</div>
+				<div class="description">
+					<h5><i>当前所有者</i></h5>
+						<p id="owner">B</p>
+				</div>
+				<!-- <div class="occasion-cart" onclick='buy()'>
+					<a class="item_add" href="#">确认购买</a>
+				</div> -->
+			</div>
+			<div class="clearfix"> </div>
+		</div>
+		<div class="clearfix"> </div>
+	</div>
+</div>
+<!-- //single -->
+
+<script type="text/javascript">
+	$(function () {
+		// 写入数据
+			$('#queryForm').submit(function () {
+				var data = {};
+				data['username']=d_username;
+				data['userType']=d_userType;
+				data['itemID']=$('#exampleId').val();;
+				var dataJSON = JSON.stringify(data);
+				$.ajax({
+					type: "POST",
+					url: "/api/getProductByID",
+					data: dataJSON,
+					beforeSend: function(request) {
+						request.setRequestHeader("content-type", "application/json");
+						request.setRequestHeader("authorization","Bearer "+d_token);
+					},
+					success: function(result) {
+						if(result['success']==true){
+							$('#single').removeClass('hide');
+							$("#itemName").html(result['data']['itemName']);
+							// $("#itemPrice").html(result['data']['itemPrice']);
+							$("#itemInfo").html(result['data']['itemInfo']);
+							$("#itemID").html(result['data']['_id']);
+							$("#itemCompany").html(result['data']['itemCompany']);
+							$("#itemType").html(result['data']['itemType']);
+							$("#itemCount").html(result['data']['itemCount']);
+							$("#owner").html(result['data']['owner']);
+
+							for(let j=0;j<result['data']['itemHistory'].length;j++){
+								$("#history").append('<p>'+result['data']['itemHistory'][j]+'</p>');
+							}
+							for(let k=0;k<result['data']['itemImages'].length;k++){
+								$("#images").append('<li><div> <img src="'+result['data']['itemImages'][k]+'"> </div></li>');
+							}
+							// 图片模式设置
+							$('.flexslider').flexslider({
+										animation: "fade",
+										slideshow: true, 
+										slideshowSpeed: 5000, 
+										animationSpeed: 600,
+										prevText: "Previous",          
+										nextText: "Next",  
+										directionNav: true, 
+										controlNav: true
+									});
+
+						}else{
+							alert(result['message']);
+						}
+					}
+				});
+			return false;
+		});
+	});
+
+	$('#youxi').addClass('hide');
+	$('#shichang').addClass('hide');
+	$('#DemoTitle').html('道具查询系统');
+
+</script>
+<!-- footer -->
+<script type="text/javascript" src="js/footer.js"></script>
+<!-- //footer -->
+</body>
+</html>

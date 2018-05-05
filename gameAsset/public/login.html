@@ -80,6 +80,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				},
 				success: function(result) {
 					if(result['success']==true){
+						storage['d-password'] = $('#password').val();
 						storage['d-username'] = result['username'];
 						storage['d-userType'] = result['userType'];
 						storage['d-balance'] = result['balance'];
