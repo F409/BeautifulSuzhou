@@ -208,7 +208,7 @@ curl -s -X POST \
 		\"username\":\"xiaoxu\",
 		\"userType\":\"1\",
 		\"itemID\":\"$itemID\",
-		\"itemPrice\":\"11\"
+		\"itemPrice\":\"210\"
 }"
 echo
 # echo

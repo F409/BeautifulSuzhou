@@ -608,8 +608,8 @@ app.post('/api/startIssueProductByID', async function(req, res) {
 		return;
 	};
 	logger.debug("req.body.itemID="+req.body.itemID)
-	var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"0"};
-	// var oldItem = {"_id":ObjectId(req.body.itemID)};
+	// var oldItem = {"_id":ObjectId(req.body.itemID),"itemStatus":"0"};
+	var oldItem = {"_id":ObjectId(req.body.itemID)};
 	var newItem = {"itemStatus":"5"};
 	await db.findOne('gameAsset',oldItem,async function(err,result){
 		if (err) {
@@ -864,6 +864,12 @@ app.post('/api/buyProductByID', async function(req, res) {
 			}
 			var Balance = result.Balance
 			var newBalance = Balance-itemPrice
+			if (newBalance<0){
+				return res.json({
+											"success": false,
+											"message": "账户余额不足"
+										})
+			}
 			await db.updateMany('myuser',{"_id":ObjectId(req.UserID) },{"Balance":newBalance},async function (err, result) {
 				if (err) {
 					logger.debug('内部服务器错误: ' + err);
