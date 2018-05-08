@@ -53,7 +53,7 @@ function setChaincodePath(){
 setChaincodePath
 
 response4=$(curl -s -X POST \
-  http://localhost:4000/api/login \
+  http://localhost:1008/api/login \
   -H "content-type: application/json" \
   -d '{
 		"username":"xiaoxu",
@@ -61,7 +61,7 @@ response4=$(curl -s -X POST \
 		 }')
 echo $response4
 response5=$(curl -s -X POST \
-  http://localhost:4000/api/login \
+  http://localhost:1008/api/login \
   -H "content-type: application/json" \
   -d '{
 		"username":"Iris",
@@ -74,7 +74,7 @@ ORG2_TOKEN=$(echo $response4 | jq ".token" | sed "s/\"//g")
 echo $ORG2_TOKEN
 
 response6=$(curl -s -X POST \
-  http://localhost:4000/api/login \
+  http://localhost:1008/api/login \
   -H "content-type: application/json" \
   -d '{
 		"username":"jingjing",
@@ -86,7 +86,7 @@ echo $BUYER_TOKEN
 # echo "POST request Create new Item  ...生成新道具"
 # echo
 # createItemIds=$(curl -s -X POST \
-#   http://localhost:4000/api/createItem \
+#   http://localhost:1008/api/createItem \
 #   -H "authorization: Bearer $ORG1_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d '{
@@ -107,7 +107,7 @@ echo
 echo
 echo "POST request getProductsByCompany  ...根据厂商获取道具列表"
 curl -s -X POST \
-  http://localhost:4000/api/getProductsByCompany \
+  http://localhost:1008/api/getProductsByCompany \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json" \
   -d "{
@@ -120,7 +120,7 @@ itemID="5aec24f513b2ae2575186302"
 echo "POST request startIssueProductByID  ...游戏公司将生成的道具发行"
 echo
 curl -s -X POST \
-  http://localhost:4000/api/startIssueProductByID \
+  http://localhost:1008/api/startIssueProductByID \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json" \
   -d "{
@@ -134,7 +134,7 @@ echo
 echo "GET query chaincode:getGameAssetInfo on peer1 of Org1"
 echo
 curl -s -X GET \
-  "http://localhost:4000/api/channels/mychannel/chaincodes/mycc?peer=peer0.org1.example.com&fcn=getGameAssetInfo&args=%5b%225aec24f513b2ae2575186302%22%5d" \
+  "http://localhost:1008/api/channels/mychannel/chaincodes/mycc?peer=peer0.org1.example.com&fcn=getGameAssetInfo&args=%5b%225aec24f513b2ae2575186302%22%5d" \
   -H "authorization: Bearer $ORG2_TOKEN" \
   -H "content-type: application/json"
 echo
@@ -143,7 +143,7 @@ echo
 echo "POST request getIssueProductByID  ...用户从厂商得到道具或者说厂商发道具"
 echo
 curl -s -X POST \
-  http://localhost:4000/api/getIssueProductByID \
+  http://localhost:1008/api/getIssueProductByID \
   -H "authorization: Bearer $ORG2_TOKEN" \
   -H "content-type: application/json" \
   -d "{
@@ -157,7 +157,7 @@ echo
 echo "GET query chaincode:getGameAssetInfo on peer1 of Org1"
 echo
 curl -s -X GET \
-  "http://localhost:4000/api/channels/mychannel/chaincodes/mycc?peer=peer0.org1.example.com&fcn=getGameAssetInfo&args=%5b%225aec24f513b2ae2575186302%22%5d" \
+  "http://localhost:1008/api/channels/mychannel/chaincodes/mycc?peer=peer0.org1.example.com&fcn=getGameAssetInfo&args=%5b%225aec24f513b2ae2575186302%22%5d" \
   -H "authorization: Bearer $ORG2_TOKEN" \
   -H "content-type: application/json"
 echo
@@ -165,7 +165,7 @@ echo
 # echo
 # echo "POST request getProductsByCompany  ...根据厂商获取道具列表"
 # curl -s -X POST \
-#   http://localhost:4000/api/getProductsByCompany \
+#   http://localhost:1008/api/getProductsByCompany \
 #   -H "authorization: Bearer $ORG1_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d "{
@@ -176,7 +176,7 @@ echo
 # echo
 # echo "POST request getProductsByOwnerAndStatus  ...根据状态和拥有者获取道具列表"
 # curl -s -X POST \
-#   http://localhost:4000/api/getProductsByOwnerAndStatus \
+#   http://localhost:1008/api/getProductsByOwnerAndStatus \
 #   -H "authorization: Bearer $ORG1_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d "{
@@ -188,7 +188,7 @@ echo
 # echo
 # echo "POST request getProductsByOwnerAndStatusAnditemCompany  ...根据状态和拥有者,厂商获取道具列表"
 # curl -s -X POST \
-#   http://localhost:4000/api/getProductsByOwnerAndStatusAnditemCompany \
+#   http://localhost:1008/api/getProductsByOwnerAndStatusAnditemCompany \
 #   -H "authorization: Bearer $ORG1_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d "{
@@ -201,7 +201,7 @@ echo
 echo "POST request startSellProductByID  ...提交出售申请"
 echo
 curl -s -X POST \
-  http://localhost:4000/api/startSellProductByID \
+  http://localhost:1008/api/startSellProductByID \
   -H "authorization: Bearer $ORG2_TOKEN" \
   -H "content-type: application/json" \
   -d "{
@@ -215,7 +215,7 @@ echo
 # echo "POST request stopSellProductByID  ...停止出售请求"
 # echo
 # curl -s -X POST \
-#   http://localhost:4000/api/stopSellProductByID \
+#   http://localhost:1008/api/stopSellProductByID \
 #   -H "authorization: Bearer $ORG2_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d "{
@@ -227,7 +227,7 @@ echo
 echo "POST request buyProductByID  ...提交购买请求"
 echo
 curl -s -X POST \
-  http://localhost:4000/api/buyProductByID \
+  http://localhost:1008/api/buyProductByID \
   -H "authorization: Bearer $BUYER_TOKEN" \
   -H "content-type: application/json" \
   -d "{
@@ -239,7 +239,7 @@ echo
 echo "POST request confirmSellProductByID  ...确认他人购买请求"
 echo
 curl -s -X POST \
-  http://localhost:4000/api/confirmSellProductByID \
+  http://localhost:1008/api/confirmSellProductByID \
   -H "authorization: Bearer $ORG2_TOKEN" \
   -H "content-type: application/json" \
   -d "{
@@ -252,7 +252,7 @@ echo
 echo "POST request approveSellProductByID  ...批准玩家购买请求"
 echo
 curl -s -X POST \
-  http://localhost:4000/api/approveSellProductByID \
+  http://localhost:1008/api/approveSellProductByID \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json" \
   -d "{
@@ -265,14 +265,14 @@ echo
 echo "GET query chaincode:getGameAssetInfo on peer1 of Org1"
 echo
 curl -s -X GET \
-  "http://localhost:4000/api/channels/mychannel/chaincodes/mycc?peer=peer0.org1.example.com&fcn=getGameAssetInfo&args=%5b%225aec24f513b2ae2575186302%22%5d" \
+  "http://localhost:1008/api/channels/mychannel/chaincodes/mycc?peer=peer0.org1.example.com&fcn=getGameAssetInfo&args=%5b%225aec24f513b2ae2575186302%22%5d" \
   -H "authorization: Bearer $ORG2_TOKEN" \
   -H "content-type: application/json"
 echo
 echo "POST request giveProductByID  ... 用户游戏中直接交易道具(页面待实现)"
 echo
 curl -s -X POST \
-  http://localhost:4000/api/giveProductByID \
+  http://localhost:1008/api/giveProductByID \
   -H "authorization: Bearer $BUYER_TOKEN" \
   -H "content-type: application/json" \
   -d "{
@@ -283,7 +283,7 @@ curl -s -X POST \
 }"
 echo
 curl -s -X GET \
-  "http://localhost:4000/api/channels/mychannel/chaincodes/mycc?peer=peer0.org1.example.com&fcn=getGameAssetInfo&args=%5b%225aec24f513b2ae2575186302%22%5d" \
+  "http://localhost:1008/api/channels/mychannel/chaincodes/mycc?peer=peer0.org1.example.com&fcn=getGameAssetInfo&args=%5b%225aec24f513b2ae2575186302%22%5d" \
   -H "authorization: Bearer $BUYER_TOKEN" \
   -H "content-type: application/json"
 echo
@@ -291,7 +291,7 @@ echo
 ################################################################################################
 # echo "POST request getProductsOnsell  ...获得所有正在交易市场的道具列表"
 # curl -s -X POST \
-#   http://localhost:4000/api/getProductsOnsell \
+#   http://localhost:1008/api/getProductsOnsell \
 #   -H "authorization: Bearer $ORG1_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d "{
@@ -302,7 +302,7 @@ echo
 # echo
 # echo "POST request getProductsByCompanyAndStatus  ...根据状态和厂商获取道具列表"
 # curl -s -X POST \
-#   http://localhost:4000/api/getProductsByCompanyAndStatus \
+#   http://localhost:1008/api/getProductsByCompanyAndStatus \
 #   -H "authorization: Bearer $ORG1_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d "{
@@ -314,7 +314,7 @@ echo
 # echo
 echo "POST request getProductByID  ...根据道具ID获取道具"
 curl -s -X POST \
-  http://localhost:4000/api/getProductByID \
+  http://localhost:1008/api/getProductByID \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json" \
   -d "{
@@ -325,7 +325,7 @@ curl -s -X POST \
 echo
 echo "POST request getProductByID  ...根据道具ID获取道具"
 curl -s -X POST \
-  http://localhost:4000/api/getProductByID \
+  http://localhost:1008/api/getProductByID \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json" \
   -d "{
@@ -337,7 +337,7 @@ echo
 # echo
 # echo "POST request getProductsByOwner  ...根据用户获取道具列表"
 # curl -s -X POST \
-#   http://localhost:4000/api/getProductsByOwner \
+#   http://localhost:1008/api/getProductsByOwner \
 #   -H "authorization: Bearer $ORG1_TOKEN" \
 #   -H "content-type: application/json" \
 #   -d "{

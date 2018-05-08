@@ -55,7 +55,7 @@ setChaincodePath
 echo "POST request Enroll on Org1  ..."
 echo
 ORG1_TOKEN=$(curl -s -X POST \
-  http://localhost:4000/api/users \
+  http://localhost:1008/api/users \
   -H "content-type: application/x-www-form-urlencoded" \
   -d 'username=Jim&orgName=Org1')
 ORG1_TOKEN=$(echo $ORG1_TOKEN | jq ".token" | sed "s/\"//g")
@@ -65,7 +65,7 @@ echo
 echo "POST request Enroll on Org2 ..."
 echo
 ORG2_TOKEN=$(curl -s -X POST \
-  http://localhost:4000/api/users \
+  http://localhost:1008/api/users \
   -H "content-type: application/x-www-form-urlencoded" \
   -d 'username=Barry&orgName=Org2')
 echo $ORG2_TOKEN
@@ -77,7 +77,7 @@ echo
 echo "POST request Create channel  ..."
 echo
 curl -s -X POST \
-  http://localhost:4000/api/channels \
+  http://localhost:1008/api/channels \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json" \
   -d '{
@@ -90,7 +90,7 @@ sleep 5
 echo "POST request Join channel on Org1"
 echo
 curl -s -X POST \
-  http://localhost:4000/api/channels/mychannel/peers \
+  http://localhost:1008/api/channels/mychannel/peers \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json" \
   -d '{
@@ -102,7 +102,7 @@ echo
 echo "POST request Join channel on Org2"
 echo
 curl -s -X POST \
-  http://localhost:4000/api/channels/mychannel/peers \
+  http://localhost:1008/api/channels/mychannel/peers \
   -H "authorization: Bearer $ORG2_TOKEN" \
   -H "content-type: application/json" \
   -d '{
@@ -114,7 +114,7 @@ echo
 echo "POST Install chaincode on Org1"
 echo
 curl -s -X POST \
-  http://localhost:4000/api/chaincodes \
+  http://localhost:1008/api/chaincodes \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json" \
   -d "{
@@ -130,7 +130,7 @@ echo
 echo "POST Install chaincode on Org2"
 echo
 curl -s -X POST \
-  http://localhost:4000/api/chaincodes \
+  http://localhost:1008/api/chaincodes \
   -H "authorization: Bearer $ORG2_TOKEN" \
   -H "content-type: application/json" \
   -d "{
@@ -146,7 +146,7 @@ echo
 echo "POST instantiate chaincode on peer1 of Org1"
 echo
 curl -s -X POST \
-  http://localhost:4000/api/channels/mychannel/chaincodes \
+  http://localhost:1008/api/channels/mychannel/chaincodes \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json" \
   -d "{
@@ -162,7 +162,7 @@ echo "Total execution time : $(($(date +%s)-starttime)) secs ..."
 echo "POST request add User on Org1  ..."
 
 response1=$(curl -s -X POST \
-  http://localhost:4000/api/addUser \
+  http://localhost:1008/api/addUser \
   -H "content-type: application/json" \
   -d '{
 		"username":"Iris",
@@ -182,7 +182,7 @@ echo $response1
 # echo "POST request add User on Org2  ..."
 
 response2=$(curl -s -X POST \
-  http://localhost:4000/api/addUser \
+  http://localhost:1008/api/addUser \
   -H "content-type: application/json" \
   -d '{
 		"username":"jingjing",
@@ -201,7 +201,7 @@ response2=$(curl -s -X POST \
 echo $response2
 
 response3=$(curl -s -X POST \
-  http://localhost:4000/api/addUser \
+  http://localhost:1008/api/addUser \
   -H "content-type: application/json" \
   -d '{
 		"username":"xiaoxu",

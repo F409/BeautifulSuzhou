@@ -45,7 +45,7 @@ cd fabric-samples/balance-transfer/typescript
 This performs the following steps:
 * lauches the required network on your local machine
 * installs the fabric-client and fabric-ca-client node modules
-* starts the node app on PORT 4000
+* starts the node app on PORT 1008
 
 ##### Terminal Window 2
 
@@ -85,10 +85,10 @@ cp types/fabric-client/index.d.tx node_modules/fabric-client/index.d.ts
 cp types/fabric-ca-client/index.d.tx node_modules/fabric-ca-client/index.d.ts
 ```
 
-* Start the node app on PORT 4000
+* Start the node app on PORT 1008
 
 ```
-PORT=4000 ts-node app.ts
+PORT=1008 ts-node app.ts
 ```
 
 ##### Terminal Window 3
@@ -101,7 +101,7 @@ PORT=4000 ts-node app.ts
 
 * Register and enroll new users in Organization - **Org1**:
 
-`curl -s -X POST http://localhost:4000/users -H "content-type: application/x-www-form-urlencoded" -d 'username=Jim&orgName=org1'`
+`curl -s -X POST http://localhost:1008/users -H "content-type: application/x-www-form-urlencoded" -d 'username=Jim&orgName=org1'`
 
 **OUTPUT:**
 
@@ -120,7 +120,7 @@ The response contains the success/failure status, an **enrollment Secret** and a
 
 ```
 curl -s -X POST \
-  http://localhost:4000/channels \
+  http://localhost:1008/channels \
   -H "authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0OTQ4NjU1OTEsInVzZXJuYW1lIjoiSmltIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTQ4NjE5OTF9.yWaJhFDuTvMQRaZIqg20Is5t-JJ_1BP58yrNLOKxtNI" \
   -H "content-type: application/json" \
   -d '{
@@ -135,7 +135,7 @@ Please note that the Header **authorization** must contain the JWT returned from
 
 ```
 curl -s -X POST \
-  http://localhost:4000/channels/mychannel/peers \
+  http://localhost:1008/channels/mychannel/peers \
   -H "authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0OTQ4NjU1OTEsInVzZXJuYW1lIjoiSmltIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTQ4NjE5OTF9.yWaJhFDuTvMQRaZIqg20Is5t-JJ_1BP58yrNLOKxtNI" \
   -H "content-type: application/json" \
   -d '{
@@ -146,7 +146,7 @@ curl -s -X POST \
 
 ```
 curl -s -X POST \
-  http://localhost:4000/chaincodes \
+  http://localhost:1008/chaincodes \
   -H "authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0OTQ4NjU1OTEsInVzZXJuYW1lIjoiSmltIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTQ4NjE5OTF9.yWaJhFDuTvMQRaZIqg20Is5t-JJ_1BP58yrNLOKxtNI" \
   -H "content-type: application/json" \
   -d '{
@@ -161,7 +161,7 @@ curl -s -X POST \
 
 ```
 curl -s -X POST \
-  http://localhost:4000/channels/mychannel/chaincodes \
+  http://localhost:1008/channels/mychannel/chaincodes \
   -H "authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0OTQ4NjU1OTEsInVzZXJuYW1lIjoiSmltIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTQ4NjE5OTF9.yWaJhFDuTvMQRaZIqg20Is5t-JJ_1BP58yrNLOKxtNI" \
   -H "content-type: application/json" \
   -d '{
@@ -175,7 +175,7 @@ curl -s -X POST \
 
 ```
 curl -s -X POST \
-  http://localhost:4000/channels/mychannel/chaincodes/mycc \
+  http://localhost:1008/channels/mychannel/chaincodes/mycc \
   -H "authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0OTQ4NjU1OTEsInVzZXJuYW1lIjoiSmltIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTQ4NjE5OTF9.yWaJhFDuTvMQRaZIqg20Is5t-JJ_1BP58yrNLOKxtNI" \
   -H "content-type: application/json" \
   -d '{
@@ -189,7 +189,7 @@ curl -s -X POST \
 
 ```
 curl -s -X GET \
-  "http://localhost:4000/channels/mychannel/chaincodes/mycc?peer=peer1&fcn=query&args=%5B%22a%22%5D" \
+  "http://localhost:1008/channels/mychannel/chaincodes/mycc?peer=peer1&fcn=query&args=%5B%22a%22%5D" \
   -H "authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0OTQ4NjU1OTEsInVzZXJuYW1lIjoiSmltIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTQ4NjE5OTF9.yWaJhFDuTvMQRaZIqg20Is5t-JJ_1BP58yrNLOKxtNI" \
   -H "content-type: application/json"
 ```
@@ -198,7 +198,7 @@ curl -s -X GET \
 
 ```
 curl -s -X GET \
-  "http://localhost:4000/channels/mychannel/blocks/1?peer=peer1" \
+  "http://localhost:1008/channels/mychannel/blocks/1?peer=peer1" \
   -H "authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0OTQ4NjU1OTEsInVzZXJuYW1lIjoiSmltIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTQ4NjE5OTF9.yWaJhFDuTvMQRaZIqg20Is5t-JJ_1BP58yrNLOKxtNI" \
   -H "content-type: application/json"
 ```
@@ -206,7 +206,7 @@ curl -s -X GET \
 ### Query Transaction by TransactionID
 
 ```
-curl -s -X GET http://localhost:4000/channels/mychannel/transactions/TRX_ID?peer=peer1 \
+curl -s -X GET http://localhost:1008/channels/mychannel/transactions/TRX_ID?peer=peer1 \
   -H "authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0OTQ4NjU1OTEsInVzZXJuYW1lIjoiSmltIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTQ4NjE5OTF9.yWaJhFDuTvMQRaZIqg20Is5t-JJ_1BP58yrNLOKxtNI" \
   -H "content-type: application/json"
 ```
@@ -217,7 +217,7 @@ curl -s -X GET http://localhost:4000/channels/mychannel/transactions/TRX_ID?peer
 
 ```
 curl -s -X GET \
-  "http://localhost:4000/channels/mychannel?peer=peer1" \
+  "http://localhost:1008/channels/mychannel?peer=peer1" \
   -H "authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0OTQ4NjU1OTEsInVzZXJuYW1lIjoiSmltIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTQ4NjE5OTF9.yWaJhFDuTvMQRaZIqg20Is5t-JJ_1BP58yrNLOKxtNI" \
   -H "content-type: application/json"
 ```
@@ -226,7 +226,7 @@ curl -s -X GET \
 
 ```
 curl -s -X GET \
-  "http://localhost:4000/chaincodes?peer=peer1&type=installed" \
+  "http://localhost:1008/chaincodes?peer=peer1&type=installed" \
   -H "authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0OTQ4NjU1OTEsInVzZXJuYW1lIjoiSmltIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTQ4NjE5OTF9.yWaJhFDuTvMQRaZIqg20Is5t-JJ_1BP58yrNLOKxtNI" \
   -H "content-type: application/json"
 ```
@@ -235,7 +235,7 @@ curl -s -X GET \
 
 ```
 curl -s -X GET \
-  "http://localhost:4000/chaincodes?peer=peer1&type=instantiated" \
+  "http://localhost:1008/chaincodes?peer=peer1&type=instantiated" \
   -H "authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0OTQ4NjU1OTEsInVzZXJuYW1lIjoiSmltIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTQ4NjE5OTF9.yWaJhFDuTvMQRaZIqg20Is5t-JJ_1BP58yrNLOKxtNI" \
   -H "content-type: application/json"
 ```
@@ -244,7 +244,7 @@ curl -s -X GET \
 
 ```
 curl -s -X GET \
-  "http://localhost:4000/channels?peer=peer1" \
+  "http://localhost:1008/channels?peer=peer1" \
   -H "authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0OTQ4NjU1OTEsInVzZXJuYW1lIjoiSmltIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE0OTQ4NjE5OTF9.yWaJhFDuTvMQRaZIqg20Is5t-JJ_1BP58yrNLOKxtNI" \
   -H "content-type: application/json"
 ```

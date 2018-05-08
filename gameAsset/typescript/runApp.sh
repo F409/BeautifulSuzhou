@@ -68,4 +68,4 @@ installNodeModules
 
 
 
-PORT=4000 ts-node app.ts
+PORT=1008 ts-node app.ts
