@@ -59,4 +59,6 @@ restartNetwork
 
 installNodeModules
 
-PORT=1008 node app
+forever stop app.js
+sleep 1s
+forever start app.js
