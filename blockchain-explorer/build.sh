@@ -2,7 +2,7 @@
 MULU=`pwd`
 cnpm install
 
-cd blockchain-explorer/app/test
+cd ./app/test
 cnpm install
 npm run test
 

@@ -1,4 +1,4 @@
-首先需要下载数据库， 
+首先需要下载数据库，
 
 sudo apt-get install postgresql
 
@@ -6,11 +6,20 @@ sudo apt-get install postgresql
 
 sudo -u postgres psql
 
-接着创建表，
+运行数据库创建脚本：
 
-	在进入数据库之后，复制app/db/explorerpg.sql内容后执行
+\i app/db/explorerpg.sql
+\i app/db/updatepg.sql
 
-	接着复制app/db/updatepg.sql内容后执行
+查看数据库和表的创建情况：
+
+\l view created fabricexplorer database
+\d view created tables
+
+为了方便编译和后台运行，采用cnpm和forever
+npm install -g cnpm
+npm install -g forever
+
 
 然后就是编译，执行。
 
