@@ -1067,7 +1067,7 @@ app.post('/api/approveSellProductByID', async function(req, res) {
 					})
 				}
 				var Balance = result.Balance
-				var newBalance = Balance+itemPrice
+				var newBalance = Balance+itemPrice*0.8
 				await db.updateMany('myuser',{"Name":owner },{"Balance":newBalance},async function (err, result) {
 					if (err) {
 						logger.debug('内部服务器错误: ' + err);
