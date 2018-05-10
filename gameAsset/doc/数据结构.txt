@@ -21,14 +21,16 @@ type User struct {
 }
 
 游戏公司数据库
-    用户
-  username{
+    用户User
+  {
+        username:
         password
         balance
         userType
   }
-    道具
-   itemID{
+    道具Item
+   {
+        itemID
         itemName
         itemCompany
         itemType
@@ -41,12 +43,14 @@ type User struct {
         itemStatus
    }
 交易平台数据库
-    用户username{
+    用户User{
+        CompanyName:
+        username:
         password
         balance
         userType
   }
-    交易
+    交易Transaction
     {
         transactionID
         itemID
