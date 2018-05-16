@@ -1,0 +1,210 @@
+ 
+  .home-container {
+    width: 100%;
+  }
+  
+  .home-container .home-main {
+    width: 100%;
+  }
+  .home-container .home-main h2 {
+    font-size: 32px;
+    /* line-height: 48px; */
+    color: #1c2736;
+    width: 100%;
+    margin: 80px 0 20px;
+    text-align: center;
+  }
+  .home-container .home-main .subtitle {
+    width: 800px;
+    height: 48px;
+    font-size: 16px;
+    line-height: 24px;
+    text-align: center;
+    color: #6e7e99;
+    margin: 0 auto;
+  }
+  .home-container .home-main ul {
+    width: 100%;
+    margin: 78px auto 360px;
+    padding: 0 50px;
+    list-style-type:none;
+  }
+  .home-container .home-main ul li {
+    float: left;
+    width: 22%;
+    margin-right: 40px;
+  }
+  .home-container .home-main ul li em {
+    width: 86px;
+    height: 86px;
+    display: block;
+    margin: 0 auto;
+  }
+  .home-container .home-main ul li span {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin: 32px 0 10px;
+    font-size: 18px;
+    line-height: 26px;
+    color: #1c2736;
+  }
+  .home-container .home-main ul li p {
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    line-height: 20px;
+    opacity: 0.5;
+    color: #191919;
+  }
+  .home-container .home-main ul li:last-child {
+    margin: 0;
+  }
+  .home-container .home-main .our-investors {
+    width: 194px;
+    height: 32px;
+    line-height: 32px;
+    font-size: 18px;
+    background: #fff;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+    top: -16px;
+    color: #6e7e99;
+  }
+  .home-container .home-main .line {
+    width: 1180px;
+    height: 1px;
+    background: #e6eaf0;
+    margin: 0 auto 62px;
+  }
+  .home-container .home-main .investors {
+    height: 49px;
+  }
+  .home-container .home-main .investors img {
+    vertical-align: middle;
+  }
+  .home-container .home-main .investors .vc {
+    width: 80px;
+    height: 80px;
+  }
+  .home-container .home-main .investors .vc:not(:first-child) {
+    margin-left: 20px;
+  }
+  .home-container .home-main .investors .vc img {
+    width: 100%;
+    height: 100%;
+  }
+  .home-container .home-main .creat-account {
+    width: 100%;
+    height: 200px;
+    box-sizing: border-box;
+    background-image: linear-gradient(to right, #0b338e, #5986d4);
+    overflow: hidden;
+  }
+  .home-container .home-main .creat-account .creat-account-container {
+    width: 1120px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .home-container .home-main .creat-account .creat-account-container .left-bottom-ball {
+    width: 366px;
+    height: 366px;
+    border-radius: 50%;
+    opacity: 0.2;
+    background-image: linear-gradient(to right, #ffffff, #1e47e0);
+    position: absolute;
+    top: 100px;
+    left: -82px;
+  }
+  .home-container .home-main .creat-account .creat-account-container .right-top-ball {
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    opacity: 0.2;
+    background-image: linear-gradient(to right, #ffffff, #1e47e0);
+    position: absolute;
+    top: -140px;
+    left: 665px;
+  }
+  .home-container .home-main .creat-account .creat-account-container .circle-ball {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    opacity: 0.4;
+    background-image: linear-gradient(12deg, #3075ef, #ffffff);
+    position: absolute;
+    left: 840px;
+    top: 36px;
+  }
+  .home-container .home-main .creat-account .creat-account-container .rotate-ani {
+    animation: rotate-frame 10s linear 0s infinite;
+    -moz-animation: rotate-frame 10s linear 0s infinite;
+    /* Firefox */
+    -webkit-animation: rotate-frame 10s linear 0s infinite;
+    /* Safari and Chrome */
+    -o-animation: rotate-frame 10s linear 0s infinite;
+    /* Opera */
+  }
+  @keyframes rotate-frame {
+    0% {
+      transform: rotate(360deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+  @-moz-keyframes rotate-frame {
+    0% {
+      transform: rotate(360deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+  @-webkit-keyframes rotate-frame {
+    0% {
+      transform: rotate(360deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+  @-o-keyframes rotate-frame {
+    0% {
+      transform: rotate(360deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+  .home-container .home-main .creat-account .creat-account-container .slogan {
+    padding-top: 60px;
+  }
+  .home-container .home-main .creat-account .creat-account-container .slogan h2 {
+    float: left;
+    font-size: 32px;
+    color: #ffffff;
+    margin: 0;
+    text-align: left;
+  }
+  .home-container .home-main .creat-account .creat-account-container .slogan p {
+    width: 600px;
+    float: left;
+    font-size: 16px;
+    color: #ffffff;
+    margin-top: 8px;
+  }
+  .home-container .home-main .creat-account .creat-account-container .create-account-btn {
+    display: none;
+    width: 185px;
+    height: 44px;
+    border-radius: 22px;
+    background-color: #58d182;
+    font-size: 16px;
+    color: #ffffff;
+    text-align: center;
+    line-height: 44px;
+    float: right;
+    margin-top: -30px;
+  }
