@@ -648,7 +648,8 @@ app.post('/api/startIssueProductByID', async function(req, res) {
 			"ReleaseTime":"2017-11-25T08:31:01.956Z",
 			"Owner":result.owner,
 			"AssetInfo":result.itemInfo,
-			"TransactionInfo":result.itemHistory
+			"TransactionInfo":result.itemHistory,
+			"GameAssetImageHash":md5(result.itemImages.join(""))
 		}
 		var peers = ["peer0.org1.example.com","peer1.org1.example.com"];
 		var chaincodeName = "mycc";
