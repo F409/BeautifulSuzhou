@@ -34,15 +34,16 @@ type GameAssetChaincode struct {
 
 //information for gameAsset
 type GameAsset struct {
-	AssetID         string    `json:"AssetID"`
-	Type            string    `json:"Type"`
-	Number          uint64    `json:"Number"`
-	GameCompany     string    `json:"GameCompany"`
-	GameName        string    `json:"GameName"`
-	ReleaseTime     time.Time `json:"ReleaseTime"`
-	Owner           string    `json:"Owner"`
-	AssetInfo       string    `json:"AssetInfo"`
-	TransactionInfo []string  `json:"TransactionInfo"`
+	AssetID            string    `json:"AssetID"`
+	Type               string    `json:"Type"`
+	Number             uint64    `json:"Number"`
+	GameCompany        string    `json:"GameCompany"`
+	GameName           string    `json:"GameName"`
+	ReleaseTime        time.Time `json:"ReleaseTime"`
+	Owner              string    `json:"Owner"`
+	AssetInfo          string    `json:"AssetInfo"`
+	GameAssetImageHash string    `json:"GameAssetImageHash"`
+	TransactionInfo    []string  `json:"TransactionInfo"`
 }
 
 //information for User
