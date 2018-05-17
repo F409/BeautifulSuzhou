@@ -1,0 +1,69 @@
+智能合约
+    游戏资产
+ GameAsset{
+                   AssetID：资产主键，保证唯一
+                   Type：资产类型，可以是帐号，道具，或者之后是其他分类
+                   Number：该类游戏资产的数量
+                   GameCompany：该游戏资产的发行公司
+                   GameName：资产所属的游戏名称
+                   ReleaseTime：游戏资产首次发行时间
+                   Owner：该资产的所有者（首次发行默认为游戏公司，有人认购再更改）
+                   AssetInfo：对于游戏资产的描述，需要对游戏资产有精确的定义
+                   TransactionInfo：用于记录每次交易的备注，相当于以太交易备注，按需写入信息，
+                                                        增加灵活性
+              }
+
+    游戏公司用户
+type User struct {
+	UserID          string   `json:"UserID"`
+	Name            string   `json:"Name"`
+	Email           string   `json:"Email"`
+}
+
+游戏公司数据库
+    用户User
+  {
+        username:
+        password
+        balance
+        userType
+  }
+    道具Item
+   {
+        itemID
+        itemName
+        itemCompany
+        itemType
+        itemCount
+        owner
+        releaseTime
+        itemHistory[]
+        itemInfo
+        itemImages[]
+        itemStatus
+   }
+交易平台数据库
+    用户User{
+        CompanyName:
+        username:
+        password
+        balance
+        userType
+  }
+    交易Transaction
+    {
+        transactionID
+        itemID
+        itemName
+        itemCompany
+        itemType
+        itemCount
+        owner
+        buyer
+        itemPrice
+        invoketime
+        itemHistory[]
+        itemInfo
+        itemImages[]
+        itemStatus
+    }
